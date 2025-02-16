@@ -1,0 +1,49 @@
+/* Style untuk menu aktif */
+.nav-secondary .nav-item.active > a {
+    border-left: 3px dashed #007bff; /* Ganti warna dan style border */
+    color: #007bff;
+    background-color: transparent; /* Hapus background color */
+}
+
+/* Style untuk menu parent */
+.nav-secondary .nav-item.active > [data-bs-toggle="collapse"] {
+    border-left: 3px dashed #007bff; /* Ganti warna dan style border */
+    color: #007bff;
+    background-color: transparent; /* Hapus background color */
+}
+
+/* Style untuk sub menu */
+.nav-secondary .nav-item .nav-collapse li.active > a .sub-item {
+    background-color: transparent;
+    color: #007bff;  /* Warna teks sub-item aktif */
+    font-weight: bold;
+}
+
+/* Style untuk sub menu yang di hover */
+.nav-secondary .nav-item .nav-collapse li:hover > a .sub-item {
+     color: #007bff; /* Ganti warna text dengan warna yang sama dengan border */
+}
+
+/* Style untuk menu yang di hover */
+.nav-secondary .nav-item:hover > a {
+    color: #007bff; /* Ganti warna text dengan warna yang sama dengan border */
+}
+
+
+/* Style untuk logo di sidebar */
+.sidebar .logo-header .logo .sidebar-brand {
+    height: 60px; /* Sesuaikan jika perlu */
+    width: auto;
+}
+
+/* Style untuk logo di header */
+.main-header .logo-header .logo .navbar-brand {
+    height: 40px; /* Sesuaikan jika perlu */
+    width: auto;
+}
+
+.content {
+  margin-top: 50px;
+}
+
+
