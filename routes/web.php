@@ -17,20 +17,19 @@ use App\Http\Controllers\ManagerArea\PersetujuanController;
 use App\Http\Controllers\ManagerArea\KendaraanController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PDFController;
 use Illuminate\Http\Request;
 
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'landingpage'])->name('welcome');
 
-Route::get('/', function () {
+Route::get('/login', function () {
     return view('login');
 });
-Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login');
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
 
 
 

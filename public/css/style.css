@@ -1,0 +1,235 @@
+:root {
+    --primary: #1E60AA;
+    --secondary: #FF4917;
+    --light: #EDF1FC;
+    --dark: #17224D;
+    --background-color: #af2424a3;
+}
+
+.fw-medium {
+    font-weight: 600 !important;
+}
+
+.back-to-top {
+    position: fixed;
+    display: none;
+    right: 45px;
+    bottom: 45px;
+    z-index: 99;
+}
+
+/*** Button ***/
+.btn {
+    font-weight: 600;
+    transition: .5s;
+}
+
+.btn.btn-primary,
+.btn.btn-secondary {
+    color: #FFFFFF;
+}
+
+.btn-square {
+    width: 38px;
+    height: 38px;
+}
+
+.btn-sm-square {
+    width: 32px;
+    height: 32px;
+}
+
+.btn-lg-square {
+    width: 48px;
+    height: 48px;
+}
+
+.btn-square,
+.btn-sm-square,
+.btn-lg-square {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: normal;
+}
+
+/*** Navbar ***/
+.top-bar {
+    height: 75px;
+    padding: 0 4rem;
+}
+
+.nav-bar {
+    position: relative;
+    padding: 0 4.75rem;
+    transition: .5s;
+    z-index: 9999;
+}
+
+.nav-bar.sticky-top {
+    position: sticky;
+    padding: 0;
+    z-index: 9999;
+    /* animasi navbar */
+}
+
+.navbar-light .navbar-nav .nav-link {
+    margin-right: 30px;
+    padding: 25px 0;
+    color: var(--dark);
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    outline: none;
+    /* ukuran navbar */
+}
+
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link.active {
+    color: var(--primary);
+/* hover */
+}
+
+/*** Header ***/
+.header-carousel .container,
+.page-header .container {
+    position: relative;
+    padding: 45px 0 45px 35px;
+    border-left: 15px;
+}
+
+.header-carousel .container::before,
+.header-carousel .container::after,
+.page-header .container::before,
+.page-header .container::after {
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 15px;
+}
+
+.header-carousel .container::after,
+.page-header .container::after {
+    top: 100%;
+    margin-top: -15px;
+}
+
+@media (max-width: 768px) {
+    .header-carousel .owl-carousel-item {
+        position: relative;
+        min-height: 500px;
+    }
+    .header-carousel .owl-carousel-item img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .header-carousel .owl-carousel-item h5,
+    .header-carousel .owl-carousel-item p {
+        font-size: 14px !important;
+        font-weight: 400 !important;
+    }
+
+    .header-carousel .owl-carousel-item h1 {
+        font-size: 30px;
+        font-weight: 600;
+    }
+    .container-fluid.p-0.mb-5 {
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        padding: 0;
+    }
+
+
+    .owl-carousel .owl-carousel-item img{
+        max-width: 100%;
+        height: auto;
+    }
+
+
+
+}
+
+.header-carousel .owl-nav {
+    position: absolute;
+    top: 50%;
+    right: 8%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+}
+
+.header-carousel .owl-nav .owl-prev,
+.header-carousel .owl-nav .owl-next {
+    margin: 7px 0;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    background: transparent;
+    border: 2px solid var(--dark);
+    border-radius: 45px;
+    font-size: 22px;
+    transition: .5s;
+}
+
+.header-carousel .owl-nav .owl-prev:hover,
+.header-carousel .owl-nav .owl-next:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: var(--light);
+}
+
+/*** Team ***/
+.team-content img {
+    transition: .5s;
+
+}
+
+.team-content:hover img {
+    transform: scale(1.1);
+}
+
+.team-content .team-text {
+    height: 90px;
+    overflow: hidden;
+}
+
+.team-content .team-text .bg-light,
+.team-content .team-text .bg-primary {
+    position: relative;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: .5s;
+}
+
+.team-content .team-text .bg-primary {
+    flex-direction: row;
+}
+
+.team-content:hover .team-text .bg-light {
+    margin-top: -90px;
+}
+
+.team-content .team-text .bg-primary .btn {
+    color: var(--primary);
+    background: #FFFFFF;
+}
+
+.team-content .team-text .bg-primary .btn:hover {
+    color: #FFFFFF;
+    background: var(--secondary)
+}

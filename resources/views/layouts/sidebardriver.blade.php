@@ -185,8 +185,8 @@
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                                     aria-expanded="false">
                                     <div class="avatar-sm">
-                                        <img src="{{ asset('storage/' . (Auth::user()->image ?? 'images/default-user.png')) }}"
-                                            alt=" " class="avatar-img rounded-circle">
+                                        <img src="{{ asset(Auth::user()?->image ? 'storage/' . Auth::user()->image : 'images/default-user.png') }}">
+                                            
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
@@ -201,8 +201,8 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-sm">
-                                                    <img src="{{ asset('storage/' . (Auth::user()->image ?? 'images/default-user.png')) }}"
-                                                        alt=" " class="avatar-img rounded">
+                                                    <img src="{{ asset(Auth::user()?->image ? 'storage/' . Auth::user()->image : 'images/default-user.png') }}">
+                                                        
                                                 </div>
                                                 <div class="u-text">
                                                     <h4>{{ Auth::user()->nama }}</h4>
@@ -297,7 +297,7 @@
 
             // Event listener untuk tombol "Tandai Sudah Dibaca"
             document.querySelector('.notif-box').addEventListener('click', function(
-            event) { // Gunakan event delegation
+                event) { // Gunakan event delegation
                 if (event.target.classList.contains('mark-as-read-btn')) {
                     event.preventDefault(); // Mencegah form di-submit secara normal
                     const form = event.target.closest('form'); // Cari form terdekat
@@ -316,7 +316,7 @@
                             if (data.success) {
                                 // Hapus notifikasi dari tampilan
                                 form.closest('.notif-item')
-                            .remove(); //Hapus parent element yang terdekat dengan class notif-item
+                                    .remove(); //Hapus parent element yang terdekat dengan class notif-item
                                 // Update jumlah notifikasi
                                 updateUnreadCount();
                             } else {
