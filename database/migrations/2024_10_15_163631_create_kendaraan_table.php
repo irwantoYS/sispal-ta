@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('no_kendaraan')->unique();
             $table->string('tipe_kendaraan');
             $table->string('km_per_liter');
-            $table->enum('status', ['ready', 'in_use', 'broken'])->default('ready');
+            $table->enum('status', ['ready', 'in_use', 'perlu_perbaikan'])->default('ready');
             $table->string('image');
         });
     }

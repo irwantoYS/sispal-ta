@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Driver\InspeksiKendaraanController;
 use App\Http\Controllers\Driver\TambahController;
 use App\Http\Controllers\Driver\DriverController;
 use App\Http\Controllers\Driver\DriverhistoryController;
@@ -82,6 +83,10 @@ Route::middleware(['auth','DriverMiddleware'])->group(function(){
     Route::post('/driver/store-perjalanan', [TambahController::class, 'storePerjalanan'])->name('storePerjalanan');
     Route::put('/driver/status/{id}', [TambahController::class, 'updatePerjalanan'])->name('update.perjalanan');
     Route::delete('/perjalanan/delete/{id}', [StatusController::class, 'destroyStatus'])->name('perjalanan.delete');
+    //inspeksi kendaraan
+    Route::get('/kendaraan/{id}/inspeksi', [DriverKendaraanController::class, 'viewInspeksi'])->name('driver.viewinspeksi');
+    Route::post('/kendaraan/{id}/inspeksi', [DriverKendaraanController::class, 'storeInspeksi'])->name('driver.storeinspeksi');
+    Route::get('/inspeksi/show/{inspeksi}', [InspeksiKendaraanController::class, 'show'])->name('driver.showinspeksi');
     
 
 });

@@ -72,8 +72,9 @@
                                         <select class="form-select" name="kendaraan_id" required>
                                             <option value="" disabled selected>Pilih kendaraan</option>
                                             @foreach ($kendaraan as $k)
-                                                <option value="{{ $k->id }}">{{ $k->tipe_kendaraan }}
-                                                    {{ $k->no_kendaraan }}</option>
+                                                <option value="{{ $k->id }}">
+                                                    {{ $k->tipe_kendaraan }} {{ $k->no_kendaraan }} <span class="status-badge">{!! $k->status_display !!}</span>
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>

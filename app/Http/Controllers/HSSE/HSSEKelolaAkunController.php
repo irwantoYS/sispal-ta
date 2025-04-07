@@ -47,7 +47,7 @@ class HSSEKelolaAkunController extends Controller
         // Proses unggah gambar atau gunakan gambar default
         $imagePath = $request->hasFile('image')
             ? $request->file('image')->store('images', 'public')
-            : 'images/default-user.png'; // Path gambar default
+            : 'assets/img/default-user.jpg'; // Path gambar default
 
         // Simpan data akun
         User::create([
@@ -92,12 +92,12 @@ class HSSEKelolaAkunController extends Controller
         // Proses gambar baru jika ada
         if ($request->hasFile('image')) {
             // Hapus gambar lama
-            if ($user->image && $user->image !== 'images/default-user.png') {
+            if ($user->image && $user->image !== 'assets/img/default-user.jpg') {
                 Storage::disk('public')->delete($user->image);
             }
             $imagePath = $request->file('image')->store('images', 'public');
         } else {
-            $imagePath = $user->image ?: 'images/default-user.png';
+            $imagePath = $user->image ?: 'assets/img/default-user.jpg';
         }
 
         // Update data pengguna
@@ -122,29 +122,27 @@ class HSSEKelolaAkunController extends Controller
      * Hapus akun.
      */
     public function destroy(User $user)
-{
-    // Periksa apakah akun ini memiliki role selain 'Driver'
-    if ($user->role === 'ManagerArea' || $user->role === 'HSSE') {
-        return redirect()->route('hsse.kelolaakun')->with('error', 'Akun dengan role Manager Area dan HSSE tidak dapat dihapus!');
+    {
+        // Periksa apakah akun ini memiliki role selain 'Driver'
+        if ($user->role === 'ManagerArea' || $user->role === 'HSSE') {
+            return redirect()->route('hsse.kelolaakun')->with('error', 'Akun dengan role Manager Area dan HSSE tidak dapat dihapus!');
+        }
+
+        // Periksa apakah akun ini sudah terhubung dengan entitas lain (misalnya LaporanPerjalanan)
+        $cekRelasi = LaporanPerjalanan::where('pengemudi_id', $user->id)->exists();
+
+        if ($cekRelasi) {
+            return redirect()->route('hsse.kelolaakun')->with('error', 'Tidak dapat menghapus akun, karena sudah terkait dengan data lain.');
+        }
+
+        // Hapus gambar jika ada dan bukan default
+        if ($user->image && $user->image !== 'assets/img/default-user.jpg') {
+            Storage::disk('public')->delete($user->image);
+        }
+
+        // Hapus pengguna
+        $user->delete();
+
+        return redirect()->route('hsse.kelolaakun')->with('success', 'Akun berhasil dihapus!');
     }
-
-    // Periksa apakah akun ini sudah terhubung dengan entitas lain (misalnya LaporanPerjalanan)
-    $cekRelasi = LaporanPerjalanan::where('pengemudi_id', $user->id)->exists();
-    
-    if ($cekRelasi) {
-        return redirect()->route('hsse.kelolaakun')->with('error', 'Tidak dapat menghapus akun, karena sudah terkait dengan data lain.');
-    }
-
-    // Hapus gambar jika ada dan bukan default
-    if ($user->image && $user->image !== 'images/default-user.png') {
-        Storage::disk('public')->delete($user->image);
-    }
-
-    // Hapus pengguna
-    $user->delete();
-
-    return redirect()->route('hsse.kelolaakun')->with('success', 'Akun berhasil dihapus!');
 }
-
-}
-

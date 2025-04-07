@@ -121,13 +121,6 @@
                                                         @method('PUT')
 
                                                         <div class="modal-body">
-                                                            {{-- <div class="mb-3">
-                                                                <label for="km_akhir-{{ $item->id }}"
-                                                                    class="form-label">KM Akhir</label>
-                                                                <input type="number" class="form-control"
-                                                                    id="km_akhir-{{ $item->id }}" name="km_akhir"
-                                                                    required>
-                                                            </div> --}}
                                                             <div class="col-md-12">
                                                                 <div class="form-group form-group-default">
                                                                     <label for="bbm_akhir-{{ $item->id }}">BBM
@@ -152,8 +145,8 @@
                                                                 <label for="jam_kembali-{{ $item->id }}"
                                                                     class="form-label">Jam Kembali</label>
                                                                 <input type="datetime-local" class="form-control"
-                                                                    id="jam_kembali-{{ $item->id }}"
-                                                                    name="jam_kembali" required>
+                                                                    id="jam_kembali-{{ $item->id }}" name="jam_kembali"
+                                                                    required>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="foto_akhir-{{ $item->id }}"
@@ -286,53 +279,28 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Ambil semua link dengan class 'foto-link'
-            const fotoLinks = document.querySelectorAll('.foto-link');
 
-            fotoLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    const fotoSrc = this.getAttribute('data-foto');
-                    document.getElementById('fotoPreview').setAttribute('src', fotoSrc);
-                });
-            });
-        });
-    </script>
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Ambil semua elemen dengan class 'alasan-link'
-            const alasanLinks = document.querySelectorAll('.alasan-link');
-
-            alasanLinks.forEach(link => {
-                link.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const alasan = this.getAttribute('data-alasan');
-                    const targetModalId = this.getAttribute(
-                        'data-bs-target'); // Ambil ID modal target dari tombol
-                    const modalContent = document.querySelector(targetModalId +
-                        ' .modal-body p'); // Select elemen <p> di dalam modal yang spesifik
-
-                    modalContent.textContent = alasan;
-                });
-            });
-
-            // Menangani penutupan modal
-            const modalAlasan = document.getElementById('modalAlasan');
-            modalAlasan.addEventListener('hidden.bs.modal', function(event) {
-                // Hapus atau atur ulang konten modal di sini jika diperlukan
-            });
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Event delegation untuk klik tombol detail dan update
+            // Event delegation untuk semua event
             document.addEventListener('click', function(event) {
-                // Tombol Detail
+
+                // --- Handle klik tombol foto ---
+                if (event.target.matches('.foto-link')) {
+                    const fotoSrc = event.target.getAttribute('data-foto');
+                    document.getElementById('fotoPreview').setAttribute('src', fotoSrc);
+                }
+
+                // --- Handle klik tombol alasan ---
+                if (event.target.matches('.alasan-link')) {
+                    event.preventDefault();
+                    const alasan = event.target.getAttribute('data-alasan');
+                    const targetModalId = event.target.getAttribute('data-bs-target');
+                    const modalContent = document.querySelector(targetModalId + ' .modal-body p');
+                    modalContent.textContent = alasan;
+                }
+
+                // --- Handle klik tombol detail ---
                 if (event.target.matches('.detail-button')) {
                     const button = event.target;
-                    // Ambil data dari atribut data-*
                     document.getElementById('detailNamaPengemudi').textContent = button.getAttribute(
                         'data-nama-pengemudi') || '-';
                     document.getElementById('detailNamaPegawai').textContent = button.getAttribute(
@@ -352,7 +320,6 @@
                     document.getElementById('detailJamPergi').textContent = button.getAttribute(
                         'data-jam-pergi') || '-';
 
-                    // Update progress bar BBM Awal
                     const bbmAwal = button.getAttribute('data-bbm-awal') || 0;
                     const bbmAwalPercentage = (bbmAwal / 8) * 100;
                     const detailBbmAwalBar = document.getElementById('detailBbmAwalBar');
@@ -362,7 +329,6 @@
                     detailBbmAwalBar.setAttribute('aria-valuenow', bbmAwal);
                     detailBbmAwalValue.textContent = bbmAwal + '/8';
 
-                    // Ubah warna bar BBM Awal
                     if (bbmAwal >= 6) {
                         detailBbmAwalBar.classList.remove('bg-warning', 'bg-danger');
                         detailBbmAwalBar.classList.add('bg-success');
@@ -374,11 +340,49 @@
                         detailBbmAwalBar.classList.add('bg-danger');
                     }
                 }
+
+                // --- Handle klik tombol delete (SweetAlert) ---
+                if (event.target.matches('.delete-button')) {
+                    const perjalananId = event.target.getAttribute('data-id');
+                    const namaPegawai = event.target.getAttribute('data-nama-pegawai');
+
+                    Swal.fire({
+                        title: 'Apakah anda yakin?',
+                        text: `Anda akan menghapus laporan perjalanan ${namaPegawai}!`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = document.createElement('form');
+                            form.action = `/perjalanan/delete/${perjalananId}`;
+                            form.method = 'POST';
+                            form.style.display = 'none';
+
+                            const csrfToken = document.createElement('input');
+                            csrfToken.type = 'hidden';
+                            csrfToken.name = '_token';
+                            csrfToken.value = "{{ csrf_token() }}";
+                            form.appendChild(csrfToken);
+
+                            const methodField = document.createElement('input');
+                            methodField.type = 'hidden';
+                            methodField.name = '_method';
+                            methodField.value = 'DELETE';
+                            form.appendChild(methodField);
+
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    });
+                }
             });
 
-            // Modal Update - Menampilkan progress bar BBM Awal dan BBM Akhir
+            // --- Handle input range BBM Akhir (di luar event click) ---
             @foreach ($perjalanan as $item)
-                // BBM Akhir
                 const bbmAkhirInput{{ $item->id }} = document.getElementById('bbm_akhir-{{ $item->id }}');
                 const bbmAkhirBar{{ $item->id }} = document.getElementById(
                     'bbm-akhir-bar-{{ $item->id }}');
@@ -394,7 +398,6 @@
                         bbmAkhirBar{{ $item->id }}.setAttribute('aria-valuenow', value);
                         bbmAkhirValue{{ $item->id }}.textContent = value + '/8';
 
-                        // Ubah warna bar berdasarkan value
                         if (value >= 6) {
                             bbmAkhirBar{{ $item->id }}.classList.remove('bg-warning', 'bg-danger');
                             bbmAkhirBar{{ $item->id }}.classList.add('bg-success');
@@ -408,50 +411,6 @@
                     });
                 }
             @endforeach
-        });
-
-        // Konfirmasi Hapus dengan SweetAlert2
-        document.addEventListener('click', function(event) {
-            if (event.target.matches('.delete-button')) {
-                const perjalananId = event.target.getAttribute('data-id');
-                const namaPegawai = event.target.getAttribute('data-nama-pegawai');
-
-                Swal.fire({
-                    title: 'Apakah anda yakin?',
-                    text: `Anda akan menghapus laporan perjalanan ${namaPegawai}!`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, hapus!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Buat form untuk hapus
-                        const form = document.createElement('form');
-                        form.action = `/perjalanan/delete/${perjalananId}`;
-                        form.method = 'POST';
-                        form.style.display = 'none';
-
-                        // CSRF token
-                        const csrfToken = document.createElement('input');
-                        csrfToken.type = 'hidden';
-                        csrfToken.name = '_token';
-                        csrfToken.value = "{{ csrf_token() }}";
-                        form.appendChild(csrfToken);
-
-                        // Method spoofing untuk DELETE
-                        const methodField = document.createElement('input');
-                        methodField.type = 'hidden';
-                        methodField.name = '_method';
-                        methodField.value = 'DELETE';
-                        form.appendChild(methodField);
-
-                        document.body.appendChild(form);
-                        form.submit();
-                    }
-                });
-            }
         });
     </script>
 

@@ -19,7 +19,7 @@
 
     {{-- CSS Kustom --}}
     <link rel="stylesheet" href="{{ asset('kai/assets/css/custom.css') }}" />
-     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
@@ -28,12 +28,13 @@
             <div class="sidebar-logo">
                 <div class="logo-header" data-background-color="dark">
                     <a href="{{ route('hsse.dashboard') }}" class="logo">
-                      {{-- Gunakan class sidebar-brand untuk styling --}}
-                        <img src="{{ asset('kai/assets/img/kaiadmin/pgncom-logo.png') }}" alt="navbar brand" class="navbar-brand sidebar-brand">
+                        {{-- Gunakan class sidebar-brand untuk styling --}}
+                        <img src="{{ asset('kai/assets/img/kaiadmin/pgncom-logo.png') }}" alt="navbar brand"
+                            class="navbar-brand sidebar-brand">
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
-                            <i class="fa-solid fa-bars"></i>  {{-- Font Awesome --}}
+                            <i class="fa-solid fa-bars"></i> {{-- Font Awesome --}}
                         </button>
                         <button class="btn btn-toggle sidenav-toggler">
                             <i class="fa-solid fa-bars"></i> {{-- Font Awesome --}}
@@ -55,29 +56,31 @@
                         </li>
 
                         <li class="nav-item {{ Request::is('hsse/perjalanan*') ? 'active' : '' }}">
-                          <a data-bs-toggle="collapse" href="#perjalanan" class="{{ Request::is('hsse/perjalanan*') ? '' : 'collapsed' }}" aria-expanded="{{ Request::is('hsse/perjalanan*') ? 'true' : 'false' }}">
-                              <i class="fa-solid fa-map-location-dot"></i>
-                              <p>Perjalanan</p>
-                              <span class="caret"></span>
-                          </a>
-                          <div class="collapse {{ Request::is('hsse/perjalanan*') ? 'show' : '' }}" id="perjalanan">
-                              <ul class="nav nav-collapse">
-                                  <li class="{{ Request::is('hsse/persetujuan') ? 'active' : '' }}">
-                                      <a href="{{ route('hsse.persetujuan') }}">
-                                          <span class="sub-item">Persetujuan Perjalanan</span>
-                                      </a>
-                                  </li>
-                                  <li class="{{ Request::is('hsse/history') ? 'active' : '' }}">
-                                      <a href="{{ route('hsse.history') }}">
-                                          <span class="sub-item">History Perjalanan</span>
-                                      </a>
-                                  </li>
-                              </ul>
-                          </div>
-                      </li>
+                            <a data-bs-toggle="collapse" href="#perjalanan"
+                                class="{{ Request::is('hsse/perjalanan*') ? '' : 'collapsed' }}"
+                                aria-expanded="{{ Request::is('hsse/perjalanan*') ? 'true' : 'false' }}">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                                <p>Perjalanan</p>
+                                <span class="caret"></span>
+                            </a>
+                            <div class="collapse {{ Request::is('hsse/perjalanan*') ? 'show' : '' }}" id="perjalanan">
+                                <ul class="nav nav-collapse">
+                                    <li class="{{ Request::is('hsse/persetujuan') ? 'active' : '' }}">
+                                        <a href="{{ route('hsse.persetujuan') }}">
+                                            <span class="sub-item">Persetujuan Perjalanan</span>
+                                        </a>
+                                    </li>
+                                    <li class="{{ Request::is('hsse/history') ? 'active' : '' }}">
+                                        <a href="{{ route('hsse.history') }}">
+                                            <span class="sub-item">History Perjalanan</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
                         <li class="nav-item {{ Request::is('hsse/kelola-akun*') ? 'active' : '' }}">
                             <a href="{{ route('hsse.kelolaakun') }}">
-                               <i class="fa-solid fa-user-group"></i>
+                                <i class="fa-solid fa-user-group"></i>
                                 <p>Kelola Akun</p>
                             </a>
                         </li>
@@ -93,13 +96,14 @@
         </div>
         <div class="main-panel">
             <div class="main-header">
-              <div class="main-header-logo">
-                <div class="logo-header" data-background-color="dark">
-                    <a href="{{ route('hsse.dashboard') }}" class="logo">
-                        <img src="{{ asset('kai/assets/img/kaiadmin/pgncom-logo.png') }}" alt="navbar brand" class="navbar-brand" height="40" />
-                    </a>
-                    
-                </div>
+                <div class="main-header-logo">
+                    <div class="logo-header" data-background-color="dark">
+                        <a href="{{ route('hsse.dashboard') }}" class="logo">
+                            <img src="{{ asset('kai/assets/img/kaiadmin/pgncom-logo.png') }}" alt="navbar brand"
+                                class="navbar-brand" height="40" />
+                        </a>
+
+                    </div>
                 </div>
 
                 <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
@@ -114,14 +118,14 @@
                                 <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
                                     <li>
                                         <div class="dropdown-title">
-                                            You have 4 new notification  {{--  Ubah teks ini --}}
+                                            You have 4 new notification {{--  Ubah teks ini --}}
                                         </div>
                                     </li>
                                     <li>
-                                      {{--  Isi notifikasi yang sebenarnya dari database --}}
+                                        {{--  Isi notifikasi yang sebenarnya dari database --}}
                                         <div class="notif-scroll scrollbar-outer">
                                             <div class="notif-center">
-                                             {{--  Contoh, sesuaikan dengan data Anda.  Bisa menggunakan @foreach --}}
+                                                {{--  Contoh, sesuaikan dengan data Anda.  Bisa menggunakan @foreach --}}
                                                 <a href="#">
                                                     <div class="notif-icon notif-primary">
                                                         <i class="fa fa-user-plus"></i>
@@ -144,7 +148,8 @@
                                                 </a>
                                                 <a href="#">
                                                     <div class="notif-img">
-                                                        <img src="{{ asset('kai/assets/img/profile2.jpg') }}" alt="Img Profile" /> {{-- Ganti path ke profile yang sesuai --}}
+                                                        <img src="{{ asset('kai/assets/img/profile2.jpg') }}"
+                                                            alt="Img Profile" /> {{-- Ganti path ke profile yang sesuai --}}
                                                     </div>
                                                     <div class="notif-content">
                                                         <span class="block">
@@ -177,7 +182,8 @@
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                                     aria-expanded="false">
                                     <div class="avatar-sm">
-                                        <img src="{{ asset('storage/' . (Auth::user()->image ?? 'kai/assets/img/default-user.png')) }}" alt=" " class="avatar-img rounded-circle">
+                                        <img src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('assets/img/default-user.jpg') }}"
+                                            alt=" " class="avatar-img rounded-circle">
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
@@ -192,7 +198,8 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-sm">
-                                                    <img src="{{ asset('storage/' . (Auth::user()->image ?? 'kai/assets/img/default-user.png')) }}" alt=" " class="avatar-img rounded">
+                                                    <img src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('assets/img/default-user.jpg') }}"
+                                                        alt=" " class="avatar-img rounded">
                                                 </div>
                                                 <div class="u-text">
                                                     <h4>{{ Auth::user()->nama }}</h4>
@@ -203,12 +210,13 @@
                                             </div>
                                         </li>
                                         <li>
-                                             {{-- Tambahkan form untuk logout, pastikan method-nya POST dan punya CSRF token --}}
+                                            {{-- Tambahkan form untuk logout, pastikan method-nya POST dan punya CSRF token --}}
                                             <form method="POST" action="{{ route('logout') }}">
-                                            @csrf
-                                            <a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault(); this.closest('form').submit();">
-                                                Log Out
-                                            </a>
+                                                @csrf
+                                                <a href="{{ route('logout') }}" class="dropdown-item"
+                                                    onclick="event.preventDefault(); this.closest('form').submit();">
+                                                    Log Out
+                                                </a>
                                             </form>
                                         </li>
                                     </div>
@@ -217,7 +225,7 @@
                         </ul>
                     </div>
                 </nav>
-                </div>
+            </div>
             <div class="content">
                 <main>
                     @yield('content')
@@ -247,4 +255,5 @@
     <script src="{{ asset('kai/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
     <script src="{{ asset('kai/assets/js/kaiadmin.min.js') }}"></script>
 </body>
+
 </html>

@@ -185,8 +185,9 @@
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                                     aria-expanded="false">
                                     <div class="avatar-sm">
-                                        <img src="{{ asset(Auth::user()?->image ? 'storage/' . Auth::user()->image : 'images/default-user.png') }}">
-                                            
+                                        <img
+                                            src="{{ Auth::user()?->image ? asset('storage/' . Auth::user()->image) : asset('assets/img/default-user.jpg') }}">
+
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
@@ -201,8 +202,9 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-sm">
-                                                    <img src="{{ asset(Auth::user()?->image ? 'storage/' . Auth::user()->image : 'images/default-user.png') }}">
-                                                        
+                                                    <img
+                                                        src="{{ Auth::user()?->image ? asset('storage/' . Auth::user()->image) : asset('assets/img/default-user.jpg') }}">
+
                                                 </div>
                                                 <div class="u-text">
                                                     <h4>{{ Auth::user()->nama }}</h4>
