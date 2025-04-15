@@ -98,8 +98,8 @@
                                         <th>KM/L</th>
                                         <th>Status</th>
                                         <th>Gambar</th>
+                                        <th style="width: 10%">Inspeksi</th>
                                         <th style="width: 10%">Action</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -109,15 +109,29 @@
                                             <td>{{ $tambahkendaraan->no_kendaraan }}</td>
                                             <td>{{ $tambahkendaraan->tipe_kendaraan }}</td>
                                             <td>{{ $tambahkendaraan->km_per_liter }}</td>
-                                            <td>{{ $tambahkendaraan->status }}</td>
+                                            <td>
+                                                @if ($tambahkendaraan->status === 'ready')
+                                                    <span class="badge bg-success">Ready</span>
+                                                @elseif ($tambahkendaraan->status === 'in_use')
+                                                    <span class="badge bg-info">Digunakan</span>
+                                                @elseif ($tambahkendaraan->status === 'perlu_perbaikan')
+                                                    <span class="badge bg-warning">Perlu Perbaikan</span>
+                                                @else
+                                                    {{ $tambahkendaraan->status }} {{-- Tampilkan apa adanya jika tidak ada yang cocok --}}
+                                                @endif
+                                            </td>
                                             <td>
                                                 <button class="btn btn-secondary" data-bs-toggle="modal"
                                                     data-bs-target="#imageModal"
-                                                    onclick="showImage('{{ asset('storage/' . $tambahkendaraan->image) }}')">Lihat
-                                                    Gambar</button>
+                                                    onclick="showImage('{{ asset('storage/' . $tambahkendaraan->image) }}')">Lihat</button>
                                             </td>
                                             <!-- Action Buttons in Table -->
-
+                                            <td>
+                                                <a href="{{ route('hsse.showinspeksi', ['inspeksi' => $tambahkendaraan->riwayatInspeksi->sortByDesc('tanggal_inspeksi')->sortByDesc('id')->first()->id]) }}"
+                                                    class="btn btn-info btn-sm">
+                                                    Detail
+                                                </a>
+                                            </td>
                                             <td>
                                                 <div class="form-button-action">
                                                     <!-- Edit Button -->

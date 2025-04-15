@@ -42,20 +42,21 @@ Route::middleware('auth')->group(function () {
     Route::patch('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 //manager area
-Route::middleware(['auth','ManagerAreaMiddleware'])->group(function(){
+Route::middleware(['auth', 'ManagerAreaMiddleware'])->group(function () {
     Route::get('/managerarea/dashboard', [ManagerAreaController::class, 'dashboard'])->name('managerarea.dashboard');
     Route::get('/managerarea/persetujuan', [PersetujuanController::class, 'viewPersetujuan'])->name('managerarea.persetujuan');
     Route::put('/perjalanan/{id}/validasi', [PersetujuanController::class, 'validasi'])->name('perjalanan.validasi');
     Route::put('/perjalanan/{id}/tolak', [PersetujuanController::class, 'tolak'])->name('perjalanan.tolak');
     Route::get('/managerarea/history', [HistoryController::class,  'viewHistory'])->name('managerarea.history');
     Route::get('/managerarea/kendaraan', [KendaraanController::class, 'viewKendaraan'])->name('managerarea.kendaraan');
+    Route::get('/managerarea/inspeksi/show/{inspeksi}', [KendaraanController::class, 'show'])->name('managerarea.showinspeksi');
 });
 
 //hsse
-Route::middleware(['auth','HSSEMiddleware'])->group(function(){
+Route::middleware(['auth', 'HSSEMiddleware'])->group(function () {
     Route::get('/hsse/dashboard', [HSSEController::class, 'dashboard'])->name('hsse.dashboard');
     Route::get('/hsse/persetujuan', [HSSEPersetujuanController::class, 'viewPersetujuan'])->name('hsse.persetujuan');
     Route::get('/hsse/history', [HSSEHistoryController::class,  'viewHistory'])->name('hsse.history');
@@ -63,18 +64,19 @@ Route::middleware(['auth','HSSEMiddleware'])->group(function(){
     Route::post('/hsse/tambahkendaraan', [HSSEKendaraanController::class, 'storeTambahKendaraan'])->name('hsse.tambahkendaraan.store');
     Route::post('/hsse/tambahkendaraan/{id}', [HSSEKendaraanController::class, 'updateTambahKendaraan'])->name('hsse.tambahkendaraan.update');
     Route::delete('/hsse/tambahkendaraan/{id}', [HSSEKendaraanController::class, 'destroyTambahKendaraan'])->name('hsse.tambahkendaraan.destroy');
+    Route::get('/hsse/inspeksi/show/{inspeksi}', [HSSEKendaraanController::class, 'show'])->name('hsse.showinspeksi');
 
-     // Route Kelola Akun
-     Route::get('/hsse/kelola-akun/', [HSSEKelolaAkunController::class, 'index'])->name('hsse.kelolaakun');
-     Route::get('/hsse/kelola-akun/create', [HSSEKelolaAkunController::class, 'create'])->name('hsse.kelolaakun.create'); // Form Tambah Akun
-     Route::post('/hsse/kelola-akun', [HSSEKelolaAkunController::class, 'store'])->name('hsse.kelolaakun.store'); // Simpan Akun
-     Route::get('/hsse/kelola-akun/{user}/edit', [HSSEKelolaAkunController::class, 'edit'])->name('hsse.kelolaakun.edit'); // Form Edit Akun
-     Route::put('/hsse/kelola-akun/{user}', [HSSEKelolaAkunController::class, 'update'])->name('hsse.kelolaakun.update'); // Update Akun
-     Route::delete('/hsse/kelola-akun/{user}', [HSSEKelolaAkunController::class, 'destroy'])->name('hsse.kelolaakun.destroy'); // Hapus Akun
+    // Route Kelola Akun
+    Route::get('/hsse/kelola-akun/', [HSSEKelolaAkunController::class, 'index'])->name('hsse.kelolaakun');
+    Route::get('/hsse/kelola-akun/create', [HSSEKelolaAkunController::class, 'create'])->name('hsse.kelolaakun.create'); // Form Tambah Akun
+    Route::post('/hsse/kelola-akun', [HSSEKelolaAkunController::class, 'store'])->name('hsse.kelolaakun.store'); // Simpan Akun
+    Route::get('/hsse/kelola-akun/{user}/edit', [HSSEKelolaAkunController::class, 'edit'])->name('hsse.kelolaakun.edit'); // Form Edit Akun
+    Route::put('/hsse/kelola-akun/{user}', [HSSEKelolaAkunController::class, 'update'])->name('hsse.kelolaakun.update'); // Update Akun
+    Route::delete('/hsse/kelola-akun/{user}', [HSSEKelolaAkunController::class, 'destroy'])->name('hsse.kelolaakun.destroy'); // Hapus Akun
 });
 
 //driver
-Route::middleware(['auth','DriverMiddleware'])->group(function(){
+Route::middleware(['auth', 'DriverMiddleware'])->group(function () {
     Route::get('/driver/dashboard', [DriverController::class, 'dashboard'])->name('driver.dashboard');
     Route::get('/driver/tambah-perjalanan', [TambahController::class, 'viewPerjalanan'])->name('driver.tambah');
     Route::get('/driver/status', [StatusController::class, 'viewStatus'])->name('driver.status');
@@ -87,8 +89,6 @@ Route::middleware(['auth','DriverMiddleware'])->group(function(){
     Route::get('/kendaraan/{id}/inspeksi', [DriverKendaraanController::class, 'viewInspeksi'])->name('driver.viewinspeksi');
     Route::post('/kendaraan/{id}/inspeksi', [DriverKendaraanController::class, 'storeInspeksi'])->name('driver.storeinspeksi');
     Route::get('/inspeksi/show/{inspeksi}', [InspeksiKendaraanController::class, 'show'])->name('driver.showinspeksi');
-    
-
 });
 
 //pdf_laravel

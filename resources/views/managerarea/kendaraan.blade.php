@@ -14,7 +14,7 @@
 
             <div class="col-md-12">
                 <div class="card">
-                    
+
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="kelolaTable" class="display table table-striped table-hover">
@@ -26,6 +26,7 @@
                                         <th>KM/L</th>
                                         <th>Status</th>
                                         <th>Gambar</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -35,12 +36,28 @@
                                             <td>{{ $k->no_kendaraan }}</td>
                                             <td>{{ $k->tipe_kendaraan }}</td>
                                             <td>{{ $k->km_per_liter }}</td>
-                                            <td>{{ $k->status }}</td>
+                                            <td>
+                                                @if ($k->status === 'ready')
+                                                    <span class="badge bg-success">Ready</span>
+                                                @elseif ($k->status === 'in_use')
+                                                    <span class="badge bg-info">Digunakan</span>
+                                                @elseif ($k->status === 'perlu_perbaikan')
+                                                    <span class="badge bg-warning">Perlu Perbaikan</span>
+                                                @else
+                                                    {{ $k->status }} {{-- Tampilkan apa adanya jika tidak ada yang cocok --}}
+                                                @endif
+                                            </td>
                                             <td>
                                                 <button class="btn btn-secondary" data-bs-toggle="modal"
                                                     data-bs-target="#imageModal"
                                                     onclick="showImage('{{ asset('storage/' . $k->image) }}')">Lihat
                                                     Gambar</button>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('managerarea.showinspeksi', ['inspeksi' => $k->riwayatInspeksi->sortByDesc('tanggal_inspeksi')->sortByDesc('id')->first()->id]) }}"
+                                                    class="btn btn-info btn-sm">
+                                                    Detail Inspeksi
+                                                </a>
                                             </td>
                                     @endforeach
                                 </tbody>
@@ -73,7 +90,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-
         // Function to show image in modal
         function showImage(imageUrl) {
             $('#imageModal .modal-body img').attr('src', imageUrl);
@@ -81,20 +97,20 @@
         }
     </script>
 
-<script>
-    $(document).ready(function() {
-        $('#kelolaTable').DataTable({
-            "paging": true,
-            "searching": true,
-            "ordering": true,
-            "responsive": true,
-            "language": {
-                "paginate": {
-                    "previous": "&laquo;",
-                    "next": "&raquo;"
+    <script>
+        $(document).ready(function() {
+            $('#kelolaTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "responsive": true,
+                "language": {
+                    "paginate": {
+                        "previous": "&laquo;",
+                        "next": "&raquo;"
+                    }
                 }
-            }
+            });
         });
-    });
-</script>
+    </script>
 @endsection

@@ -173,7 +173,7 @@
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <img id="modalImage" src="" alt="akun Image"
+                                            <img id="modalImage" src="" alt="tidak ada gambar"
                                                 style="width: 100%; height: auto;" />
                                         </div>
                                     </div>

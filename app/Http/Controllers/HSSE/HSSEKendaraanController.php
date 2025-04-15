@@ -8,6 +8,7 @@ use App\Models\LaporanPerjalanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Models\InspeksiKendaraan;
 
 class HSSEKendaraanController extends Controller
 {
@@ -99,5 +100,11 @@ class HSSEKendaraanController extends Controller
         $kendaraan->delete();
 
         return response()->json(['success' => true, 'message' => 'Data kendaraan berhasil dihapus!']);
+    }
+
+    public function show($id)
+    {
+        $inspeksi = InspeksiKendaraan::findOrFail($id);
+        return view('hsse.showinspeksi', compact('inspeksi'));
     }
 }

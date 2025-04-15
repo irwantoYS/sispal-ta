@@ -1,4 +1,4 @@
-@extends('layouts.sidebardriver') {{-- Sesuaikan dengan nama layout yang Anda gunakan --}}
+@extends('layouts.sidebarma') {{-- Mengubah layout dari sidebardriver menjadi sidebarma --}}
 
 @section('title', 'Detail Inspeksi')
 
@@ -243,7 +243,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <a href="{{ route('driver.kendaraan') }}" class="btn btn-secondary mt-3">Kembali</a>
+                    <a href="{{ route('managerarea.kendaraan') }}" class="btn btn-secondary mt-3">Kembali</a>
                 </div>
             </div>
         </div>
