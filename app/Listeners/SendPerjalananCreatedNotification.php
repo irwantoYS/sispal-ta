@@ -13,13 +13,23 @@ class SendPerjalananCreatedNotification implements ShouldQueue
 {
     public function handle(PerjalananCreated $event): void
     {
-        $managerArea = User::where('role', 'managerarea')->first(); // Sesuaikan
-        if ($managerArea) {
-            Mail::to($managerArea->email)->send(new PerjalananNotification($event->perjalanan, 'baru', $managerArea));
+        // Ambil semua pengguna dengan peran 'managerarea' atau 'HSSE'
+        $recipients = User::whereIn('role', ['managerarea', 'HSSE'])->get();
+
+        foreach ($recipients as $recipient) {
+            // Kirim email notifikasi
+            Mail::to($recipient->email)->send(new PerjalananNotification($event->perjalanan, 'baru', $recipient));
+
+            // Buat notifikasi di database
             Notification::create([
-                'type' => 'perjalanan_baru', 'notifiable_type' => get_class($managerArea), 'notifiable_id' => $managerArea->id,
-                'data' => ['perjalanan_id' => $event->perjalanan->id, 'driver' => $event->perjalanan->user->nama,
-                    'pesan' => "Perjalanan baru dari {$event->perjalanan->user->nama} menunggu persetujuan."],
+                'type' => 'perjalanan_baru',
+                'notifiable_type' => get_class($recipient),
+                'notifiable_id' => $recipient->id,
+                'data' => [
+                    'perjalanan_id' => $event->perjalanan->id,
+                    'driver' => $event->perjalanan->user->nama,
+                    'pesan' => "Perjalanan baru dari {$event->perjalanan->user->nama} menunggu persetujuan."
+                ],
             ]);
         }
     }

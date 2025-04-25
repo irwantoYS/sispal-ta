@@ -11,8 +11,9 @@ class StatusController extends Controller
 {
     public function viewStatus()
     {
-        // $perjalananQuery = LaporanPerjalanan::query();
-        $perjalananQuery = LaporanPerjalanan::whereNull('km_akhir')
+        // Hapus whereNull('km_akhir'), hanya cek field yang diupdate di modal
+        // Pastikan eager loading untuk relasi yang dibutuhkan di modal detail
+        $perjalananQuery = LaporanPerjalanan::with(['user', 'Kendaraan.latestInspeksi'])
             ->whereNull('bbm_akhir')
             ->whereNull('jam_kembali')
             ->whereNull('foto_akhir')

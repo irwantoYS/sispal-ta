@@ -8,7 +8,7 @@
 
 <body>
     <div class="header">
-        <img src="{{ public_path('images/logo.png') }}" alt="Logo">
+        <img src="{{ public_path('kai/assets/img/kaiadmin/pgncom-logo.png') }}" alt="Logo">
         <h2>PT. PGAS TELEKOMUNIKASI NUSANTARA</h2>
         <p>Bandar Lampung</p>
         <p>Telp: (021) xxx-xxxx, Email: info@namaperusahaan.com</p>

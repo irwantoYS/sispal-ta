@@ -20,7 +20,7 @@ class DriverhistoryController extends Controller
         $perjalananQuery = LaporanPerjalanan::query()
             ->whereNotNull('bbm_akhir')
             ->whereNotNull('jam_kembali')
-            ->orderBy('updated_at', 'desc');
+            ->orderBy('jam_pergi', 'desc');
 
 
         // --- Filtering Tanggal (DIKOREKSI) ---

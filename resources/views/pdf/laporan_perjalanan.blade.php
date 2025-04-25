@@ -11,8 +11,29 @@
 <body>
     <div class="container">
         <header>
+            @php
+                $logoPath = public_path('kai/assets/img/kaiadmin/pgncom-logo.png');
+                $logoDataUri = null;
+                if (file_exists($logoPath)) {
+                    try {
+                        $logoContent = file_get_contents($logoPath);
+                        $logoBase64 = base64_encode($logoContent);
+                        $logoMime = mime_content_type($logoPath);
+                        if ($logoMime) {
+                            $logoDataUri = 'data:' . $logoMime . ';base64,' . $logoBase64;
+                        }
+                    } catch (\Exception $e) {
+                        // Opsional: log error jika perlu
+                        // \Log::error("Error processing logo for PDF: " . $e->getMessage());
+                    }
+                }
+            @endphp
             <div class="header-left">
-                <img src="{{ public_path('images/logo.png') }}" alt="Logo Perusahaan">
+                @if ($logoDataUri)
+                    <img src="{{ $logoDataUri }}" alt="Logo Perusahaan" style="max-width: 100px; height: auto;">
+                @else
+                    <p style="font-size: 10px;">Logo</p>
+                @endif
             </div>
             <div class="header-right">
                 <h1>PT. Perusahaan Gas Negara, Tbk</h1>
@@ -90,6 +111,18 @@
     <footer>
         <p>© {{ date('Y') }} PT. Perusahaan Gas Negara, Tbk. Semua Hak Dilindungi.</p>
     </footer>
+
+    <script type="text/javascript">
+        // Script untuk memicu dialog print saat PDF dibuka
+        try {
+            this.print();
+        } catch (e) {
+            // Fallback jika this.print() tidak didukung atau diblokir
+            window.onload = function() {
+                window.print();
+            }
+        }
+    </script>
 </body>
 
 

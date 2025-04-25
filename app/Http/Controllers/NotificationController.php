@@ -6,13 +6,13 @@ use App\Models\Notification;
 use App\Models\User; // Import model User
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Notifications\Notifiable;
 
 class NotificationController extends Controller
 {
     public function markAsRead(Notification $notification)
     {
-        if ($notification->notifiable_id == Auth::user()->id)
-        {
+        if ($notification->notifiable_id == Auth::user()->id) {
             $notification->update(['read_at' => now()]);
             return response()->json(['success' => true]); // Kembalikan JSON, karena ini AJAX request
         }

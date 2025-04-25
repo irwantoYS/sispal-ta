@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Kendaraan extends Model
@@ -22,6 +23,22 @@ class Kendaraan extends Model
     public function riwayatInspeksi() // Ganti nama method-nya
     {
         return $this->hasMany(InspeksiKendaraan::class, 'kendaraan_id');
+    }
+
+    public function inspeksiKendaraan(): HasMany
+    {
+        return $this->hasMany(InspeksiKendaraan::class, 'kendaraan_id');
+    }
+
+    /**
+     * Mendapatkan relasi ke inspeksi kendaraan TERBARU.
+     */
+    public function latestInspeksi(): HasOne
+    {
+        return $this->hasOne(InspeksiKendaraan::class)->latestOfMany();
+        // Jika Anda punya kolom tanggal inspeksi spesifik (misal 'tanggal_inspeksi') 
+        // dan ingin yang terbaru berdasarkan itu, gunakan:
+        // return $this->hasOne(InspeksiKendaraan::class)->ofMany('tanggal_inspeksi', 'max');
     }
 
     protected function statusDisplay(): Attribute

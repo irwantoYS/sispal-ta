@@ -139,36 +139,35 @@ class PDFController extends Controller
         // Dapatkan pengguna yang sedang login
         $user = Auth::user();
 
-    
+
         if (!$user) {
             abort(401, 'Pengguna tidak terautentikasi.');
         }
-    
+
         // Role pengguna
         $role = $user->role; // Pastikan kolom 'role' ada di tabel users
-    
+
         // Cari data perjalanan berdasarkan ID dan pengemudi yang sedang login
         $data['title'] = 'Status Perjalanan';
         $perjalanan = LaporanPerjalanan::where('id', $id)
             ->where('pengemudi_id', $user->id)
             ->first();
-    
+
         if (!$perjalanan) {
             abort(404, 'Data perjalanan tidak ditemukan.');
         }
-    
+
         // Menyiapkan data untuk view
         $data = [
             'perjalanan' => $perjalanan,
             'role' => $role,
             'user' => $user,
         ];
-    
+
         // Generate PDF
         $pdf = Pdf::loadView('pdf.status_perjalanan', $data)->setPaper('A4', 'portrait');
-    
-        return $pdf->stream("status_perjalanan_{$perjalanan->id}.pdf");
+
+        // Ubah dari stream ke download
+        return $pdf->download("status_perjalanan_{$perjalanan->id}.pdf");
     }
-    
-    
 }

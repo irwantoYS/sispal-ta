@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Kendaraan;
 use App\Models\LaporanPerjalanan;
 use App\Models\InspeksiKendaraan;
+use App\Models\Pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Events\PerjalananCreated;
@@ -18,7 +19,8 @@ class TambahController extends Controller
     {
         $perjalanan = LaporanPerjalanan::all();
         $kendaraan = Kendaraan::whereIn('status', ['ready', 'perlu_perbaikan'])->get();
-        return view('driver.tambahperjalanan', compact('perjalanan', 'kendaraan'));
+        $pegawaiList = Pegawai::orderBy('nama')->get();
+        return view('driver.tambahperjalanan', compact('perjalanan', 'kendaraan', 'pegawaiList'));
     }
 
     // Menyimpan data perjalanan
@@ -26,7 +28,8 @@ class TambahController extends Controller
     {
         $request->validate([
             // 'pengemudi_id' => 'required', // Ini tidak perlu, karena pakai Auth::id()
-            'nama_pegawai' => 'required|max:255',
+            'nama_pegawai' => 'required|array',
+            'nama_pegawai.*' => 'string|max:255',
             'titik_awal' => 'required|max:255',
             'titik_akhir' => 'required|max:255',
             'tujuan_perjalanan' => 'required|max:255',
@@ -58,7 +61,7 @@ class TambahController extends Controller
 
         $perjalanan = LaporanPerjalanan::create([
             'pengemudi_id' => Auth::id(),
-            'nama_pegawai' => $request->nama_pegawai,
+            'nama_pegawai' => json_encode($request->nama_pegawai),
             'titik_awal' => $request->titik_awal,
             'titik_akhir' => $request->titik_akhir,
             'tujuan_perjalanan' => $request->tujuan_perjalanan,

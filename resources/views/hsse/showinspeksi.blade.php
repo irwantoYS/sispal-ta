@@ -1,4 +1,4 @@
-@extends('layouts.sidebarhsse') 
+@extends('layouts.sidebarhsse')
 
 @section('title', 'Detail Inspeksi')
 
@@ -222,24 +222,34 @@
                                 <td>{{ $inspeksi->kotak_p3k_keterangan ?? '-' }}</td>
                             </tr>
                             <tr>
-                                <td>Lap Majun</td>
-                                <td>{{ $inspeksi->lap_majun_baik ? 'Baik' : 'Tidak Baik' }}</td>
-                                <td>{{ $inspeksi->lap_majun_keterangan ?? '-' }}</td>
+                                <td>Dokumen Service Record Terakhir</td>
+                                <td>{{ $inspeksi->dokumen_service_baik ? 'Baik' : 'Tidak Baik' }}</td>
+                                <td>{{ $inspeksi->dokumen_service_keterangan ?? '-' }}</td>
+                            </tr>
+
+                            {{-- Tambahkan pemisah dan data kondisi pengemudi --}}
+                            <tr class="table-group-divider">
+                                <td colspan="3"><strong>Kondisi Pengemudi</strong></td>
                             </tr>
                             <tr>
-                                <td>Safety Boots</td>
-                                <td>{{ $inspeksi->safety_boots_baik ? 'Baik' : 'Tidak Baik' }}</td>
-                                <td>{{ $inspeksi->safety_boots_keterangan ?? '-' }}</td>
+                                <td>Pengemudi dalam Keadaan Sehat</td>
+                                <td>{{ $inspeksi->pengemudi_sehat_baik ? 'Ya' : 'Tidak' }}</td>
+                                <td>{{ $inspeksi->pengemudi_sehat_keterangan ?? '-' }}</td>
                             </tr>
                             <tr>
-                                <td>Safety Helmet</td>
-                                <td>{{ $inspeksi->safety_helmet_baik ? 'Baik' : 'Tidak Baik' }}</td>
-                                <td>{{ $inspeksi->safety_helmet_keterangan ?? '-' }}</td>
+                                <td>Pengemudi Cukup Istirahat</td>
+                                <td>{{ $inspeksi->pengemudi_istirahat_baik ? 'Ya' : 'Tidak' }}</td>
+                                <td>{{ $inspeksi->pengemudi_istirahat_keterangan ?? '-' }}</td>
                             </tr>
                             <tr>
-                                <td>Sarung Tangan</td>
-                                <td>{{ $inspeksi->sarung_tangan_baik ? 'Baik' : 'Tidak Baik' }}</td>
-                                <td>{{ $inspeksi->sarung_tangan_keterangan ?? '-' }}</td>
+                                <td>Tidak dalam Kondisi Mabuk</td>
+                                <td>{{ $inspeksi->pengemudi_mabuk_baik ? 'Ya' : 'Tidak' }}</td>
+                                <td>{{ $inspeksi->pengemudi_mabuk_keterangan ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Tidak dalam Konsumsi Obat</td>
+                                <td>{{ $inspeksi->pengemudi_obat_baik ? 'Ya' : 'Tidak' }}</td>
+                                <td>{{ $inspeksi->pengemudi_obat_keterangan ?? '-' }}</td>
                             </tr>
                         </tbody>
                     </table>

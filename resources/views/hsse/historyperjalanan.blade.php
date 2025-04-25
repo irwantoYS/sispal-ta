@@ -2,284 +2,477 @@
 @extends('layouts.sidebarhsse')
 @section('content')
 
-<div class="container">
-    <div class="page-inner">
-        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
-            <div>
-                <h3 class="fw-bold mb-3">History Perjalanan</h3>
-                <h6 class="op-7 mb-2">History Perjalanan</h6>
+    <div class="container">
+        <div class="page-inner">
+            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+                <div>
+                    <h3 class="fw-bold mb-3">History Perjalanan</h3>
+                    <h6 class="op-7 mb-2">History Perjalanan</h6>
+                </div>
             </div>
-        </div>
 
-        <div class="col-md-12">
-            <div class="card">
+            <div class="col-md-12">
+                <div class="card">
 
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <div>
-                        <label for="startDate" class="form-label fw-bold">Cari berdasarkan tanggal awal dan akhir:</label>
-                        <form action="{{ route('hsse.history') }}" method="GET" class="d-flex align-items-center">
-                            <div class="input-group">
-                                <input type="date" id="startDate" name="startDate" class="form-control" placeholder="Tanggal Awal">
-                                <input type="date" id="endDate" name="endDate" class="form-control" placeholder="Tanggal Akhir">
-                                <button class="btn btn-primary" type="submit">Cari</button>
-                                <button class="btn btn-secondary" type="button" id="resetSearch">Reset</button>
+                    <div class="card-header d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
+                        <div class="mb-3 mb-md-0">
+                            <label for="startDate" class="form-label fw-bold">Cari berdasarkan tanggal awal dan
+                                akhir:</label>
+                            <form action="{{ route('hsse.history') }}" method="GET" class="d-flex align-items-center">
+                                <div class="input-group">
+                                    <input type="date" id="startDate" name="startDate" class="form-control"
+                                        placeholder="Tanggal Awal">
+                                    <input type="date" id="endDate" name="endDate" class="form-control"
+                                        placeholder="Tanggal Akhir">
+                                    <button class="btn btn-primary" type="submit">Cari</button>
+                                    <button class="btn btn-secondary" type="button" id="resetSearch">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="d-flex mt-3 mt-md-0">
+                            <button type="button" class="btn btn-primary btn-round me-2" data-bs-toggle="modal"
+                                data-bs-target="#driverSummaryModal">
+                                <i class="fas fa-chart-bar"></i>
+                            </button>
+
+                            <a class="btn btn-success btn-round ms-auto"
+                                href="{{ route('cetak.pdf', ['role' => 'HSSE', 'startDate' => request('startDate'), 'endDate' => request('endDate')]) }}">
+                                <i class="fa-solid fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <div class="text-center">
+                                <p><strong>Total Seluruh Perjalan {{ $rentangTanggal }}</strong></p>
                             </div>
-                        </form>
-                    </div>
+                            <p><strong>Total Estimasi Jarak:</strong> {{ number_format($totalEstimasiJarak, 2, '.', '') }}
+                                KM</p>
+                            <p><strong>Total Estimasi BBM:</strong> {{ number_format($totalEstimasiBBM, 2, '.', '') }} Liter
+                            </p>
+                            <p><strong>Total Estimasi Waktu:</strong> {{ $totalDurasiFormat }}</p>
+                        </div>
 
-                    <div class="d-flex">
-                         <button type="button" class="btn btn-primary btn-round me-2" data-bs-toggle="modal" data-bs-target="#driverSummaryModal">
-                           <i class="fas fa-chart-bar"></i>
-                        </button>
-
-                        <a class="btn btn-success btn-round ms-auto" href="{{ route('cetak.pdf', ['role' => 'HSSE', 'startDate' => request('startDate'), 'endDate' => request('endDate')]) }}">
-                            <i class="fa-solid fa-print"></i>
-                        </a>
+                        <div class="table-responsive">
+                            <table id="allhistoryTable" class="display table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Pengemudi</th>
+                                        <th>Nama Pegawai</th>
+                                        <th>Titik Akhir</th>
+                                        <th>Tujuan Perjalanan</th>
+                                        <th>Jam Pergi</th>
+                                        <th>Jam Kembali</th>
+                                        <th>KM & BBM Awal</th>
+                                        <th>KM & BBM Akhir</th>
+                                        <th>Detail</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($perjalanan as $key => $perjalanan)
+                                        <tr>
+                                            <td>{{ $key + 1 }}</td>
+                                            <td>{{ $perjalanan->user->nama }}</td>
+                                            <td>
+                                                @php
+                                                    $namaArray = json_decode($perjalanan->nama_pegawai);
+                                                    if (is_array($namaArray)) {
+                                                        echo e(implode(', ', $namaArray));
+                                                    } else {
+                                                        echo e($perjalanan->nama_pegawai);
+                                                    }
+                                                @endphp
+                                            </td>
+                                            <td>{{ $perjalanan->titik_akhir }}</td>
+                                            <td>{{ $perjalanan->tujuan_perjalanan }}</td>
+                                            <td>{{ $perjalanan->jam_pergi }}</td>
+                                            <td>{{ $perjalanan->jam_kembali }}</td>
+                                            <td>
+                                                @if ($perjalanan->foto_awal)
+                                                    <button class="btn btn-info btn-sm foto-link" data-bs-toggle="modal"
+                                                        data-bs-target="#fotoModal"
+                                                        data-foto="{{ asset('storage/' . $perjalanan->foto_awal) }}">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button>
+                                                @else
+                                                    <span class="text-muted">Tidak ada foto</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($perjalanan->foto_akhir)
+                                                    <button class="btn btn-info btn-sm foto-link" data-bs-toggle="modal"
+                                                        data-bs-target="#fotoModal"
+                                                        data-foto="{{ asset('storage/' . $perjalanan->foto_akhir) }}">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button>
+                                                @else
+                                                    <span class="text-muted">Tidak ada foto</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-info btn-sm detail-button" data-bs-toggle="modal"
+                                                    data-bs-target="#detailModal"
+                                                    data-nama-pengemudi="{{ $perjalanan->user->nama }}"
+                                                    data-nama-pegawai="{{ e($perjalanan->nama_pegawai ?? '') }}"
+                                                    data-titik-awal="{{ $perjalanan->titik_awal }}"
+                                                    data-titik-akhir="{{ $perjalanan->titik_akhir }}"
+                                                    data-tujuan="{{ $perjalanan->tujuan_perjalanan }}"
+                                                    data-no-kendaraan="{{ $perjalanan->Kendaraan->no_kendaraan ?? '-' }}"
+                                                    data-tipe-kendaraan="{{ $perjalanan->Kendaraan->tipe_kendaraan ?? '-' }}"
+                                                    data-estimasi-jarak="{{ $perjalanan->estimasi_jarak }}"
+                                                    data-km-akhir="{{ $perjalanan->km_akhir }}"
+                                                    data-bbm-awal="{{ $perjalanan->bbm_awal }}"
+                                                    data-bbm-akhir="{{ $perjalanan->bbm_akhir }}"
+                                                    data-jam-pergi="{{ $perjalanan->jam_pergi }}"
+                                                    data-jam-kembali="{{ $perjalanan->jam_kembali }}"
+                                                    data-estimasi-waktu="{{ $perjalanan->estimasi_waktu ?? '-' }}"
+                                                    data-estimasi-bbm="{{ $perjalanan->estimasi_bbm ?? '-' }}">
+                                                    Lihat Detail
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <div class="card-body">
-                    <div class="mb-4">
-                        <div class="text-center"><p><strong>Total Seluruh Perjalan {{ $rentangTanggal }}</strong></p></div>
-                        <p><strong>Total Estimasi Jarak:</strong> {{ number_format($totalEstimasiJarak, 2, '.', '') }} KM</p>
-                        <p><strong>Total Estimasi BBM:</strong> {{ number_format($totalEstimasiBBM, 2, '.', '') }} Liter</p>
-                        <p><strong>Total Estimasi Waktu:</strong> {{ $totalDurasiFormat }}</p>
+        <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailModalLabel">Detail Perjalanan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
-                    <div class="table-responsive">
-                        <table id="allhistoryTable" class="display table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Pengemudi</th>
-                                    <th>Nama Pegawai</th>
-                                    <th>Titik Awal</th>
-                                    <th>Titik Akhir</th>
-                                    <th>Tujuan Perjalanan</th>
-                                    <th>Jam Pergi</th>
-                                    <th>Jam Kembali</th>
-                                    <th>Detail</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($perjalanan as $key => $perjalanan)
-                                <tr>
-                                    <td>{{ $key + 1 }}</td>
-                                    <td>{{ $perjalanan->user->nama }}</td>
-                                    <td>{{ $perjalanan->nama_pegawai }}</td>
-                                    <td>{{ $perjalanan->titik_awal }}</td>
-                                    <td>{{ $perjalanan->titik_akhir }}</td>
-                                    <td>{{ $perjalanan->tujuan_perjalanan }}</td>
-                                    <td>{{ $perjalanan->jam_pergi }}</td>
-                                    <td>{{ $perjalanan->jam_kembali }}</td>
-                                    <td>
-                                        <button class="btn btn-info btn-sm detail-button" data-bs-toggle="modal" data-bs-target="#detailModal" data-nama-pengemudi="{{ $perjalanan->user->nama }}" data-nama-pegawai="{{ $perjalanan->nama_pegawai }}" data-titik-awal="{{ $perjalanan->titik_awal }}" data-titik-akhir="{{ $perjalanan->titik_akhir }}" data-tujuan="{{ $perjalanan->tujuan_perjalanan }}" data-no-kendaraan="{{ $perjalanan->Kendaraan->no_kendaraan ?? '-' }}" data-tipe-kendaraan="{{ $perjalanan->Kendaraan->tipe_kendaraan ?? '-' }}" data-km-awal="{{ $perjalanan->km_awal }}" data-km-akhir="{{ $perjalanan->km_akhir }}" data-bbm-awal="{{ $perjalanan->bbm_awal }}" data-bbm-akhir="{{ $perjalanan->bbm_akhir }}" data-jam-pergi="{{ $perjalanan->jam_pergi }}" data-jam-kembali="{{ $perjalanan->jam_kembali }}">
-                                            Lihat Detail
-                                        </button>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
+                    <div class="modal-body">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Nama Pengemudi</th>
+                                <td id="detailNamaPengemudi"></td>
+                            </tr>
+                            <tr>
+                                <th>Nama Pegawai</th>
+                                <td id="detailNamaPegawai"></td>
+                            </tr>
+                            <tr>
+                                <th>Titik Awal</th>
+                                <td id="detailTitikAwal"></td>
+                            </tr>
+                            <tr>
+                                <th>Titik Akhir</th>
+                                <td id="detailTitikAkhir"></td>
+                            </tr>
+                            <tr>
+                                <th>Tujuan</th>
+                                <td id="detailTujuan"></td>
+                            </tr>
+                            <tr>
+                                <th>No Kendaraan</th>
+                                <td id="detailNoKendaraan"></td>
+                            </tr>
+                            <tr>
+                                <th>Tipe Kendaraan</th>
+                                <td id="detailTipeKendaraan"></td>
+                            </tr>
+                            <tr>
+                                <th>KM Akhir</th>
+                                <td id="detailKmAkhir"></td>
+                            </tr>
+                            <tr>
+                                <th>BBM Awal</th>
+                                <td>
+                                    <div class="progress" style="height: 25px;">
+                                        <div id="detailBbmAwalBar" class="progress-bar" role="progressbar"
+                                            style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8">
+                                            <span id="detailBbmAwalValue">0/8</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>BBM Akhir</th>
+                                <td>
+                                    <div class="progress" style="height: 25px;">
+                                        <div id="detailBbmAkhirBar" class="progress-bar" role="progressbar"
+                                            style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8">
+                                            <span id="detailBbmAkhirValue">0/8</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Jam Pergi</th>
+                                <td id="detailJamPergi"></td>
+                            </tr>
+                            <tr>
+                                <th>Jam Kembali</th>
+                                <td id="detailJamKembali"></td>
+                            </tr>
+                            <tr>
+                                <th>Estimasi Waktu</th>
+                                <td id="detailEstimasiWaktu"></td>
+                            </tr>
+                            <tr>
+                                <th>Estimasi BBM</th>
+                                <td id="detailEstimasiBBM"></td>
+                            </tr>
                         </table>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-       <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="detailModalLabel">Detail Perjalanan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-bordered">
-                        <tr>
-                            <th>Nama Pengemudi</th>
-                            <td id="detailNamaPengemudi"></td>
-                        </tr>
-                        <tr>
-                            <th>Nama Pegawai</th>
-                            <td id="detailNamaPegawai"></td>
-                        </tr>
-                        <tr>
-                            <th>Titik Awal</th>
-                            <td id="detailTitikAwal"></td>
-                        </tr>
-                        <tr>
-                            <th>Titik Akhir</th>
-                            <td id="detailTitikAkhir"></td>
-                        </tr>
-                        <tr>
-                            <th>Tujuan</th>
-                            <td id="detailTujuan"></td>
-                        </tr>
-                        <tr>
-                            <th>No Kendaraan</th>
-                            <td id="detailNoKendaraan"></td>
-                        </tr>
-                        <tr>
-                            <th>Tipe Kendaraan</th>
-                            <td id="detailTipeKendaraan"></td>
-                        </tr>
-                        <tr>
-                            <th>KM Awal</th>
-                            <td id="detailKmAwal"></td>
-                        </tr>
-                        <tr>
-                            <th>KM Akhir</th>
-                            <td id="detailKmAkhir"></td>
-                        </tr>
-                        <tr>
-                            <th>BBM Awal</th>
-                            <td id="detailBbmAwal"></td>
-                        </tr>
-                        <tr>
-                            <th>BBM Akhir</th>
-                            <td id="detailBbmAkhir"></td>
-                        </tr>
-                        <tr>
-                            <th>Jam Pergi</th>
-                            <td id="detailJamPergi"></td>
-                        </tr>
-                        <tr>
-                            <th>jam Kembali</th>
-                            <td id="detailJamKembali"></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="driverSummaryModal" tabindex="-1" aria-labelledby="driverSummaryModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header text-center">
-                    <h5 class="modal-title" id="driverSummaryModalLabel">Ringkasan Perjalanan per Driver {{$rentangTanggal}}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Driver</th>
-                                    <th>Total Jarak Tempuh (KM)</th>
-                                    <th>Total Durasi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($driverSummary as $index => $driver)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $driver->user->nama }}</td>
-                                    <td>{{ $driver->total_jarak}}</td>
-                                    <td>{{ $driver->total_durasi_format }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+
+        <div class="modal fade" id="fotoModal" tabindex="-1" aria-labelledby="fotoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="fotoModalLabel">Foto KM & BBM</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img id="fotoPreview" src="" alt="Foto Perjalanan" class="img-fluid rounded">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+
+        <div class="modal fade" id="driverSummaryModal" tabindex="-1" aria-labelledby="driverSummaryModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h5 class="modal-title" id="driverSummaryModalLabel">Ringkasan Perjalanan per Driver
+                            {{ $rentangTanggal }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Driver</th>
+                                        <th>Total Jarak Tempuh (KM)</th>
+                                        <th>Total Durasi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($driverSummary as $index => $driver)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $driver->user->nama }}</td>
+                                            <td>{{ $driver->total_jarak }}</td>
+                                            <td>{{ $driver->total_durasi_format }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Modal Lihat Detail
-            const detailButtons = document.querySelectorAll('.detail-button');
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
 
-            detailButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    // Ambil data dari atribut data-*
-                    document.getElementById('detailNamaPengemudi').textContent = this.getAttribute('data-nama-pengemudi') || '-';
-                    document.getElementById('detailNamaPegawai').textContent = this.getAttribute('data-nama-pegawai') || '-';
-                    document.getElementById('detailTitikAwal').textContent = this.getAttribute('data-titik-awal') || '-';
-                    document.getElementById('detailTitikAkhir').textContent = this.getAttribute('data-titik-akhir') || '-';
-                    document.getElementById('detailTujuan').textContent = this.getAttribute('data-tujuan') || '-';
-                    document.getElementById('detailNoKendaraan').textContent = this.getAttribute('data-no-kendaraan') || '-';
-                    document.getElementById('detailTipeKendaraan').textContent = this.getAttribute('data-tipe-kendaraan') || '-';
-                    document.getElementById('detailKmAwal').textContent = this.getAttribute('data-km-awal') || '-';
-                    document.getElementById('detailKmAkhir').textContent = this.getAttribute('data-km-akhir') || '-';
-                    document.getElementById('detailBbmAwal').textContent = this.getAttribute('data-bbm-awal') || '-';
-                    document.getElementById('detailBbmAkhir').textContent = this.getAttribute('data-bbm-akhir') || '-';
-                    document.getElementById('detailJamPergi').textContent = this.getAttribute('data-jam-pergi') || '-';
-                    document.getElementById('detailJamKembali').textContent = this.getAttribute('data-jam-kembali') || '-';
-                });
-            });
+                // Event delegation untuk klik tombol detail dan foto
+                document.addEventListener('click', function(event) {
 
-            // Tambahkan pencarian berdasarkan rentang tanggal
-            document.querySelector('form[action="{{ route('hsse.history') }}"]').addEventListener('submit', function(e) {
-                e.preventDefault();
-                var startDate = document.querySelector('input[name="startDate"]').value;
-                var endDate = document.querySelector('input[name="endDate"]').value;
-
-                if (startDate && endDate) {
-                    window.location.href = "{{ route('hsse.history') }}?startDate=" + startDate + "&endDate=" +
-                        endDate;
-                }
-            });
-
-            //DataTable
-            const table = $('#allhistoryTable').DataTable({
-                "paging": true,
-                "searching": true,
-                "ordering": true,
-                "lengthChange": true,
-                "responsive": true,
-                "language": {
-                    "paginate": {
-                        "previous": "&laquo;",
-                        "next": "&raquo;"
+                    // --- Handle klik tombol foto ---
+                    if (event.target.matches('.foto-link')) {
+                        const fotoSrc = event.target.getAttribute('data-foto');
+                        const fotoPreview = document.getElementById('fotoPreview');
+                        if (fotoPreview) {
+                            fotoPreview.setAttribute('src', fotoSrc);
+                        } else {
+                            console.error("Element with ID 'fotoPreview' not found.");
+                        }
                     }
+
+                    // --- Handle klik tombol Detail ---
+                    if (event.target.matches('.detail-button')) {
+                        const button = event.target;
+                        // Ambil data dari atribut data-*
+                        document.getElementById('detailNamaPengemudi').textContent = button.getAttribute(
+                            'data-nama-pengemudi') || '-';
+                        // Format Nama Pegawai dari data attribute
+                        const namaPegawaiData = button.getAttribute('data-nama-pegawai');
+                        let namaPegawaiDisplay = '-';
+                        if (namaPegawaiData) {
+                            try {
+                                const namaArray = JSON.parse(namaPegawaiData);
+                                if (Array.isArray(namaArray)) {
+                                    namaPegawaiDisplay = namaArray.join(', ');
+                                } else {
+                                    namaPegawaiDisplay = namaPegawaiData; // Bukan JSON array, tampilkan asli
+                                }
+                            } catch (e) {
+                                namaPegawaiDisplay = namaPegawaiData; // Gagal parse JSON, tampilkan asli
+                            }
+                        }
+                        document.getElementById('detailNamaPegawai').textContent = namaPegawaiDisplay;
+                        document.getElementById('detailTitikAwal').textContent = button.getAttribute(
+                            'data-titik-awal') || '-';
+                        document.getElementById('detailTitikAkhir').textContent = button.getAttribute(
+                            'data-titik-akhir') || '-';
+                        document.getElementById('detailTujuan').textContent = button.getAttribute(
+                            'data-tujuan') || '-';
+                        document.getElementById('detailNoKendaraan').textContent = button.getAttribute(
+                            'data-no-kendaraan') || '-';
+                        document.getElementById('detailTipeKendaraan').textContent = button.getAttribute(
+                            'data-tipe-kendaraan') || '-';
+                        document.getElementById('detailKmAkhir').textContent = button.getAttribute(
+                            'data-km-akhir') || '-';
+                        document.getElementById('detailJamPergi').textContent = button.getAttribute(
+                            'data-jam-pergi') || '-';
+                        document.getElementById('detailJamKembali').textContent = button.getAttribute(
+                            'data-jam-kembali') || '-';
+
+                        {{-- Tambahkan pengambilan data estimasi --}}
+                        let estimasiWaktu = button.getAttribute('data-estimasi-waktu') || '-';
+                        let estimasiBBM = button.getAttribute('data-estimasi-bbm') || '-';
+                        document.getElementById('detailEstimasiWaktu').textContent = estimasiWaktu;
+                        document.getElementById('detailEstimasiBBM').textContent = estimasiBBM !== '-' ?
+                            estimasiBBM + ' Liter' : '-';
+
+                        // Update progress bar BBM Awal
+                        const bbmAwal = button.getAttribute('data-bbm-awal') || 0;
+                        const bbmAwalPercentage = (bbmAwal / 8) * 100;
+                        const detailBbmAwalBar = document.getElementById('detailBbmAwalBar');
+                        const detailBbmAwalValue = document.getElementById('detailBbmAwalValue');
+
+                        if (detailBbmAwalBar && detailBbmAwalValue) {
+                            detailBbmAwalBar.style.width = bbmAwalPercentage + '%';
+                            detailBbmAwalBar.setAttribute('aria-valuenow', bbmAwal);
+                            detailBbmAwalValue.textContent = bbmAwal + '/8';
+
+                            // Ubah warna bar BBM Awal
+                            detailBbmAwalBar.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+                            if (bbmAwal >= 6) {
+                                detailBbmAwalBar.classList.add('bg-success');
+                            } else if (bbmAwal >= 3) {
+                                detailBbmAwalBar.classList.add('bg-warning');
+                            } else {
+                                detailBbmAwalBar.classList.add('bg-danger');
+                            }
+                        }
+
+                        // Update progress bar BBM Akhir
+                        const bbmAkhir = button.getAttribute('data-bbm-akhir') || 0;
+                        const bbmAkhirPercentage = (bbmAkhir / 8) * 100;
+                        const detailBbmAkhirBar = document.getElementById('detailBbmAkhirBar');
+                        const detailBbmAkhirValue = document.getElementById('detailBbmAkhirValue');
+
+                        if (detailBbmAkhirBar && detailBbmAkhirValue) {
+                            detailBbmAkhirBar.style.width = bbmAkhirPercentage + '%';
+                            detailBbmAkhirBar.setAttribute('aria-valuenow', bbmAkhir);
+                            detailBbmAkhirValue.textContent = bbmAkhir + '/8';
+
+                            // Ubah warna bar BBM Akhir
+                            detailBbmAkhirBar.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+                            if (bbmAkhir >= 6) {
+                                detailBbmAkhirBar.classList.add('bg-success');
+                            } else if (bbmAkhir >= 3) {
+                                detailBbmAkhirBar.classList.add('bg-warning');
+                            } else {
+                                detailBbmAkhirBar.classList.add('bg-danger');
+                            }
+                        }
+                    }
+                });
+
+                // Logika pencarian tanggal (jika form submit dikelola oleh JS, jika tidak ini bisa dihapus)
+                const dateSearchForm = document.querySelector('form[action="{{ route('hsse.history') }}"]');
+                if (dateSearchForm) {
+                    dateSearchForm.addEventListener('submit', function(e) {
+                        const startDate = document.querySelector('input[name="startDate"]').value;
+                        const endDate = document.querySelector('input[name="endDate"]').value;
+                        // Jika ingin validasi sebelum submit atau manipulasi URL
+                        // Jika tidak, biarkan form submit biasa
+                        if (!startDate || !endDate) {
+                            // Contoh: mencegah submit jika tanggal kosong (opsional)
+                            // e.preventDefault(); 
+                            // alert('Silakan pilih tanggal awal dan akhir.');
+                        }
+                    });
+                }
+
+                // Inisialisasi DataTable
+                // Note: jQuery diperlukan untuk DataTable
+                if (window.jQuery) {
+                    const table = $('#allhistoryTable').DataTable({
+                        "paging": true,
+                        "searching": true,
+                        "ordering": true,
+                        "lengthChange": true,
+                        "responsive": true,
+                        "language": {
+                            "paginate": {
+                                "previous": "&laquo;",
+                                "next": "&raquo;"
+                            },
+                            // Tambahkan terjemahan lain jika perlu
+                            "search": "Cari:",
+                            "lengthMenu": "Tampilkan _MENU_ data",
+                            "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                            "infoEmpty": "Menampilkan 0 sampai 0 dari 0 data",
+                            "infoFiltered": "(disaring dari _MAX_ total data)",
+                            "zeroRecords": "Tidak ada data yang cocok ditemukan"
+                        }
+                    });
+
+                    // Logika search DataTable (jika diperlukan terpisah dari search bawaan)
+                    /*
+                    $('#searchForm').on('submit', function(e) { 
+                        e.preventDefault();
+                        const search = $('#searchText').val(); 
+                        table.search(search).draw(); 
+                    });
+                    */
+
+                    // Logika tombol cetak PDF jika event listener diperlukan
+                    // Jika tombol PDF adalah link biasa <a>, ini tidak perlu
+                    /*
+                     $('#cetakPDF').on('click', function() {
+                        const params = $.param({ 
+                            search: table.search(),
+                            startDate: $('input[name="startDate"]').val(), 
+                            endDate: $('input[name="endDate"]').val(), 
+                        });
+                        const url = `{{ route('cetak.pdf', ['role' => 'HSSE']) }}?${params}`;
+                        window.open(url, '_blank');
+                    });
+                    */
+                } else {
+                    console.error("jQuery is not loaded. DataTable cannot be initialized.");
+                }
+
+                // Reset pencarian tanggal
+                const resetSearchButton = document.getElementById('resetSearch');
+                if (resetSearchButton) {
+                    resetSearchButton.addEventListener('click', function() {
+                        const startDateInput = document.getElementById('startDate');
+                        const endDateInput = document.getElementById('endDate');
+                        if (startDateInput) startDateInput.value = '';
+                        if (endDateInput) endDateInput.value = '';
+                        window.location.href = '{{ route('hsse.history') }}';
+                    });
                 }
             });
+        </script>
 
-            $('#searchForm').on('submit', function(e) {
-                e.preventDefault();
-                const search = $('#searchText').val();
-                const startDate = $('#startDate').val();
-                const endDate = $('#endDate').val();
-                table.search(search).draw(); // Pencarian kata kunci
-                table.columns([0, 1, 2, 3, 4, 5, 6, 7, 8]).search(startDate)
-                    .draw(); // Pencarian berdasarkan tanggal
-                table.columns([0, 1, 2, 3, 4, 5, 6, 7, 8]).search(endDate)
-                    .draw(); // Pencarian berdasarkan tanggal
-            });
-
-            // Tombol cetak PDF
-            $('#cetakPDF').on('click', function() {
-                const params = $.param({
-                    search: table.search(), // Ambil kata kunci pencarian
-                    startDate: $('input[name="startDate"]').val(), // Ambil tanggal awal
-                    endDate: $('input[name="endDate"]').val(), // Ambil tanggal akhir
-                });
-                const url = `{{ route('cetak.pdf', ['role' => 'HSSE']) }}?${params}`;
-                window.open(url, '_blank');
-            });
-
-            // Reset pencarian
-            const resetSearchButton = document.getElementById('resetSearch');
-            resetSearchButton.addEventListener('click', function() {
-                document.getElementById('startDate').value = '';
-                document.getElementById('endDate').value = '';
-                window.location.href = '{{ route('hsse.history') }}';
-            });
-        });
-
-       
-    </script>
-
-@endsection
+    @endsection

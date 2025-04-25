@@ -271,6 +271,9 @@
 
     <script src="{{ asset('kai/assets/js/kaiadmin.min.js') }}"></script>
 
+    {{-- Tambahkan @stack untuk script spesifik halaman --}}
+    @stack('scripts')
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 

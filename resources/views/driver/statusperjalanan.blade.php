@@ -43,7 +43,16 @@
                                                     <span class="badge bg-danger">Ditolak</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $item->nama_pegawai }}</td>
+                                            <td>
+                                                @php
+                                                    $namaArray = json_decode($item->nama_pegawai);
+                                                    if (is_array($namaArray)) {
+                                                        echo e(implode(', ', $namaArray));
+                                                    } else {
+                                                        echo e($item->nama_pegawai); // Tampilkan asli jika bukan array JSON
+                                                    }
+                                                @endphp
+                                            </td>
                                             <td>{{ $item->titik_akhir }}</td>
                                             <td>{{ $item->tujuan_perjalanan }}</td>
                                             <td>
@@ -88,16 +97,57 @@
                                             <td>
                                                 <button class="btn btn-info btn-sm detail-button" data-bs-toggle="modal"
                                                     data-bs-target="#detailModal"
-                                                    data-nama-pengemudi="{{ $item->user->nama }}"
-                                                    data-nama-pegawai="{{ $item->nama_pegawai }}"
-                                                    data-titik-awal="{{ $item->titik_awal }} "
-                                                    data-titik-akhir="{{ $item->titik_akhir }}"
-                                                    data-tujuan="{{ $item->tujuan_perjalanan }}"
+                                                    data-nama-pengemudi="{{ $item->user->nama ?? '-' }}"
+                                                    data-nama-pegawai="{{ e($item->nama_pegawai ?? '') }}"
+                                                    data-titik-awal="{{ $item->titik_awal ?? '-' }} "
+                                                    data-titik-akhir="{{ $item->titik_akhir ?? '-' }}"
+                                                    data-tujuan="{{ $item->tujuan_perjalanan ?? '-' }}"
                                                     data-no-kendaraan="{{ $item->Kendaraan->no_kendaraan ?? '-' }}"
                                                     data-tipe-kendaraan="{{ $item->Kendaraan->tipe_kendaraan ?? '-' }}"
-                                                    data-estimasi-jarak="{{ $item->estimasi_jarak }}"
-                                                    data-bbm-awal="{{ $item->bbm_awal }}"
-                                                    data-jam-pergi="{{ $item->jam_pergi }}">
+                                                    data-estimasi-jarak="{{ $item->estimasi_jarak ?? '-' }}"
+                                                    data-bbm-awal="{{ $item->bbm_awal ?? '-' }}"
+                                                    data-jam-pergi="{{ $item->jam_pergi ? \Carbon\Carbon::parse($item->jam_pergi)->format('d/m/Y H:i') : '-' }}"
+                                                    data-kendaraan-status="{{ $item->Kendaraan->status ?? '' }}"
+                                                    data-inspeksi-body_baik="{{ $item->Kendaraan->latestInspeksi->body_baik ?? '' }}"
+                                                    data-inspeksi-ban_baik="{{ $item->Kendaraan->latestInspeksi->ban_baik ?? '' }}"
+                                                    data-inspeksi-stir_baik="{{ $item->Kendaraan->latestInspeksi->stir_baik ?? '' }}"
+                                                    data-inspeksi-rem_kaki_tangan_baik="{{ $item->Kendaraan->latestInspeksi->rem_kaki_tangan_baik ?? '' }}"
+                                                    data-inspeksi-pedal_kopling_gas_rem_baik="{{ $item->Kendaraan->latestInspeksi->pedal_kopling_gas_rem_baik ?? '' }}"
+                                                    data-inspeksi-starter_baik="{{ $item->Kendaraan->latestInspeksi->starter_baik ?? '' }}"
+                                                    data-inspeksi-oli_mesin_baik="{{ $item->Kendaraan->latestInspeksi->oli_mesin_baik ?? '' }}"
+                                                    data-inspeksi-tangki_bb_pompa_baik="{{ $item->Kendaraan->latestInspeksi->tangki_bb_pompa_baik ?? '' }}"
+                                                    data-inspeksi-radiator_pompa_fanbelt_baik="{{ $item->Kendaraan->latestInspeksi->radiator_pompa_fanbelt_baik ?? '' }}"
+                                                    data-inspeksi-transmisi_baik="{{ $item->Kendaraan->latestInspeksi->transmisi_baik ?? '' }}"
+                                                    data-inspeksi-knalpot_baik="{{ $item->Kendaraan->latestInspeksi->knalpot_baik ?? '' }}"
+                                                    data-inspeksi-klakson_baik="{{ $item->Kendaraan->latestInspeksi->klakson_baik ?? '' }}"
+                                                    data-inspeksi-alarm_mundur_baik="{{ $item->Kendaraan->latestInspeksi->alarm_mundur_baik ?? '' }}"
+                                                    data-inspeksi-lampu_depan_baik="{{ $item->Kendaraan->latestInspeksi->lampu_depan_baik ?? '' }}"
+                                                    data-inspeksi-lampu_sign_baik="{{ $item->Kendaraan->latestInspeksi->lampu_sign_baik ?? '' }}"
+                                                    data-inspeksi-lampu_kabin_pintu_baik="{{ $item->Kendaraan->latestInspeksi->lampu_kabin_pintu_baik ?? '' }}"
+                                                    data-inspeksi-lampu_rem_baik="{{ $item->Kendaraan->latestInspeksi->lampu_rem_baik ?? '' }}"
+                                                    data-inspeksi-lampu_mundur_baik="{{ $item->Kendaraan->latestInspeksi->lampu_mundur_baik ?? '' }}"
+                                                    data-inspeksi-lampu_drl_baik="{{ $item->Kendaraan->latestInspeksi->lampu_drl_baik ?? '' }}"
+                                                    data-inspeksi-indikator_kecepatan_baik="{{ $item->Kendaraan->latestInspeksi->indikator_kecepatan_baik ?? '' }}"
+                                                    data-inspeksi-indikator_bb_baik="{{ $item->Kendaraan->latestInspeksi->indikator_bb_baik ?? '' }}"
+                                                    data-inspeksi-indikator_temperatur_baik="{{ $item->Kendaraan->latestInspeksi->indikator_temperatur_baik ?? '' }}"
+                                                    data-inspeksi-lampu_depan_belakang_baik="{{ $item->Kendaraan->latestInspeksi->lampu_depan_belakang_baik ?? '' }}"
+                                                    data-inspeksi-lampu_rem2_baik="{{ $item->Kendaraan->latestInspeksi->lampu_rem2_baik ?? '' }}"
+                                                    data-inspeksi-baut_roda_baik="{{ $item->Kendaraan->latestInspeksi->baut_roda_baik ?? '' }}"
+                                                    data-inspeksi-jendela_baik="{{ $item->Kendaraan->latestInspeksi->jendela_baik ?? '' }}"
+                                                    data-inspeksi-wiper_washer_baik="{{ $item->Kendaraan->latestInspeksi->wiper_washer_baik ?? '' }}"
+                                                    data-inspeksi-spion_baik="{{ $item->Kendaraan->latestInspeksi->spion_baik ?? '' }}"
+                                                    data-inspeksi-kunci_pintu_baik="{{ $item->Kendaraan->latestInspeksi->kunci_pintu_baik ?? '' }}"
+                                                    data-inspeksi-kursi_baik="{{ $item->Kendaraan->latestInspeksi->kursi_baik ?? '' }}"
+                                                    data-inspeksi-sabuk_keselamatan_baik="{{ $item->Kendaraan->latestInspeksi->sabuk_keselamatan_baik ?? '' }}"
+                                                    data-inspeksi-apar_baik="{{ $item->Kendaraan->latestInspeksi->apar_baik ?? '' }}"
+                                                    data-inspeksi-perlengkapan_kebocoran_baik="{{ $item->Kendaraan->latestInspeksi->perlengkapan_kebocoran_baik ?? '' }}"
+                                                    data-inspeksi-segitiga_pengaman_baik="{{ $item->Kendaraan->latestInspeksi->segitiga_pengaman_baik ?? '' }}"
+                                                    data-inspeksi-safety_cone_baik="{{ $item->Kendaraan->latestInspeksi->safety_cone_baik ?? '' }}"
+                                                    data-inspeksi-dongkrak_kunci_baik="{{ $item->Kendaraan->latestInspeksi->dongkrak_kunci_baik ?? '' }}"
+                                                    data-inspeksi-ganjal_ban_baik="{{ $item->Kendaraan->latestInspeksi->ganjal_ban_baik ?? '' }}"
+                                                    data-inspeksi-kotak_p3k_baik="{{ $item->Kendaraan->latestInspeksi->kotak_p3k_baik ?? '' }}"
+                                                    data-inspeksi-dokumen_rutin_baik="{{ $item->Kendaraan->latestInspeksi->dokumen_rutin_baik ?? '' }}"
+                                                    data-inspeksi-dokumen_service_baik="{{ $item->Kendaraan->latestInspeksi->dokumen_service_baik ?? '' }}">
                                                     Detail
                                                 </button>
                                             </td>
@@ -110,7 +160,8 @@
                                         </tr>
 
                                         <div class="modal fade" id="updatePerjalananModal-{{ $item->id }}"
-                                            tabindex="-1" aria-labelledby="updatePerjalananModalLabel-{{ $item->id }}"
+                                            tabindex="-1"
+                                            aria-labelledby="updatePerjalananModalLabel-{{ $item->id }}"
                                             aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
@@ -136,23 +187,25 @@
                                                                         </div>
                                                                     </div>
                                                                     <input type="range" class="form-range"
-                                                                        id="bbm_akhir-{{ $item->id }}" name="bbm_akhir"
-                                                                        min="0" max="8" value="0"
-                                                                        required>
+                                                                        id="bbm_akhir-{{ $item->id }}"
+                                                                        name="bbm_akhir" min="0" max="8"
+                                                                        value="0" required>
                                                                 </div>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label for="jam_kembali-{{ $item->id }}"
-                                                                    class="form-label">Jam Kembali</label>
-                                                                <input type="datetime-local" class="form-control"
-                                                                    id="jam_kembali-{{ $item->id }}" name="jam_kembali"
-                                                                    required>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="foto_akhir-{{ $item->id }}"
                                                                     class="form-label">Foto KM & BBM Akhir</label>
                                                                 <input type="file" id="foto_akhir-{{ $item->id }}"
                                                                     name="foto_akhir" accept="image/*">
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="jam_kembali-{{ $item->id }}"
+                                                                    class="form-label">Jam Kembali</label>
+                                                                <input type="datetime-local" class="form-control"
+                                                                    id="jam_kembali-{{ $item->id }}"
+                                                                    name="jam_kembali"
+                                                                    value="{{ now()->format('Y-m-d\TH:i') }}" required
+                                                                    readonly>
                                                             </div>
                                                         </div>
 
@@ -254,7 +307,16 @@
                             <th>Jam Pergi</th>
                             <td id="detailJamPergi"></td>
                         </tr>
+                        <tr>
+                            <th>Status Kendaraan</th>
+                            <td id="detailKendaraanStatus"></td>
+                        </tr>
                     </table>
+                    <div id="detailInspeksiSection" style="display: none; margin-top: 15px;">
+                        <h5>Kendaraan yang Digunakan Perlu Perbaikan:</h5>
+                        <ul id="detailInspeksiItems" class="list-group">
+                        </ul>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -298,13 +360,28 @@
                     modalContent.textContent = alasan;
                 }
 
-                // --- Handle klik tombol detail ---
+                // --- Handle klik tombol detail --- (Modifikasi)
                 if (event.target.matches('.detail-button')) {
                     const button = event.target;
                     document.getElementById('detailNamaPengemudi').textContent = button.getAttribute(
                         'data-nama-pengemudi') || '-';
-                    document.getElementById('detailNamaPegawai').textContent = button.getAttribute(
-                        'data-nama-pegawai') || '-';
+                    // Format Nama Pegawai dari data attribute
+                    const namaPegawaiData = button.getAttribute('data-nama-pegawai');
+                    let namaPegawaiDisplay = '-';
+                    if (namaPegawaiData) {
+                        try {
+                            const namaArray = JSON.parse(namaPegawaiData);
+                            if (Array.isArray(namaArray)) {
+                                namaPegawaiDisplay = namaArray.join(', ');
+                            } else {
+                                namaPegawaiDisplay = namaPegawaiData; // Bukan JSON array, tampilkan asli
+                            }
+                        } catch (e) {
+                            namaPegawaiDisplay = namaPegawaiData; // Gagal parse JSON, tampilkan asli
+                        }
+                    }
+                    document.getElementById('detailNamaPegawai').textContent = namaPegawaiDisplay;
+                    // --- End Format Nama Pegawai ---
                     document.getElementById('detailTitikAwal').textContent = button.getAttribute(
                         'data-titik-awal') || '-';
                     document.getElementById('detailTitikAkhir').textContent = button.getAttribute(
@@ -320,6 +397,95 @@
                     document.getElementById('detailJamPergi').textContent = button.getAttribute(
                         'data-jam-pergi') || '-';
 
+                    // Ambil dan tampilkan status kendaraan
+                    const kendaraanStatus = button.getAttribute('data-kendaraan-status');
+                    document.getElementById('detailKendaraanStatus').textContent = formatStatus(
+                        kendaraanStatus); // Gunakan fungsi format
+
+                    // Ambil elemen-elemen inspeksi
+                    const detailInspeksiSection = document.getElementById('detailInspeksiSection');
+                    const detailInspeksiItemsList = document.getElementById('detailInspeksiItems');
+
+                    // Bersihkan daftar item inspeksi sebelumnya
+                    detailInspeksiItemsList.innerHTML = '';
+
+                    // Definisikan item inspeksi yang akan diperiksa (Label => Atribut Data)
+                    const inspectionChecks = {
+                        'Body': 'data-inspeksi-body_baik',
+                        'Ban': 'data-inspeksi-ban_baik',
+                        'Stir': 'data-inspeksi-stir_baik',
+                        'Rem Kaki & Tangan': 'data-inspeksi-rem_kaki_tangan_baik',
+                        'Pedal Kopling/Gas/Rem': 'data-inspeksi-pedal_kopling_gas_rem_baik',
+                        'Starter': 'data-inspeksi-starter_baik',
+                        'Oli Mesin': 'data-inspeksi-oli_mesin_baik',
+                        'Tangki BBM & Pompa': 'data-inspeksi-tangki_bb_pompa_baik',
+                        'Radiator/Pompa/Fanbelt': 'data-inspeksi-radiator_pompa_fanbelt_baik',
+                        'Transmisi': 'data-inspeksi-transmisi_baik',
+                        'Knalpot': 'data-inspeksi-knalpot_baik',
+                        'Klakson': 'data-inspeksi-klakson_baik',
+                        'Alarm Mundur': 'data-inspeksi-alarm_mundur_baik',
+                        'Lampu Depan': 'data-inspeksi-lampu_depan_baik',
+                        'Lampu Sign': 'data-inspeksi-lampu_sign_baik',
+                        'Lampu Kabin/Pintu': 'data-inspeksi-lampu_kabin_pintu_baik',
+                        'Lampu Rem': 'data-inspeksi-lampu_rem_baik',
+                        'Lampu Mundur': 'data-inspeksi-lampu_mundur_baik',
+                        'Lampu DRL': 'data-inspeksi-lampu_drl_baik',
+                        'Indikator Kecepatan': 'data-inspeksi-indikator_kecepatan_baik',
+                        'Indikator BBM': 'data-inspeksi-indikator_bb_baik',
+                        'Indikator Temperatur': 'data-inspeksi-indikator_temperatur_baik',
+                        'Lampu Depan/Belakang': 'data-inspeksi-lampu_depan_belakang_baik',
+                        'Lampu Rem (Tambahan)': 'data-inspeksi-lampu_rem2_baik',
+                        'Baut Roda': 'data-inspeksi-baut_roda_baik',
+                        'Jendela': 'data-inspeksi-jendela_baik',
+                        'Wiper & Washer': 'data-inspeksi-wiper_washer_baik',
+                        'Spion': 'data-inspeksi-spion_baik',
+                        'Kunci Pintu': 'data-inspeksi-kunci_pintu_baik',
+                        'Kursi': 'data-inspeksi-kursi_baik',
+                        'Sabuk Keselamatan': 'data-inspeksi-sabuk_keselamatan_baik',
+                        'APAR': 'data-inspeksi-apar_baik',
+                        'Perlengkapan Kebocoran': 'data-inspeksi-perlengkapan_kebocoran_baik',
+                        'Segitiga Pengaman': 'data-inspeksi-segitiga_pengaman_baik',
+                        'Safety Cone': 'data-inspeksi-safety_cone_baik',
+                        'Dongkrak & Kunci': 'data-inspeksi-dongkrak_kunci_baik',
+                        'Ganjal Ban': 'data-inspeksi-ganjal_ban_baik',
+                        'Kotak P3K': 'data-inspeksi-kotak_p3k_baik',
+                        'Dokumen Rutin': 'data-inspeksi-dokumen_rutin_baik',
+                        'Dokumen Service': 'data-inspeksi-dokumen_service_baik',
+                    };
+
+                    let hasProblem = false; // Flag untuk menandai jika ada item '0'
+                    for (const [itemName, attributeName] of Object.entries(inspectionChecks)) {
+                        const itemStatus = button.getAttribute(attributeName);
+                        // Periksa apakah status item adalah '0' (string nol)
+                        if (itemStatus === '0') {
+                            hasProblem = true; // Set flag jika ditemukan masalah
+                            const listItem = document.createElement('li');
+                            listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between',
+                                'align-items-center');
+                            listItem.innerHTML = `
+                                ${itemName}
+                                <span class="badge bg-danger rounded-pill">Tidak Baik</span>
+                            `;
+                            detailInspeksiItemsList.appendChild(listItem); // Tambahkan item ke list
+                        }
+                    }
+
+                    // Tampilkan atau sembunyikan section berdasarkan flag hasProblem
+                    if (hasProblem) {
+                        detailInspeksiSection.style.display = 'block';
+                    } else {
+                        detailInspeksiSection.style.display = 'none';
+                        // Opsional: jika ingin menampilkan pesan "Tidak ada..." saat tidak ada masalah
+                        /* 
+                        detailInspeksiSection.style.display = 'block'; // Tetap tampilkan section
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('list-group-item', 'text-muted');
+                        listItem.textContent = 'Semua item inspeksi dalam kondisi baik.';
+                        detailInspeksiItemsList.appendChild(listItem);
+                        */
+                    }
+
+                    // ... (kode untuk BBM awal tetap sama) ...
                     const bbmAwal = button.getAttribute('data-bbm-awal') || 0;
                     const bbmAwalPercentage = (bbmAwal / 8) * 100;
                     const detailBbmAwalBar = document.getElementById('detailBbmAwalBar');
@@ -329,6 +495,7 @@
                     detailBbmAwalBar.setAttribute('aria-valuenow', bbmAwal);
                     detailBbmAwalValue.textContent = bbmAwal + '/8';
 
+                    // ... (kode warna BBM awal tetap sama) ...
                     if (bbmAwal >= 6) {
                         detailBbmAwalBar.classList.remove('bg-warning', 'bg-danger');
                         detailBbmAwalBar.classList.add('bg-success');
@@ -412,6 +579,21 @@
                 }
             @endforeach
         });
+
+        // Fungsi untuk memformat tampilan status
+        function formatStatus(status) {
+            if (!status) return '-';
+            switch (status.toLowerCase()) {
+                case 'ready':
+                    return 'Ready';
+                case 'in_use':
+                    return 'Sedang Digunakan';
+                case 'perlu_perbaikan':
+                    return 'Perlu Perbaikan';
+                default:
+                    return status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ');
+            }
+        }
     </script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

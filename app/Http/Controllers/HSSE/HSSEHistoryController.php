@@ -55,7 +55,7 @@ class HSSEHistoryController extends Controller
         $perjalananQuery = LaporanPerjalanan::query()
             ->whereNotNull('bbm_akhir')
             ->whereNotNull('jam_kembali')
-            ->orderBy('updated_at', 'desc');
+            ->orderBy('jam_pergi', 'desc');
 
         // --- Filter Tanggal (Pindahkan ke sini agar konsisten) ---
         if ($startDate && $endDate) {
@@ -64,7 +64,7 @@ class HSSEHistoryController extends Controller
         }
 
         $perjalanan = $perjalananQuery->get();
-        
+
         // --- Buat String Rentang Tanggal ---
         if ($startDate && $endDate) {
             $rentangTanggal = $startDate->format('d M Y') . ' - ' . $endDate->format('d M Y');
@@ -77,11 +77,11 @@ class HSSEHistoryController extends Controller
         $totalEstimasiBBM = 0;
         $totalDurasiMenit = 0;
 
-       foreach ($perjalanan as $item) {
-             // Hitung durasi
+        foreach ($perjalanan as $item) {
+            // Hitung durasi
             $jam_pergi = Carbon::createFromFormat('Y-m-d H:i:s', $item->jam_pergi, 'Asia/Jakarta');
             $jam_kembali = Carbon::createFromFormat('Y-m-d H:i:s', $item->jam_kembali, 'Asia/Jakarta');
-             $durasi = $jam_pergi->diffInMinutes($jam_kembali); //perbaiki urutan
+            $durasi = $jam_pergi->diffInMinutes($jam_kembali); //perbaiki urutan
 
             $jam = floor($durasi / 60);
             $menit = $durasi % 60;
@@ -90,25 +90,24 @@ class HSSEHistoryController extends Controller
             // Simpan durasi ke database (optional, tapi bagus untuk konsistensi)
             $item->estimasi_waktu = $durasi_format;
 
-              // Hitung total jarak (km_akhir)
-             $total_jarak = (float)$item->estimasi_jarak * 2; //dari tambah perjalanan
-             $item->km_akhir = number_format($total_jarak, 2, '.', '');
+            // Hitung total jarak (km_akhir)
+            $total_jarak = (float)$item->estimasi_jarak * 2; //dari tambah perjalanan
+            $item->km_akhir = number_format($total_jarak, 2, '.', '');
 
 
             // Hitung estimasi BBM
-             if ($item->Kendaraan && is_numeric($item->km_akhir)) {
-                  $km_akhir_numeric = (float) str_replace(' KM', '', $item->km_akhir);
-                  $estimasi_bbm =  $km_akhir_numeric / $item->Kendaraan->km_per_liter;
-                  $item->estimasi_bbm = number_format($estimasi_bbm, 2, '.', '');
-             } else {
-                  $item->estimasi_bbm = '0';
-             }
+            if ($item->Kendaraan && is_numeric($item->km_akhir)) {
+                $km_akhir_numeric = (float) str_replace(' KM', '', $item->km_akhir);
+                $estimasi_bbm =  $km_akhir_numeric / $item->Kendaraan->km_per_liter;
+                $item->estimasi_bbm = number_format($estimasi_bbm, 2, '.', '');
+            } else {
+                $item->estimasi_bbm = '0';
+            }
 
-              //Tambahkan ke total
+            //Tambahkan ke total
             $totalEstimasiJarak += $total_jarak;
             $totalEstimasiBBM += $item->estimasi_bbm;
             $totalDurasiMenit += $durasi;
-
         }
 
         $totalDurasiJam = floor($totalDurasiMenit / 60);
@@ -127,5 +126,4 @@ class HSSEHistoryController extends Controller
             'rentangTanggal' => $rentangTanggal,    // String rentang tanggal
         ]);
     }
-
 }

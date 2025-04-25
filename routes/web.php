@@ -73,6 +73,11 @@ Route::middleware(['auth', 'HSSEMiddleware'])->group(function () {
     Route::get('/hsse/kelola-akun/{user}/edit', [HSSEKelolaAkunController::class, 'edit'])->name('hsse.kelolaakun.edit'); // Form Edit Akun
     Route::put('/hsse/kelola-akun/{user}', [HSSEKelolaAkunController::class, 'update'])->name('hsse.kelolaakun.update'); // Update Akun
     Route::delete('/hsse/kelola-akun/{user}', [HSSEKelolaAkunController::class, 'destroy'])->name('hsse.kelolaakun.destroy'); // Hapus Akun
+
+    // Route Kelola Pegawai (CRUD)
+    Route::resource('hsse/pegawai', App\Http\Controllers\HSSE\PegawaiController::class)
+        ->except(['show']) // Tidak butuh halaman show detail pegawai
+        ->names('hsse.pegawai'); // Memberi nama route (hsse.pegawai.index, hsse.pegawai.create, dll)
 });
 
 //driver

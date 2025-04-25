@@ -188,39 +188,75 @@
                     Our Expert Staff
                 </h1>
             </div>
-            <div class="row g-4 justify-content-center">
-                {{-- Loop untuk menampilkan staff dinamis --}}
+            <div id="staffCarousel" class="owl-carousel owl-theme wow fadeInUp" data-wow-delay="0.3s">
                 @forelse ($staff as $member)
-                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="{{ 0.1 + $loop->index * 0.2 }}s">
-                        {{-- Delay animasi dinamis --}}
+                    <div class="item">
                         <div class="team-content text-center">
                             <div class="position-relative overflow-hidden" style="height: 300px;">
-                                {{-- Beri tinggi tetap --}}
                                 <img class="img-fluid w-100 h-100"
                                     src="{{ $member->image ? asset('storage/' . $member->image) : asset('kai/assets/img/default-user.jpg') }}"
-                                    {{-- Path gambar dinamis + fallback --}} alt="{{ $member->nama }}" style="object-fit: cover;">
-                                {{-- Pastikan gambar mengisi container --}}
+                                    alt="{{ $member->nama }}" style="object-fit: cover;">
                             </div>
                             <div class="team-text">
                                 <div class="bg-light p-3">
-                                    <h5 class="fw-bold mb-1">{{ $member->nama }}</h5> {{-- Nama dinamis --}}
-                                    <small class="text-muted">{{ $member->role }}</small> {{-- Role dinamis --}}
+                                    <h5 class="fw-bold mb-1">{{ $member->nama }}</h5>
+                                    <small class="text-muted">{{ $member->role }}</small>
                                 </div>
-                                {{-- Hapus bagian social media jika tidak diperlukan --}}
-                                {{-- <div class="bg-primary"> ... ikon sosial media ... </div> --}}
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-12 text-center">
+                        <p>Data staff tidak ditemukan.</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+    {{-- SECTION TOP DRIVER --}}
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                <h6 class="text-primary text-uppercase">
+                    TOP DRIVER
+                </h6>
+                <h1 class="mb-5">
+                    Driver Terbaik Bulan {{ $monthName ?? 'Ini' }}
+                </h1>
+            </div>
+            <div class="row g-4 justify-content-center">
+                @forelse ($topDrivers as $index => $driver)
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ 0.1 + $index * 0.2 }}s">
+                        <div class="card h-100 shadow-sm">
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-primary rounded-pill fs-4">#{{ $index + 1 }}</span>
+                            </div>
+                            <img class="card-img-top"
+                                src="{{ $driver->image ? asset('storage/' . $driver->image) : asset('kai/assets/img/default-user.jpg') }}"
+                                alt="Foto {{ $driver->nama }}" style="height: 300px; object-fit: cover;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title fw-bold">{{ $driver->nama }}</h5>
+                                <p class="card-text mb-1"><i class="fas fa-route me-2"></i>Total Perjalanan:
+                                    {{ $driver->total_perjalanan }}</p>
+                                <p class="card-text mb-1"><i class="fas fa-road me-2"></i>Total Jarak:
+                                    {{ number_format($driver->total_jarak, 2, ',', '.') }} KM</p>
+                                <p class="card-text"><i class="fas fa-clock me-2"></i>Total Durasi:
+                                    {{ $driver->total_durasi_format }}</p>
                             </div>
                         </div>
                     </div>
                 @empty
                     <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s">
-                        <p>Data staff tidak ditemukan.</p>
+                        <p class="text-muted fs-5">Belum ada data driver terbaik untuk bulan
+                            {{ $monthName ?? 'ini' }}.</p>
                     </div>
                 @endforelse
             </div>
-
         </div>
-
     </div>
+    {{-- AKHIR SECTION TOP DRIVER --}}
+
     <footer class="text-white text-center text-lg-start bg-primary wow fadeInUp" data-wow-delay="0.5s">
         <div class="container p-4">
             <div class="row mt-4">

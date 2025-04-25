@@ -1,6 +1,13 @@
 @section('title', 'Tambah Perjalanan | Driver')
 @extends('layouts.sidebardriver')
 
+@push('styles')
+    {{-- Tambahkan CSS Select2 --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+@endpush
+
 @section('content')
 
     <div class="container">
@@ -33,15 +40,20 @@
                                 <div class="col-md-6">
                                     <div class="form-group form-group-default">
                                         <label>Nama Pegawai</label>
-                                        <input type="text" class="form-control" name="nama_pegawai"
-                                            placeholder="Nama Pegawai" required>
+                                        <select class="js-example-basic-multiple form-control" name="nama_pegawai[]"
+                                            multiple="multiple" required style="width: 100%;">
+                                            @foreach ($pegawaiList as $pegawai)
+                                                <option value="{{ $pegawai->nama }}">{{ $pegawai->nama }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group form-group-default">
                                         <label>Titik Awal</label>
                                         <input type="text" class="form-control" id="titik_awal" name="titik_awal"
-                                            value="35125, Jl. Sam Ratulangi No.15, Penengahan, Kec. Tj. Karang Pusat, Kota Bandar Lampung, Lampung 35126" required readonly>
+                                            value="35125, Jl. Sam Ratulangi No.15, Penengahan, Kec. Tj. Karang Pusat, Kota Bandar Lampung, Lampung 35126"
+                                            required readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -73,26 +85,23 @@
                                             <option value="" disabled selected>Pilih kendaraan</option>
                                             @foreach ($kendaraan as $k)
                                                 <option value="{{ $k->id }}">
-                                                    {{ $k->tipe_kendaraan }} {{ $k->no_kendaraan }} <span class="status-badge">{!! $k->status_display !!}</span>
+                                                    {{ $k->tipe_kendaraan }} {{ $k->no_kendaraan }} <span
+                                                        class="status-badge">{!! $k->status_display !!}</span>
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
-                                    {{-- <div class="col-md-6">
-                                        <div class="form-group form-group-default">
-                                            <label>KM Awal</label>
-                                            <input type="number" class="form-control" name="km_awal" placeholder="KM Awal"
-                                                required>
-                                        </div>
-                                    </div> --}}
+
                                 <div class="col-md-6">
                                     <div class="form-group form-group-default">
                                         <label for="bbm_awal">BBM Awal</label>
                                         <div class="progress" style="height: 25px;">
-                                            <div id="bbm-awal-bar" class="progress-bar bg-success" role="progressbar"
-                                                style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8">
-                                                <span id="bbm-awal-value">0</span>/8
+                                            <div id="bbm-awal-bar"
+                                                class="progress-bar bg-success d-flex align-items-center justify-content-center"
+                                                role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0"
+                                                aria-valuemax="8">
+                                                <span id="bbm-awal-value">0/8</span>
                                             </div>
                                         </div>
                                         <input type="range" class="form-range" id="bbm_awal" name="bbm_awal"
@@ -101,14 +110,16 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group form-group-default">
-                                        <label>Jam Pergi</label>
-                                        <input type="datetime-local" class="form-control" name="jam_pergi" required>
+                                        <label>Foto KM & BBM Awal</label>
+                                        <input type="file" class="form-control" name="foto_awal" accept="image/*"
+                                            required />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group form-group-default">
-                                        <label>Foto KM & BBM Awal</label>
-                                        <input type="file" class="form-control" name="foto_awal" accept="image/*" required />
+                                        <label>Jam Pergi</label>
+                                        <input type="datetime-local" class="form-control" name="jam_pergi"
+                                            value="{{ now()->format('Y-m-d\TH:i') }}" required readonly>
                                     </div>
                                 </div>
                             </div>
@@ -278,7 +289,8 @@
                     });
 
                     const distanceString = response.rows[0].elements[0].distance.text; // Ambil string, contoh "11.9 km"
-                    const distanceValue = parseFloat(distanceString.replace(/[^0-9.]/g, '')); // Hapus " km", konversi ke float
+                    const distanceValue = parseFloat(distanceString.replace(/[^0-9.]/g,
+                        '')); // Hapus " km", konversi ke float
                     document.getElementById("estimasi_jarak").value = distanceValue; // Simpan hanya angka
                 } catch (error) {
                     console.error("Error:", error);
@@ -310,7 +322,7 @@
         });
     </script>
 
-{{-- script untuk visualisasi BBM AWAL --}}
+    {{-- script untuk visualisasi BBM AWAL --}}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -324,7 +336,7 @@
 
                 bbmAwalBar.style.width = percentage + '%';
                 bbmAwalBar.setAttribute('aria-valuenow', value);
-                bbmAwalValue.textContent = value;
+                bbmAwalValue.textContent = value + '/8';
 
                 // Ubah warna bar berdasarkan value
                 if (value >= 6) {
@@ -370,4 +382,17 @@
             }
         }
     </style>
+
+    @push('scripts')
+        {{-- Hapus jQuery CDN, asumsikan sudah ada di layout --}}
+        {{-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> --}}
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                // Gunakan inisialisasi Select2 paling dasar
+                $('.js-example-basic-multiple').select2();
+            });
+        </script>
+    @endpush
 @endsection

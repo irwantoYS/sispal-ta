@@ -14,9 +14,10 @@
             <div class="col-md-12">
                 <div class="card">
 
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <div>
-                            <label for="startDate" class="form-label fw-bold">Cari berdasarkan tanggal awal dan akhir:</label>
+                    <div class="card-header d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
+                        <div class="mb-3 mb-md-0">
+                            <label for="startDate" class="form-label fw-bold">Cari berdasarkan tanggal awal dan
+                                akhir:</label>
                             <form action="{{ route('managerarea.history') }}" method="GET"
                                 class="d-flex align-items-center">
                                 <div class="input-group">
@@ -30,7 +31,7 @@
                             </form>
                         </div>
 
-                        <div class="d-flex">
+                        <div class="d-flex mt-3 mt-md-0">
                             <button type="button" class="btn btn-primary btn-round me-2" data-bs-toggle="modal"
                                 data-bs-target="#driverSummaryModal">
                                 <i class="fas fa-chart-bar"></i>
@@ -62,11 +63,12 @@
                                         <th>No</th>
                                         <th>Nama Pengemudi</th>
                                         <th>Nama Pegawai</th>
-                                        <th>Titik Awal</th>
                                         <th>Titik Akhir</th>
                                         <th>Tujuan Perjalanan</th>
                                         <th>Jam Pergi</th>
                                         <th>Jam Kembali</th>
+                                        <th>KM & BBM Awal</th>
+                                        <th>KM & BBM Akhir</th>
                                         <th>Detail</th>
                                     </tr>
                                 </thead>
@@ -75,28 +77,59 @@
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $perjalanan->user->nama }}</td>
-                                            <td>{{ $perjalanan->nama_pegawai }}</td>
-                                            <td>{{ $perjalanan->titik_awal }}</td>
+                                            <td>
+                                                @php
+                                                    $namaArray = json_decode($perjalanan->nama_pegawai);
+                                                    if (is_array($namaArray)) {
+                                                        echo e(implode(', ', $namaArray));
+                                                    } else {
+                                                        echo e($perjalanan->nama_pegawai);
+                                                    }
+                                                @endphp
+                                            </td>
                                             <td>{{ $perjalanan->titik_akhir }}</td>
                                             <td>{{ $perjalanan->tujuan_perjalanan }}</td>
                                             <td>{{ $perjalanan->jam_pergi }}</td>
                                             <td>{{ $perjalanan->jam_kembali }}</td>
                                             <td>
+                                                @if ($perjalanan->foto_awal)
+                                                    <button class="btn btn-info btn-sm foto-link" data-bs-toggle="modal"
+                                                        data-bs-target="#fotoModal"
+                                                        data-foto="{{ asset('storage/' . $perjalanan->foto_awal) }}">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button>
+                                                @else
+                                                    <span class="text-muted">Tidak ada foto</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($perjalanan->foto_akhir)
+                                                    <button class="btn btn-info btn-sm foto-link" data-bs-toggle="modal"
+                                                        data-bs-target="#fotoModal"
+                                                        data-foto="{{ asset('storage/' . $perjalanan->foto_akhir) }}">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button>
+                                                @else
+                                                    <span class="text-muted">Tidak ada foto</span>
+                                                @endif
+                                            </td>
+                                            <td>
                                                 <button class="btn btn-info btn-sm detail-button" data-bs-toggle="modal"
                                                     data-bs-target="#detailModal"
                                                     data-nama-pengemudi="{{ $perjalanan->user->nama }}"
-                                                    data-nama-pegawai="{{ $perjalanan->nama_pegawai }}"
+                                                    data-nama-pegawai="{{ e($perjalanan->nama_pegawai ?? '') }}"
                                                     data-titik-awal="{{ $perjalanan->titik_awal }}"
                                                     data-titik-akhir="{{ $perjalanan->titik_akhir }}"
                                                     data-tujuan="{{ $perjalanan->tujuan_perjalanan }}"
                                                     data-no-kendaraan="{{ $perjalanan->Kendaraan->no_kendaraan ?? '-' }}"
                                                     data-tipe-kendaraan="{{ $perjalanan->Kendaraan->tipe_kendaraan ?? '-' }}"
-                                                    {{-- data-km-awal="{{ $perjalanan->km_awal }}" --}}
-                                                    data-km-akhir="{{ $perjalanan->km_akhir }}"
+                                                    {{-- data-km-awal="{{ $perjalanan->km_awal }}" --}} data-km-akhir="{{ $perjalanan->km_akhir }}"
                                                     data-bbm-awal="{{ $perjalanan->bbm_awal }}"
                                                     data-bbm-akhir="{{ $perjalanan->bbm_akhir }}"
                                                     data-jam-pergi="{{ $perjalanan->jam_pergi }}"
-                                                    data-jam-kembali="{{ $perjalanan->jam_kembali }}">
+                                                    data-jam-kembali="{{ $perjalanan->jam_kembali }}"
+                                                    data-estimasi-waktu="{{ $perjalanan->estimasi_waktu ?? '-' }}"
+                                                    data-estimasi-bbm="{{ $perjalanan->estimasi_bbm ?? '-' }}">
                                                     Lihat Detail
                                                 </button>
                                             </td>
@@ -157,11 +190,25 @@
                             </tr>
                             <tr>
                                 <th>BBM Awal</th>
-                                <td id="detailBbmAwal"></td>
+                                <td>
+                                    <div class="progress" style="height: 25px;">
+                                        <div id="detailBbmAwalBar" class="progress-bar" role="progressbar"
+                                            style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8">
+                                            <span id="detailBbmAwalValue">0/8</span>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <th>BBM Akhir</th>
-                                <td id="detailBbmAkhir"></td>
+                                <td>
+                                    <div class="progress" style="height: 25px;">
+                                        <div id="detailBbmAkhirBar" class="progress-bar" role="progressbar"
+                                            style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8">
+                                            <span id="detailBbmAkhirValue">0/8</span>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <th>Jam Pergi</th>
@@ -171,10 +218,32 @@
                                 <th>jam Kembali</th>
                                 <td id="detailJamKembali"></td>
                             </tr>
+                            <tr>
+                                <th>Estimasi Waktu</th>
+                                <td id="detailEstimasiWaktu"></td>
+                            </tr>
+                            <tr>
+                                <th>Estimasi BBM</th>
+                                <td id="detailEstimasiBBM"></td>
+                            </tr>
                         </table>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="fotoModal" tabindex="-1" aria-labelledby="fotoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="fotoModalLabel">Foto KM & BBM</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img id="fotoPreview" src="" alt="Foto Perjalanan" class="img-fluid rounded">
                     </div>
                 </div>
             </div>
@@ -223,99 +292,188 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Modal Lihat Detail
-                const detailButtons = document.querySelectorAll('.detail-button');
+                // Event delegation untuk klik tombol detail dan foto
+                document.addEventListener('click', function(event) {
 
-                detailButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        // Ambil data dari atribut data-*
-                        document.getElementById('detailNamaPengemudi').textContent = this.getAttribute(
-                            'data-nama-pengemudi') || '-';
-                        document.getElementById('detailNamaPegawai').textContent = this.getAttribute(
-                            'data-nama-pegawai') || '-';
-                        document.getElementById('detailTitikAwal').textContent = this.getAttribute(
-                            'data-titik-awal') || '-';
-                        document.getElementById('detailTitikAkhir').textContent = this.getAttribute(
-                            'data-titik-akhir') || '-';
-                        document.getElementById('detailTujuan').textContent = this.getAttribute(
-                            'data-tujuan') || '-';
-                        document.getElementById('detailNoKendaraan').textContent = this.getAttribute(
-                            'data-no-kendaraan') || '-';
-                        document.getElementById('detailTipeKendaraan').textContent = this.getAttribute(
-                            'data-tipe-kendaraan') || '-';
-                        // document.getElementById('detailKmAwal').textContent = this.getAttribute('data-km-awal') || '-';
-                        document.getElementById('detailKmAkhir').textContent = this.getAttribute(
-                            'data-km-akhir') || '-';
-                        document.getElementById('detailBbmAwal').textContent = this.getAttribute(
-                            'data-bbm-awal') || '-';
-                        document.getElementById('detailBbmAkhir').textContent = this.getAttribute(
-                            'data-bbm-akhir') || '-';
-                        document.getElementById('detailJamPergi').textContent = this.getAttribute(
-                            'data-jam-pergi') || '-';
-                        document.getElementById('detailJamKembali').textContent = this.getAttribute(
-                            'data-jam-kembali') || '-';
-                    });
-                });
-
-                // Tambahkan pencarian berdasarkan rentang tanggal
-                document.querySelector('form[action="{{ route('managerarea.history') }}"]').addEventListener('submit',
-                    function(e) {
-                        e.preventDefault();
-                        var startDate = document.querySelector('input[name="startDate"]').value;
-                        var endDate = document.querySelector('input[name="endDate"]').value;
-
-                        if (startDate && endDate) {
-                            window.location.href = "{{ route('managerarea.history') }}?startDate=" + startDate +
-                                "&endDate=" +
-                                endDate;
+                    // --- Handle klik tombol foto ---
+                    if (event.target.matches('.foto-link')) {
+                        const fotoSrc = event.target.getAttribute('data-foto');
+                        const fotoPreview = document.getElementById('fotoPreview');
+                        if (fotoPreview) {
+                            fotoPreview.setAttribute('src', fotoSrc);
+                        } else {
+                            console.error("Element with ID 'fotoPreview' not found.");
                         }
-                    });
+                    }
 
-                //DataTable
-                const table = $('#allhistoryTable').DataTable({
-                    "paging": true,
-                    "searching": true,
-                    "ordering": true,
-                    "lengthChange": true,
-                    "responsive": true,
-                    "language": {
-                        "paginate": {
-                            "previous": "&laquo;",
-                            "next": "&raquo;"
+                    // --- Handle klik tombol Detail ---
+                    if (event.target.matches('.detail-button')) {
+                        const button = event.target;
+                        // Ambil data dari atribut data-*
+                        document.getElementById('detailNamaPengemudi').textContent = button.getAttribute(
+                            'data-nama-pengemudi') || '-';
+                        // Format Nama Pegawai dari data attribute
+                        const namaPegawaiData = button.getAttribute('data-nama-pegawai');
+                        let namaPegawaiDisplay = '-';
+                        if (namaPegawaiData) {
+                            try {
+                                const namaArray = JSON.parse(namaPegawaiData);
+                                if (Array.isArray(namaArray)) {
+                                    namaPegawaiDisplay = namaArray.join(', ');
+                                } else {
+                                    namaPegawaiDisplay = namaPegawaiData; // Bukan JSON array, tampilkan asli
+                                }
+                            } catch (e) {
+                                namaPegawaiDisplay = namaPegawaiData; // Gagal parse JSON, tampilkan asli
+                            }
+                        }
+                        document.getElementById('detailNamaPegawai').textContent = namaPegawaiDisplay;
+                        document.getElementById('detailTitikAwal').textContent = button.getAttribute(
+                            'data-titik-awal') || '-';
+                        document.getElementById('detailTitikAkhir').textContent = button.getAttribute(
+                            'data-titik-akhir') || '-';
+                        document.getElementById('detailTujuan').textContent = button.getAttribute(
+                            'data-tujuan') || '-';
+                        document.getElementById('detailNoKendaraan').textContent = button.getAttribute(
+                            'data-no-kendaraan') || '-';
+                        document.getElementById('detailTipeKendaraan').textContent = button.getAttribute(
+                            'data-tipe-kendaraan') || '-';
+                        // document.getElementById('detailKmAwal').textContent = button.getAttribute('data-km-awal') || '-'; // Jika KM awal ingin ditampilkan
+                        document.getElementById('detailKmAkhir').textContent = button.getAttribute(
+                            'data-km-akhir') || '-';
+                        document.getElementById('detailJamPergi').textContent = button.getAttribute(
+                            'data-jam-pergi') || '-';
+                        document.getElementById('detailJamKembali').textContent = button.getAttribute(
+                            'data-jam-kembali') || '-';
+
+                        // Tambahkan pengambilan data estimasi
+                        let estimasiWaktu = button.getAttribute('data-estimasi-waktu') || '-';
+                        let estimasiBBM = button.getAttribute('data-estimasi-bbm') || '-';
+                        document.getElementById('detailEstimasiWaktu').textContent = estimasiWaktu;
+                        document.getElementById('detailEstimasiBBM').textContent = estimasiBBM !== '-' ?
+                            estimasiBBM + ' Liter' : '-';
+
+                        // Update progress bar BBM Awal
+                        const bbmAwal = button.getAttribute('data-bbm-awal') || 0;
+                        const bbmAwalPercentage = (bbmAwal / 8) * 100;
+                        const detailBbmAwalBar = document.getElementById('detailBbmAwalBar');
+                        const detailBbmAwalValue = document.getElementById('detailBbmAwalValue');
+
+                        if (detailBbmAwalBar && detailBbmAwalValue) {
+                            detailBbmAwalBar.style.width = bbmAwalPercentage + '%';
+                            detailBbmAwalBar.setAttribute('aria-valuenow', bbmAwal);
+                            detailBbmAwalValue.textContent = bbmAwal + '/8';
+
+                            // Ubah warna bar BBM Awal
+                            detailBbmAwalBar.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+                            if (bbmAwal >= 6) {
+                                detailBbmAwalBar.classList.add('bg-success');
+                            } else if (bbmAwal >= 3) {
+                                detailBbmAwalBar.classList.add('bg-warning');
+                            } else {
+                                detailBbmAwalBar.classList.add('bg-danger');
+                            }
+                        }
+
+                        // Update progress bar BBM Akhir
+                        const bbmAkhir = button.getAttribute('data-bbm-akhir') || 0;
+                        const bbmAkhirPercentage = (bbmAkhir / 8) * 100;
+                        const detailBbmAkhirBar = document.getElementById('detailBbmAkhirBar');
+                        const detailBbmAkhirValue = document.getElementById('detailBbmAkhirValue');
+
+                        if (detailBbmAkhirBar && detailBbmAkhirValue) {
+                            detailBbmAkhirBar.style.width = bbmAkhirPercentage + '%';
+                            detailBbmAkhirBar.setAttribute('aria-valuenow', bbmAkhir);
+                            detailBbmAkhirValue.textContent = bbmAkhir + '/8';
+
+                            // Ubah warna bar BBM Akhir
+                            detailBbmAkhirBar.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+                            if (bbmAkhir >= 6) {
+                                detailBbmAkhirBar.classList.add('bg-success');
+                            } else if (bbmAkhir >= 3) {
+                                detailBbmAkhirBar.classList.add('bg-warning');
+                            } else {
+                                detailBbmAkhirBar.classList.add('bg-danger');
+                            }
                         }
                     }
                 });
 
-                $('#searchForm').on('submit', function(e) {
-                    e.preventDefault();
-                    const search = $('#searchText').val();
-                    const startDate = $('#startDate').val();
-                    const endDate = $('#endDate').val();
-                    table.search(search).draw(); // Pencarian kata kunci
-                    table.columns([0, 1, 2, 3, 4, 5, 6, 7, 8]).search(startDate)
-                        .draw(); // Pencarian berdasarkan tanggal
-                    table.columns([0, 1, 2, 3, 4, 5, 6, 7, 8]).search(endDate)
-                        .draw(); // Pencarian berdasarkan tanggal
-                });
-
-                // Tombol cetak PDF
-                $('#cetakPDF').on('click', function() {
-                    const params = $.param({
-                        search: table.search(), // Ambil kata kunci pencarian
-                        startDate: $('input[name="startDate"]').val(), // Ambil tanggal awal
-                        endDate: $('input[name="endDate"]').val(), // Ambil tanggal akhir
+                // Logika pencarian tanggal (jika form submit dikelola oleh JS, jika tidak ini bisa dihapus)
+                const dateSearchFormMA = document.querySelector('form[action="{{ route('managerarea.history') }}"]');
+                if (dateSearchFormMA) {
+                    dateSearchFormMA.addEventListener('submit', function(e) {
+                        const startDate = document.querySelector('input[name="startDate"]').value;
+                        const endDate = document.querySelector('input[name="endDate"]').value;
+                        // Jika ingin validasi sebelum submit atau manipulasi URL
+                        // Jika tidak, biarkan form submit biasa
+                        if (!startDate || !endDate) {
+                            // e.preventDefault(); 
+                            // alert('Silakan pilih tanggal awal dan akhir.');
+                        }
                     });
-                    const url = `{{ route('cetak.pdf', ['role' => 'ManagerArea']) }}?${params}`;
-                    window.open(url, '_blank');
-                });
+                }
 
-                // Reset pencarian
-                const resetSearchButton = document.getElementById('resetSearch');
-                resetSearchButton.addEventListener('click', function() {
-                    document.getElementById('startDate').value = '';
-                    document.getElementById('endDate').value = '';
-                    window.location.href = '{{ route('managerarea.history') }}';
-                });
+                // Inisialisasi DataTable
+                // Note: jQuery diperlukan untuk DataTable
+                if (window.jQuery) {
+                    const tableMA = $('#allhistoryTable').DataTable({
+                        "paging": true,
+                        "searching": true,
+                        "ordering": true,
+                        "lengthChange": true,
+                        "responsive": true,
+                        "language": {
+                            "paginate": {
+                                "previous": "&laquo;",
+                                "next": "&raquo;"
+                            },
+                            "search": "Cari:",
+                            "lengthMenu": "Tampilkan _MENU_ data",
+                            "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                            "infoEmpty": "Menampilkan 0 sampai 0 dari 0 data",
+                            "infoFiltered": "(disaring dari _MAX_ total data)",
+                            "zeroRecords": "Tidak ada data yang cocok ditemukan"
+                        }
+                    });
+
+                    // Logika search DataTable (jika diperlukan terpisah dari search bawaan)
+                    /*
+                            $('#searchFormMA').on('submit', function(e) { 
+                                e.preventDefault();
+                                const search = $('#searchTextMA').val(); 
+                                tableMA.search(search).draw(); 
+                            });
+                            */
+
+                    // Logika tombol cetak PDF jika event listener diperlukan
+                    // Jika tombol PDF adalah link biasa <a>, ini tidak perlu
+                    /*
+                     $('#cetakPDFMA').on('click', function() {
+                        const params = $.param({ 
+                            search: tableMA.search(),
+                            startDate: $('input[name="startDate"]').val(), 
+                            endDate: $('input[name="endDate"]').val(), 
+                        });
+                        const url = `{{ route('cetak.pdf', ['role' => 'ManagerArea']) }}?${params}`;
+                        window.open(url, '_blank');
+                    });
+                    */
+                } else {
+                    console.error("jQuery is not loaded. DataTable cannot be initialized.");
+                }
+
+                // Reset pencarian tanggal
+                const resetSearchButtonMA = document.getElementById('resetSearch');
+                if (resetSearchButtonMA) {
+                    resetSearchButtonMA.addEventListener('click', function() {
+                        const startDateInputMA = document.getElementById('startDate');
+                        const endDateInputMA = document.getElementById('endDate');
+                        if (startDateInputMA) startDateInputMA.value = '';
+                        if (endDateInputMA) endDateInputMA.value = '';
+                        window.location.href = '{{ route('managerarea.history') }}';
+                    });
+                }
             });
         </script>
 

@@ -1,8 +1,8 @@
 :root {
-    --primary: #1E60AA;
-    --secondary: #FF4917;
-    --light: #EDF1FC;
-    --dark: #17224D;
+    --primary: #1e60aa;
+    --secondary: #ff4917;
+    --light: #edf1fc;
+    --dark: #17224d;
     --background-color: #af2424a3;
 }
 
@@ -21,12 +21,12 @@
 /*** Button ***/
 .btn {
     font-weight: 600;
-    transition: .5s;
+    transition: 0.5s;
 }
 
 .btn.btn-primary,
 .btn.btn-secondary {
-    color: #FFFFFF;
+    color: #ffffff;
 }
 
 .btn-square {
@@ -63,7 +63,7 @@
 .nav-bar {
     position: relative;
     padding: 0 4.75rem;
-    transition: .5s;
+    transition: 0.5s;
     z-index: 9999;
 }
 
@@ -88,7 +88,7 @@
 .navbar-light .navbar-nav .nav-link:hover,
 .navbar-light .navbar-nav .nav-link.active {
     color: var(--primary);
-/* hover */
+    /* hover */
 }
 
 /*** Header ***/
@@ -145,14 +145,10 @@
         padding: 0;
     }
 
-
-    .owl-carousel .owl-carousel-item img{
+    .owl-carousel .owl-carousel-item img {
         max-width: 100%;
         height: auto;
     }
-
-
-
 }
 
 .header-carousel .owl-nav {
@@ -177,7 +173,7 @@
     border: 2px solid var(--dark);
     border-radius: 45px;
     font-size: 22px;
-    transition: .5s;
+    transition: 0.5s;
 }
 
 .header-carousel .owl-nav .owl-prev:hover,
@@ -192,8 +188,7 @@
 
 /*** Team ***/
 .team-content img {
-    transition: .5s;
-
+    transition: 0.5s;
 }
 
 .team-content:hover img {
@@ -213,7 +208,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    transition: .5s;
+    transition: 0.5s;
 }
 
 .team-content .team-text .bg-primary {
@@ -226,10 +221,56 @@
 
 .team-content .team-text .bg-primary .btn {
     color: var(--primary);
-    background: #FFFFFF;
+    background: #ffffff;
 }
 
 .team-content .team-text .bg-primary .btn:hover {
-    color: #FFFFFF;
-    background: var(--secondary)
+    color: #ffffff;
+    background: var(--secondary);
 }
+
+/*** Staff Carousel Navigation ***/
+/* 1. Jadikan Carousel sebagai referensi posisi */
+#staffCarousel {
+    position: relative;
+}
+
+/* 2. Posisikan container .owl-nav secara absolut */
+#staffCarousel .owl-nav {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+    padding: 0 15px; /* Sesuaikan padding jika perlu */
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    z-index: 10;
+}
+
+/* 3. Styling tombol (pastikan pointer-events: auto ada) */
+#staffCarousel .owl-nav button.owl-prev,
+#staffCarousel .owl-nav button.owl-next {
+    background: rgba(0, 0, 0, 0.5) !important;
+    color: #fff !important;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    font-size: 20px;
+    transition: background 0.3s ease;
+    pointer-events: auto; /* Pastikan ini ada */
+}
+
+/* 4. Styling hover (sama) */
+#staffCarousel .owl-nav button.owl-prev:hover,
+#staffCarousel .owl-nav button.owl-next:hover {
+    background: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Hapus rule position: relative untuk .container-xxl yang ditambahkan sebelumnya jika tidak diperlukan lagi */
+/* .container-xxl {
+    position: relative; 
+} */
