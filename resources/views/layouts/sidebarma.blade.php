@@ -307,7 +307,7 @@
 
             // Event listener untuk tombol "Tandai Sudah Dibaca"
             document.querySelector('.notif-box').addEventListener('click', function(
-                event) { // Gunakan event delegation
+            event) { // Gunakan event delegation
                 if (event.target.classList.contains('mark-as-read-btn')) {
                     event.preventDefault(); // Mencegah form di-submit secara normal
                     const form = event.target.closest('form'); // Cari form terdekat
@@ -326,7 +326,7 @@
                             if (data.success) {
                                 // Hapus notifikasi dari tampilan
                                 form.closest('.notif-item')
-                                    .remove(); //Hapus parent element yang terdekat dengan class notif-item
+                            .remove(); //Hapus parent element yang terdekat dengan class notif-item
                                 // Update jumlah notifikasi
                                 updateUnreadCount();
                             } else {
