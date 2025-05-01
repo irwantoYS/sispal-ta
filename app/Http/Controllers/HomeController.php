@@ -3,10 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-// use App\Models\LaporanPerjalanan; // Tidak perlu jika hanya menampilkan staff
-// use Illuminate\Support\Facades\Auth; // Tidak perlu jika tidak terkait user login
-// use Barryvdh\DomPDF\Facade\Pdf; // Tidak perlu untuk halaman ini
-// use carbon\Carbon; // Tidak perlu untuk halaman ini
 use App\Models\User; // Tambahkan model User
 use Illuminate\Support\Facades\DB; // Untuk OrderByRaw
 use App\Models\LaporanPerjalanan; // Tambahkan model LaporanPerjalanan

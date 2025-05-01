@@ -12,6 +12,7 @@
             </div>
 
             <div class="row">
+                <!-- Kartu Total Perjalanan -->
                 <div class="col-md-4">
                     <div class="card card-stats card-round">
                         <div class="card-body">
@@ -31,8 +32,29 @@
                         </div>
                     </div>
                 </div>
-            </div>
+                <!-- Kartu Total Kendaraan -->
+                <div class="col-md-4">
+                    <div class="card card-stats card-round">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-icon">
+                                    <div class="icon-big text-center icon-info bubble-shadow-small">
+                                        <i class="fas fa-car" style="color: white;"></i>
+                                    </div>
+                                </div>
+                                <div class="col col-stats ms-3 ms-sm-0">
+                                    <div class="numbers">
+                                        <p class="card-category">Total Kendaraan Digunakan</p>
+                                        <h4 class="card-title">{{ $totalKendaraanDriver }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- Penutup .row untuk kartu statistik atas -->
 
+            <!-- Baris untuk Statistik Performa Bulanan -->
             <div class="row mt-4">
                 <div class="col-md-12">
                     <div class="card card-round">
@@ -42,6 +64,7 @@
                             </div>
                         </div>
                         <div class="card-body">
+                            <!-- Ringkasan Total Keseluruhan -->
                             <div class="row mb-4 text-center">
                                 <div class="col-md-4">
                                     <div class="d-flex align-items-center justify-content-center">
@@ -76,6 +99,7 @@
                                 </div>
                             </div>
                             <hr>
+                            <!-- Filter Bulan dan Tahun -->
                             <form method="GET" action="{{ route('driver.dashboard') }}"
                                 class="row g-3 align-items-center mb-4">
                                 <div class="col-md-4">
@@ -119,6 +143,7 @@
                                     {{ $selectedYear }}</strong>
                             </p>
                             <hr>
+                            <!-- Statistik Bulanan -->
                             <div class="row mt-4">
                                 <div class="col-md-4">
                                     <div class="card card-stats card-secondary card-round">
@@ -178,14 +203,14 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                            </div> <!-- Penutup .row untuk statistik bulanan -->
+                        </div> <!-- Penutup .card-body utama -->
+                    </div> <!-- Penutup .card utama -->
+                </div> <!-- Penutup .col-md-12 utama -->
+            </div> <!-- Penutup .row utama -->
 
-            {{-- Kartu Statistik Performa Driver --}}
-        </div>
-    </div>
+            {{-- Kartu Statistik Performa Driver (Placeholder - bisa dihapus jika tidak diperlukan) --}}
+        </div> <!-- Penutup .page-inner -->
+    </div> <!-- Penutup .container -->
 
 @endsection

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\LaporanPerjalanan;
+use Illuminate\Http\RedirectResponse;
 
 class HSSEKelolaAkunController extends Controller
 {
@@ -16,7 +17,8 @@ class HSSEKelolaAkunController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        // Mengambil hanya user dengan status 'aktif'
+        $users = User::where('status', 'aktif')->get();
         return view('hsse.kelolaakun', compact('users'));
     }
 
@@ -72,6 +74,11 @@ class HSSEKelolaAkunController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        // Pastikan hanya user aktif yang bisa diupdate datanya dari halaman ini
+        if ($user->status !== 'aktif') {
+            return redirect()->route('hsse.kelolaakun')->with('error', 'Akun ini sudah nonaktif.');
+        }
+
         // Validasi input
         $request->validate([
             'nama' => 'required|string|max:255',
@@ -119,30 +126,53 @@ class HSSEKelolaAkunController extends Controller
     }
 
     /**
-     * Hapus akun.
+     * Nonaktifkan akun.
      */
     public function destroy(User $user)
     {
-        // Periksa apakah akun ini memiliki role selain 'Driver'
-        if ($user->role === 'ManagerArea' || $user->role === 'HSSE') {
-            return redirect()->route('hsse.kelolaakun')->with('error', 'Akun dengan role Manager Area dan HSSE tidak dapat dihapus!');
+        // Cek jika akun sudah nonaktif
+        if ($user->status === 'nonaktif') {
+            return redirect()->route('hsse.kelolaakun')->with('error', 'Akun ini sudah dinonaktifkan sebelumnya.');
         }
 
-        // Periksa apakah akun ini sudah terhubung dengan entitas lain (misalnya LaporanPerjalanan)
-        $cekRelasi = LaporanPerjalanan::where('pengemudi_id', $user->id)->exists();
+        // Ubah status pengguna menjadi nonaktif
+        try {
+            $user->update(['status' => 'nonaktif']);
+            return redirect()->route('hsse.kelolaakun')->with('success', 'Akun berhasil dinonaktifkan!');
+        } catch (\Exception $e) {
+            // Tangani jika ada error saat update
+            return redirect()->route('hsse.kelolaakun')->with('error', 'Gagal menonaktifkan akun. Silakan coba lagi.');
+        }
+    }
 
-        if ($cekRelasi) {
-            return redirect()->route('hsse.kelolaakun')->with('error', 'Tidak dapat menghapus akun, karena sudah terkait dengan data lain.');
+    /**
+     * Tampilkan daftar akun yang nonaktif.
+     */
+    public function showNonaktif()
+    {
+        $users = User::where('status', 'nonaktif')->get();
+        // Kita akan membuat view baru bernama 'kelolaakun_nonaktif'
+        return view('hsse.kelolaakun_nonaktif', compact('users'));
+    }
+
+    /**
+     * Aktifkan kembali akun pengguna.
+     */
+    public function activate(User $user): RedirectResponse
+    {
+        // Cek jika akun sudah aktif
+        if ($user->status === 'aktif') {
+            // Sebaiknya arahkan ke halaman nonaktif karena proses ini dimulai dari sana
+            return redirect()->route('hsse.kelolaakun.nonaktif')->with('error', 'Akun ini sudah aktif.');
         }
 
-        // Hapus gambar jika ada dan bukan default
-        if ($user->image && $user->image !== 'assets/img/default-user.jpg') {
-            Storage::disk('public')->delete($user->image);
+        try {
+            $user->update(['status' => 'aktif']);
+            // Kembali ke halaman daftar nonaktif dengan pesan sukses
+            return redirect()->route('hsse.kelolaakun.nonaktif')->with('success', 'Akun ' . $user->nama . ' berhasil diaktifkan kembali!');
+        } catch (\Exception $e) {
+            // Kembali ke halaman daftar nonaktif dengan pesan error
+            return redirect()->route('hsse.kelolaakun.nonaktif')->with('error', 'Gagal mengaktifkan akun. Silakan coba lagi.');
         }
-
-        // Hapus pengguna
-        $user->delete();
-
-        return redirect()->route('hsse.kelolaakun')->with('success', 'Akun berhasil dihapus!');
     }
 }

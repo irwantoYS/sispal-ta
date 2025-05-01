@@ -5,6 +5,7 @@
 @section('content')
     <div class="container">
         <div class="page-inner">
+            {{-- Bagian Header Halaman --}}
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                 <div>
                     <h3 class="fw-bold mb-3">Kelola Akun</h3>
@@ -20,12 +21,21 @@
         @endif --}}
 
             <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Daftar Akun</h4>
-                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">Tambah
-                        Akun</a>
+                {{-- Header Card --}}
+                <div class="card-header">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                        <h4 class="card-title mb-3 mb-md-0">Daftar Akun Aktif</h4>
+                        <div class="d-flex flex-column flex-sm-row gap-2 mt-2 mt-md-0">
+                            <a href="{{ route('hsse.kelolaakun.nonaktif') }}" class="btn btn-secondary btn-round ">Lihat
+                                Akun Nonaktif</a>
+                            <a href="#" class="btn btn-primary btn-round" data-bs-toggle="modal"
+                                data-bs-target="#addUserModal">Tambah Akun</a>
+                        </div>
+                    </div>
                 </div>
+                {{-- Body Card --}}
                 <div class="card-body">
+                    {{-- Pastikan table-responsive membungkus tabel --}}
                     <div class="table-responsive">
                         <table id="kelolaTable" class="display table table-striped table-hover">
                             <thead>
@@ -61,9 +71,9 @@
                                             <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                                 data-bs-target="#editUserModal-{{ $user->id }}">Edit</button>
 
-                                            <!-- Tombol Hapus -->
-                                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" 
-                                            data-bs-target="#deleteModal-{{ $user->id }}">Hapus</button>
+                                            <!-- Tombol Nonaktifkan -->
+                                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#deactivateModal-{{ $user->id }}">Nonaktifkan</button>
                                         </td>
                                     </tr>
 
@@ -163,6 +173,7 @@
                                     </div>
                                 @endforeach
                             </tbody>
+                            {{-- Modal Lihat Gambar (dipindah ke luar tbody) --}}
                             <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel"
                                 aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
@@ -186,29 +197,38 @@
         </div>
     </div>
 
-    <!-- Modal Hapus Akun -->
-        <div class="modal fade" id="deleteModal-{{ $user->id }}" tabindex="-1" 
-            aria-labelledby="deleteModalLabel-{{ $user->id }}" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel-{{ $user->id }}">Konfirmasi Hapus</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Apakah Anda yakin ingin menghapus akun <strong>{{ $user->nama }}</strong>?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <form action="{{ route('hsse.kelolaakun.destroy', $user) }}" method="POST" style="display: inline-block;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Hapus</button>
-                    </form>
+    {{-- Modal Nonaktifkan Akun (di luar perulangan) --}}
+    {{-- Sebaiknya modal ini didefinisikan satu kali saja di luar loop --}}
+    {{-- dan menggunakan JavaScript untuk mengisi data user yang benar --}}
+    {{-- Namun, untuk sementara kita biarkan seperti ini jika sudah berfungsi --}}
+    @foreach ($users as $user)
+        <div class="modal fade" id="deactivateModal-{{ $user->id }}" tabindex="-1"
+            aria-labelledby="deactivateModalLabel-{{ $user->id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deactivateModalLabel-{{ $user->id }}">Konfirmasi Nonaktifkan Akun
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Apakah Anda yakin ingin menonaktifkan akun <strong>{{ $user->nama }}</strong>? Akun ini tidak
+                        akan
+                        bisa login lagi.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <form action="{{ route('hsse.kelolaakun.destroy', $user) }}" method="POST"
+                            style="display: inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Ya, Nonaktifkan</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-        </div>
+    @endforeach
 
 
     <!-- Modal Tambah Akun -->
@@ -288,42 +308,46 @@
             Swal.fire({
                 icon: 'error',
                 title: 'Error!',
-                html: errorMessage
+                html: errorMessage,
+                // Perhatikan: Jika ada error validasi saat update/store, pesan ini mungkin perlu penyesuaian
+                // tergantung bagaimana Anda menangani error di controller setelah perubahan
             });
         </script>
     @endif
 
     @if (session('error'))
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal Menghapus!',
-            text: '{{ session('error') }}',
-            timer: 3000
-        });
-    </script>
-@endif
-
-
-    <script>
-        function showImage(imageUrl) {
-            var modalImage = document.getElementById('modalImage');
-            modalImage.src = imageUrl;
-        }
-
-        $(document).ready(function() {
-            $('#kelolaTable').DataTable({
-                "paging": true,
-                "searching": true,
-                "ordering": true,
-                "responsive": true,
-                "language": {
-                    "paginate": {
-                        "previous": "&laquo;",
-                        "next": "&raquo;"
-                    }
-                }
+        <script>
+            Swal.fire({
+                icon: 'error',
+                // Ganti judul pesan error jika diperlukan untuk konteks nonaktifkan
+                title: 'Gagal!',
+                text: '{{ session('error') }}',
+                timer: 3000
             });
-        });
-    </script>
+        </script>
+    @endif
+
+    @push('scripts')
+        <script>
+            function showImage(imageUrl) {
+                var modalImage = document.getElementById('modalImage');
+                modalImage.src = imageUrl;
+            }
+
+            $(document).ready(function() {
+                $('#kelolaTable').DataTable({
+                    "paging": true,
+                    "searching": true,
+                    "ordering": true,
+                    // "responsive": true,   // Coba nonaktifkan ini karena library-nya belum dimuat
+                    "language": {
+                        "paginate": {
+                            "previous": "&laquo;",
+                            "next": "&raquo;"
+                        }
+                    }
+                });
+            });
+        </script>
+    @endpush
 @endsection

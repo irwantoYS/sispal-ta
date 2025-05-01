@@ -26,7 +26,8 @@ class historyController extends Controller
             ->select(
                 'pengemudi_id',
                 DB::raw('SUM(km_akhir) as total_jarak'),
-                DB::raw("SUM(TIMESTAMPDIFF(MINUTE, jam_pergi, jam_kembali)) as total_durasi_menit")
+                DB::raw("SUM(TIMESTAMPDIFF(MINUTE, jam_pergi, jam_kembali)) as total_durasi_menit"),
+                DB::raw('COUNT(*) as total_perjalanan')
             )
             ->with('user')
             ->whereNotNull('bbm_akhir')

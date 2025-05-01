@@ -20,6 +20,14 @@ class DriverController extends Controller
 
         $totalPerjalananDriver = LaporanPerjalanan::where('pengemudi_id', $driverId)->count();
 
+        // Hitung Total Kendaraan Unik yang Digunakan Driver (Perjalanan Selesai)
+        $totalKendaraanDriver = LaporanPerjalanan::where('pengemudi_id', $driverId)
+            ->whereNotNull('kendaraan_id') // Pastikan ada kendaraan tercatat
+            ->whereNotNull('bbm_akhir')    // Indikator perjalanan selesai
+            ->whereNotNull('jam_kembali')   // Indikator perjalanan selesai
+            ->distinct('kendaraan_id')
+            ->count('kendaraan_id');
+
         // Hitung Total Keseluruhan (HANYA dari perjalanan SELESAI oleh driver ini)
         // Jarak (mengikuti logika History: estimasi_jarak * 2)
         $totalJarakDriverSelesai = 0;
@@ -98,7 +106,8 @@ class DriverController extends Controller
             'selectedMonth',
             'selectedYear',
             'availableMonths',
-            'availableYears'
+            'availableYears',
+            'totalKendaraanDriver' // Tambahkan variabel ini
         ));
     }
 

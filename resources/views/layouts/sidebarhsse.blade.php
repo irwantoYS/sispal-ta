@@ -19,6 +19,12 @@
 
     {{-- CSS Kustom --}}
     <link rel="stylesheet" href="{{ asset('kai/assets/css/custom.css') }}" />
+
+    {{-- CSS untuk DataTables (Dihapus karena kemungkinan sudah include di plugins.min.css atau kaiadmin.min.css) --}}
+    {{-- <link rel="stylesheet" href="{{ asset('kai/assets/js/plugin/datatables/datatables.min.css') }}" /> --}}
+    {{-- Jika Anda menggunakan ekstensi Responsive, tambahkan juga CSS-nya --}}
+    {{-- <link rel="stylesheet" href="{{ asset('path/to/responsive.dataTables.min.css') }}" /> --}}
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
@@ -354,6 +360,9 @@
             });
         });
     </script>
+
+    {{-- Stack untuk script tambahan dari view anak --}}
+    @stack('scripts')
 </body>
 
 </html>

@@ -54,6 +54,7 @@
                             <p><strong>Total Estimasi BBM:</strong> {{ number_format($totalEstimasiBBM, 2, '.', '') }} Liter
                             </p>
                             <p><strong>Total Estimasi Waktu:</strong> {{ $totalDurasiFormat }}</p>
+                            <p><strong>Total Perjalanan:</strong> {{ count($perjalanan) }}</p>
                         </div>
 
                         <div class="table-responsive">
@@ -267,6 +268,7 @@
                                         <th>Nama Driver</th>
                                         <th>Total Jarak Tempuh (KM)</th>
                                         <th>Total Durasi</th>
+                                        <th>Total Perjalanan</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -276,6 +278,7 @@
                                             <td>{{ $driver->user->nama }}</td>
                                             <td>{{ $driver->total_jarak }}</td>
                                             <td>{{ $driver->total_durasi_format }}</td>
+                                            <td>{{ $driver->total_perjalanan }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

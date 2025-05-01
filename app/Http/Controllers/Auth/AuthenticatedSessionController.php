@@ -26,6 +26,15 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        $user = Auth::user();
+        if ($user->status === 'nonaktif') {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors(['email' => 'Akun Anda sudah tidak aktif. Silakan hubungi administrator.']);
+        }
+
         $request->session()->regenerate();
 
         if (Auth::user()->role == 'ManagerArea') {
@@ -33,7 +42,7 @@ class AuthenticatedSessionController extends Controller
         } elseif (Auth::user()->role == 'HSSE') {
             return redirect(route('hsse.dashboard'));
         } else {
-            return redirect()->intended(route('driver.dashboard'));    
+            return redirect()->intended(route('driver.dashboard'));
         }
     }
 

@@ -52,6 +52,7 @@
                             <p><strong>Total Estimasi BBM:</strong> {{ number_format($totalEstimasiBBM, 2, '.', '') }} Liter
                             </p>
                             <p><strong>Total Estimasi Waktu:</strong> {{ $totalDurasiFormat }}</p>
+                            <p><strong>Total Perjalanan:</strong> {{ count($perjalanan) }}</p>
                         </div>
                     </div>
 
