@@ -438,28 +438,7 @@
                         }
                     });
 
-                    // Logika search DataTable (jika diperlukan terpisah dari search bawaan)
-                    /*
-                    $('#searchForm').on('submit', function(e) { 
-                        e.preventDefault();
-                        const search = $('#searchText').val(); 
-                        table.search(search).draw(); 
-                    });
-                    */
-
-                    // Logika tombol cetak PDF jika event listener diperlukan
-                    // Jika tombol PDF adalah link biasa <a>, ini tidak perlu
-                    /*
-                     $('#cetakPDF').on('click', function() {
-                        const params = $.param({ 
-                            search: table.search(),
-                            startDate: $('input[name="startDate"]').val(), 
-                            endDate: $('input[name="endDate"]').val(), 
-                        });
-                        const url = `{{ route('cetak.pdf', ['role' => 'HSSE']) }}?${params}`;
-                        window.open(url, '_blank');
-                    });
-                    */
+                    
                 } else {
                     console.error("jQuery is not loaded. DataTable cannot be initialized.");
                 }

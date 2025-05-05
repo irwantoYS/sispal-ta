@@ -380,31 +380,6 @@
                     }
                 });
 
-                // Logika form pencarian tanggal (jika ada)
-                // Jika Anda menggunakan form terpisah untuk search tanggal:
-                /*
-                $('#searchForm').on('submit', function(e) {
-                    e.preventDefault();
-                    const startDate = $('#startDate').val();
-                    const endDate = $('#endDate').val();
-                    // Logika filter DataTable berdasarkan tanggal
-                    // Anda mungkin perlu custom filtering function DataTable di sini
-                });
-                */
-
-                // Tombol cetak PDF (Contoh jika tombolnya #cetakPDF)
-                // Jika tombol PDF di header adalah link biasa, ini tidak perlu
-                /*
-                $('#cetakPDF').on('click', function() {
-                    const params = $.param({
-                        search: table.search(), // Ambil kata kunci pencarian DataTable
-                        startDate: $('input[name="startDate"]').val(), 
-                        endDate: $('input[name="endDate"]').val(), 
-                    });
-                    const url = `{{ route('cetak.pdf', ['role' => 'Driver']) }}?${params}`;
-                    window.open(url, '_blank');
-                });
-                */
             } else {
                 console.error("jQuery is not loaded. DataTable cannot be initialized.");
             }
