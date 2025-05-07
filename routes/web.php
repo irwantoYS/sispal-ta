@@ -114,3 +114,8 @@ Route::get('/perjalanan/pdf/{id}', [PDFController::class, 'StatusPerjalananPDF']
 //notification
 Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
 Route::patch('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+
+// Halaman Offline PWA
+Route::get('/offline', function () {
+    return view('offline');
+})->name('pwa.offline');
