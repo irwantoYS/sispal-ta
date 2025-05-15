@@ -34,7 +34,7 @@ class HSSEKelolaAkunController extends Controller
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:ManagerArea,HSSE,Driver',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:6000',
         ], [
             'nama.required' => 'Nama wajib diisi.',
             'no_telepon.required' => 'Nomor telepon wajib diisi.',

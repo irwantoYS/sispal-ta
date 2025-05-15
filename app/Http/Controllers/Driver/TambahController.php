@@ -36,7 +36,7 @@ class TambahController extends Controller
             'kendaraan_id' => 'required|exists:kendaraan,id',
             'bbm_awal' => 'required|numeric',
             'jam_pergi' => 'required',
-            'foto_awal' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'foto_awal' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:6000',
             'estimasi_jarak' => 'required',
         ]);
 
@@ -101,7 +101,7 @@ class TambahController extends Controller
         $request->validate([
             'bbm_akhir' => 'required|numeric',
             'jam_kembali' => 'required',
-            'foto_akhir' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'foto_akhir' => 'image|mimes:jpeg,png,jpg,gif,svg|max:6000',
         ]);
 
         $perjalanan->update([

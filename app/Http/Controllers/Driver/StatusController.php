@@ -39,7 +39,7 @@ class StatusController extends Controller
         $request->validate([
             'status' => 'required|in:menunggu validasi,disetujui,ditolak',
             'alasan' => 'nullable|string|max:255', // Validasi alasan (jika ada)
-            'foto_akhir' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validasi foto akhir
+            'foto_akhir' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:6000', // Validasi foto akhir
         ]);
 
         // Mencari data perjalanan berdasarkan ID

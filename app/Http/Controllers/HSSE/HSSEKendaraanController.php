@@ -25,7 +25,7 @@ class HSSEKendaraanController extends Controller
             'no_kendaraan' => 'required|string|max:255',
             'tipe_kendaraan' => 'required|string|max:255',
             'km_per_liter' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:6000',
         ]);
 
         if ($request->hasFile('image')) {
@@ -57,7 +57,7 @@ class HSSEKendaraanController extends Controller
             'no_kendaraan' => 'required|string|max:255',
             'tipe_kendaraan' => 'required|string|max:255',
             'km_per_liter' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:6000',
         ]);
 
         $kendaraan = Kendaraan::findOrFail($id);
