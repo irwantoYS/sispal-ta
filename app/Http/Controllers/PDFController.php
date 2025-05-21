@@ -7,6 +7,7 @@ use App\Models\LaporanPerjalanan;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use carbon\Carbon;
+use App\Models\InspeksiKendaraan;
 
 
 class PDFController extends Controller
@@ -169,5 +170,26 @@ class PDFController extends Controller
 
         // Ubah dari stream ke download
         return $pdf->download("status_perjalanan_{$perjalanan->id}.pdf");
+    }
+
+    public function InspeksiKendaraanPDF($id)
+    {
+        // Dapatkan data inspeksi kendaraan
+        $inspeksi = InspeksiKendaraan::with(['kendaraan', 'user'])->findOrFail($id);
+
+        // Siapkan data untuk view
+        $data = [
+            'title' => 'Laporan Inspeksi Kendaraan',
+            'inspeksi' => $inspeksi,
+            'kendaraan' => $inspeksi->kendaraan,
+            'user' => $inspeksi->user,
+            'tanggal_inspeksi' => \Carbon\Carbon::parse($inspeksi->tanggal_inspeksi)->format('d/m/Y H:i'),
+        ];
+
+        // Generate PDF
+        $pdf = PDF::loadView('pdf.inspeksi_kendaraan', $data)->setPaper('A4', 'portrait');
+
+        // Download PDF
+        return $pdf->download("inspeksi_kendaraan_{$inspeksi->kendaraan->no_kendaraan}_{$inspeksi->tanggal_inspeksi}.pdf");
     }
 }

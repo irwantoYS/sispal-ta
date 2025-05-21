@@ -118,7 +118,7 @@
                                         @foreach ($availableMonths as $month)
                                             <option value="{{ $month }}"
                                                 {{ $selectedMonth == $month ? 'selected' : '' }}>
-                                                {{ \Carbon\Carbon::create()->month($month)->translatedFormat('F') }}
+                                                {{ Carbon\Carbon::create(null, $month, 1)->format('F') }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -139,7 +139,7 @@
                                 </div>
                             </form>
                             <p class="mt-3 mb-4">Menampilkan data untuk:
-                                <strong>{{ \Carbon\Carbon::create()->month($selectedMonth)->translatedFormat('F') }}
+                                <strong>{{ Carbon\Carbon::create(null, $selectedMonth, 1)->format('F') }}
                                     {{ $selectedYear }}</strong>
                             </p>
                             <hr>

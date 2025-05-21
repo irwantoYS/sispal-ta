@@ -110,6 +110,7 @@ Route::middleware(['auth', 'DriverMiddleware'])->group(function () {
 //cetak_pdf
 Route::get('/cetak-pdf/{role}', [PDFController::class, 'cetakPDF'])->name('cetak.pdf');
 Route::get('/perjalanan/pdf/{id}', [PDFController::class, 'StatusPerjalananPDF'])->name('statusperjalanan.pdf');
+Route::get('/inspeksi/pdf/{id}', [PDFController::class, 'InspeksiKendaraanPDF'])->name('inspeksi.pdf');
 
 //notification
 Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
