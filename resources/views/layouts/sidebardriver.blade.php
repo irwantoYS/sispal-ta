@@ -174,10 +174,10 @@
                                             </div>
                                         </div>
                                     </li>
-                                    <li>
+                                    {{-- <li>
                                         <a class="see-all" href="#">Lihat Semua Notifikasi <i
                                                 class="fa fa-angle-right"></i></a>
-                                    </li>
+                                    </li> --}}
                                 </ul>
                             </li>
 
@@ -202,16 +202,17 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-sm">
-                                                    {{-- Pastikan class img benar --}}
-                                                    <img src="{{ Auth::user() && Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('kai/assets/img/default-user.jpg') }}"
-                                                        alt="..." class="avatar-img rounded">
+                                                    {{-- Pastikan class img benar dan tambahkan ID untuk modal --}}
+                                                    <a href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#profileModalDriver">
+                                                        <img src="{{ Auth::user() && Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('kai/assets/img/default-user.jpg') }}"
+                                                            alt="..." class="avatar-img rounded">
+                                                    </a>
                                                 </div>
                                                 <div class="u-text">
                                                     <h4>{{ Auth::user()->nama }}</h4>
                                                     <p class="text-muted">{{ Auth::user()->role }}</p>
-                                                    {{--  Perbaiki route ke profile  --}}
-                                                    <a href="#" class="btn btn-xs btn-secondary btn-sm">View
-                                                        Profile</a>
+                                                    {{-- Hapus tombol View Profile --}}
                                                 </div>
                                             </div>
                                         </li>
@@ -245,6 +246,23 @@
             </footer>
         </div>
 
+    </div>
+
+    {{-- Modal untuk menampilkan gambar profil Driver --}}
+    <div class="modal fade" id="profileModalDriver" tabindex="-1" aria-labelledby="profileModalDriverLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalDriverLabel">Foto Profil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="{{ Auth::user() && Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('kai/assets/img/default-user.jpg') }}"
+                        alt="Foto Profil" class="img-fluid">
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- Pindahkan jquery ke atas --}}

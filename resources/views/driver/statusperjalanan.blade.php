@@ -259,59 +259,61 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table table-bordered">
-                        <tr>
-                            <th style="width:30%">Nama Pengemudi</th>
-                            <td id="detailNamaPengemudi"></td>
-                        </tr>
-                        <tr>
-                            <th>Nama Pegawai</th>
-                            <td id="detailNamaPegawai"></td>
-                        </tr>
-                        <tr>
-                            <th>Titik Awal</th>
-                            <td id="detailTitikAwal"></td>
-                        </tr>
-                        <tr>
-                            <th>Titik Akhir</th>
-                            <td id="detailTitikAkhir"></td>
-                        </tr>
-                        <tr>
-                            <th>Tujuan</th>
-                            <td id="detailTujuan"></td>
-                        </tr>
-                        <tr>
-                            <th>No Kendaraan</th>
-                            <td id="detailNoKendaraan"></td>
-                        </tr>
-                        <tr>
-                            <th>Tipe Kendaraan</th>
-                            <td id="detailTipeKendaraan"></td>
-                        </tr>
-                        <tr>
-                            <th>Estimasi Jarak Pergi</th>
-                            <td id="detailEstimasiJarak"></td>
-                        </tr>
-                        <tr>
-                            <th>BBM Awal</th>
-                            <td>
-                                <div class="progress" style="height: 25px;">
-                                    <div id="detailBbmAwalBar" class="progress-bar bg-danger" role="progressbar"
-                                        style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8">
-                                        <span id="detailBbmAwalValue">0</span>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th style="width:30%">Nama Pengemudi</th>
+                                <td id="detailNamaPengemudi"></td>
+                            </tr>
+                            <tr>
+                                <th>Nama Pegawai</th>
+                                <td id="detailNamaPegawai"></td>
+                            </tr>
+                            <tr>
+                                <th>Titik Awal</th>
+                                <td id="detailTitikAwal"></td>
+                            </tr>
+                            <tr>
+                                <th>Titik Akhir</th>
+                                <td id="detailTitikAkhir"></td>
+                            </tr>
+                            <tr>
+                                <th>Tujuan</th>
+                                <td id="detailTujuan"></td>
+                            </tr>
+                            <tr>
+                                <th>No Kendaraan</th>
+                                <td id="detailNoKendaraan"></td>
+                            </tr>
+                            <tr>
+                                <th>Tipe Kendaraan</th>
+                                <td id="detailTipeKendaraan"></td>
+                            </tr>
+                            <tr>
+                                <th>Estimasi Jarak Pergi</th>
+                                <td id="detailEstimasiJarak"></td>
+                            </tr>
+                            <tr>
+                                <th>BBM Awal</th>
+                                <td>
+                                    <div class="progress" style="height: 25px;">
+                                        <div id="detailBbmAwalBar" class="progress-bar bg-danger" role="progressbar"
+                                            style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8">
+                                            <span id="detailBbmAwalValue">0</span>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Jam Pergi</th>
-                            <td id="detailJamPergi"></td>
-                        </tr>
-                        <tr>
-                            <th>Status Kendaraan</th>
-                            <td id="detailKendaraanStatus"></td>
-                        </tr>
-                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Jam Pergi</th>
+                                <td id="detailJamPergi"></td>
+                            </tr>
+                            <tr>
+                                <th>Status Kendaraan</th>
+                                <td id="detailKendaraanStatus"></td>
+                            </tr>
+                        </table>
+                    </div>
                     <div id="detailInspeksiSection" style="display: none; margin-top: 15px;">
                         <h5>Kendaraan yang Digunakan Perlu Perbaikan:</h5>
                         <ul id="detailInspeksiItems" class="list-group">
@@ -365,19 +367,23 @@
                     const button = event.target;
                     document.getElementById('detailNamaPengemudi').textContent = button.getAttribute(
                         'data-nama-pengemudi') || '-';
+
                     // Format Nama Pegawai dari data attribute
-                    const namaPegawaiData = button.getAttribute('data-nama-pegawai');
+                    const namaPegawaiDataEncoded = button.getAttribute('data-nama-pegawai');
                     let namaPegawaiDisplay = '-';
-                    if (namaPegawaiData) {
+                    if (namaPegawaiDataEncoded) {
+                        const textarea = document.createElement('textarea');
+                        textarea.innerHTML = namaPegawaiDataEncoded;
+                        const namaPegawaiDataDecoded = textarea.value;
                         try {
-                            const namaArray = JSON.parse(namaPegawaiData);
+                            const namaArray = JSON.parse(namaPegawaiDataDecoded);
                             if (Array.isArray(namaArray)) {
                                 namaPegawaiDisplay = namaArray.join(', ');
                             } else {
-                                namaPegawaiDisplay = namaPegawaiData; // Bukan JSON array, tampilkan asli
+                                namaPegawaiDisplay = namaPegawaiDataDecoded;
                             }
                         } catch (e) {
-                            namaPegawaiDisplay = namaPegawaiData; // Gagal parse JSON, tampilkan asli
+                            namaPegawaiDisplay = namaPegawaiDataDecoded;
                         }
                     }
                     document.getElementById('detailNamaPegawai').textContent = namaPegawaiDisplay;

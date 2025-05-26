@@ -80,7 +80,18 @@
                     <tr>
                         <td>{{ $nomor++ }}</td> {{-- Increment nomor untuk setiap baris --}}
                         <td>{{ $item->user->nama ?? '-' }}</td>
-                        <td>{{ $item->nama_pegawai ?? '-' }}</td>
+                        <td>
+                            @php
+                                $namaPegawaiString = $item->nama_pegawai ?? '-';
+                                $namaPegawaiDecoded = html_entity_decode($namaPegawaiString);
+                                $namaArray = json_decode($namaPegawaiDecoded);
+                                if (is_array($namaArray)) {
+                                    echo e(implode(', ', $namaArray));
+                                } else {
+                                    echo e($namaPegawaiDecoded);
+                                }
+                            @endphp
+                        </td>
                         <td>{{ $item->titik_awal ?? '-' }}</td>
                         <td>{{ $item->titik_akhir ?? '-' }}</td>
                         <td>{{ $item->tujuan_perjalanan ?? '-' }}</td>

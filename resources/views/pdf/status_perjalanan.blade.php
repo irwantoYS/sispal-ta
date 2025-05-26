@@ -42,7 +42,18 @@
         </thead>
         <tbody>
             <tr>
-                <td>{{ $perjalanan->nama_pegawai }}</td>
+                <td>
+                    @php
+                        $namaPegawaiString = $perjalanan->nama_pegawai ?? '-';
+                        $namaPegawaiDecoded = html_entity_decode($namaPegawaiString);
+                        $namaArray = json_decode($namaPegawaiDecoded);
+                        if (is_array($namaArray)) {
+                            echo e(implode(', ', $namaArray));
+                        } else {
+                            echo e($namaPegawaiDecoded);
+                        }
+                    @endphp
+                </td>
                 <td>{{ $perjalanan->titik_awal }}</td>
                 <td>{{ $perjalanan->titik_akhir }}</td>
                 <td>{{ $perjalanan->tujuan_perjalanan }}</td>

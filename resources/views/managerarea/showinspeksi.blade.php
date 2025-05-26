@@ -13,6 +13,14 @@
 
 
             <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Detail Inspeksi Kendaraan</h4>
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ route('inspeksi.pdf', $inspeksi->id) }}" class="btn btn-primary">
+                            <i class="fas fa-file-pdf"></i> Cetak PDF
+                        </a>
+                    </div>
+                </div>
                 <div class="card-body">
                     <h5 class="card-title">Inspeksi Tanggal: {{ $inspeksi->tanggal_inspeksi }}</h5>
                     <p>Kendaraan: {{ $inspeksi->kendaraan->no_kendaraan }} - {{ $inspeksi->kendaraan->tipe_kendaraan }}</p>

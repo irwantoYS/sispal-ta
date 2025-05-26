@@ -152,78 +152,82 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>Nama Pengemudi</th>
-                                <td id="detailNamaPengemudi"></td>
-                            </tr>
-                            <tr>
-                                <th>Nama Pegawai</th>
-                                <td id="detailNamaPegawai"></td>
-                            </tr>
-                            <tr>
-                                <th>Titik Awal</th>
-                                <td id="detailTitikAwal"></td>
-                            </tr>
-                            <tr>
-                                <th>Titik Akhir</th>
-                                <td id="detailTitikAkhir"></td>
-                            </tr>
-                            <tr>
-                                <th>Tujuan</th>
-                                <td id="detailTujuan"></td>
-                            </tr>
-                            <tr>
-                                <th>No Kendaraan</th>
-                                <td id="detailNoKendaraan"></td>
-                            </tr>
-                            <tr>
-                                <th>Tipe Kendaraan</th>
-                                <td id="detailTipeKendaraan"></td>
-                            </tr>
-                            <tr>
-                                <th>KM Akhir</th>
-                                <td id="detailKmAkhir"></td>
-                            </tr>
-                            <tr>
-                                <th>BBM Awal</th>
-                                <td>
-                                    <div class="progress" style="height: 25px;">
-                                        <div id="detailBbmAwalBar" class="progress-bar" role="progressbar"
-                                            style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8">
-                                            <span id="detailBbmAwalValue">0/8</span>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Nama Pengemudi</th>
+                                    <td id="detailNamaPengemudi"></td>
+                                </tr>
+                                <tr>
+                                    <th>Nama Pegawai</th>
+                                    <td id="detailNamaPegawai"></td>
+                                </tr>
+                                <tr>
+                                    <th>Titik Awal</th>
+                                    <td id="detailTitikAwal"></td>
+                                </tr>
+                                <tr>
+                                    <th>Titik Akhir</th>
+                                    <td id="detailTitikAkhir"></td>
+                                </tr>
+                                <tr>
+                                    <th>Tujuan</th>
+                                    <td id="detailTujuan"></td>
+                                </tr>
+                                <tr>
+                                    <th>No Kendaraan</th>
+                                    <td id="detailNoKendaraan"></td>
+                                </tr>
+                                <tr>
+                                    <th>Tipe Kendaraan</th>
+                                    <td id="detailTipeKendaraan"></td>
+                                </tr>
+                                <tr>
+                                    <th>KM Akhir</th>
+                                    <td id="detailKmAkhir"></td>
+                                </tr>
+                                <tr>
+                                    <th>BBM Awal</th>
+                                    <td>
+                                        <div class="progress" style="height: 25px;">
+                                            <div id="detailBbmAwalBar" class="progress-bar" role="progressbar"
+                                                style="width: 0%;" aria-valuenow="0" aria-valuemin="0"
+                                                aria-valuemax="8">
+                                                <span id="detailBbmAwalValue">0/8</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>BBM Akhir</th>
-                                <td>
-                                    <div class="progress" style="height: 25px;">
-                                        <div id="detailBbmAkhirBar" class="progress-bar" role="progressbar"
-                                            style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8">
-                                            <span id="detailBbmAkhirValue">0/8</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>BBM Akhir</th>
+                                    <td>
+                                        <div class="progress" style="height: 25px;">
+                                            <div id="detailBbmAkhirBar" class="progress-bar" role="progressbar"
+                                                style="width: 0%;" aria-valuenow="0" aria-valuemin="0"
+                                                aria-valuemax="8">
+                                                <span id="detailBbmAkhirValue">0/8</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Jam Pergi</th>
-                                <td id="detailJamPergi"></td>
-                            </tr>
-                            <tr>
-                                <th>Jam Kembali</th>
-                                <td id="detailJamKembali"></td>
-                            </tr>
-                            <tr>
-                                <th>Estimasi Waktu</th>
-                                <td id="detailEstimasiWaktu"></td>
-                            </tr>
-                            <tr>
-                                <th>Estimasi BBM</th>
-                                <td id="detailEstimasiBBM"></td>
-                            </tr>
-                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Jam Pergi</th>
+                                    <td id="detailJamPergi"></td>
+                                </tr>
+                                <tr>
+                                    <th>Jam Kembali</th>
+                                    <td id="detailJamKembali"></td>
+                                </tr>
+                                <tr>
+                                    <th>Estimasi Waktu</th>
+                                    <td id="detailEstimasiWaktu"></td>
+                                </tr>
+                                <tr>
+                                    <th>Estimasi BBM</th>
+                                    <td id="detailEstimasiBBM"></td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -312,22 +316,27 @@
                         // Ambil data dari atribut data-*
                         document.getElementById('detailNamaPengemudi').textContent = button.getAttribute(
                             'data-nama-pengemudi') || '-';
+
                         // Format Nama Pegawai dari data attribute
-                        const namaPegawaiData = button.getAttribute('data-nama-pegawai');
+                        const namaPegawaiDataEncoded = button.getAttribute('data-nama-pegawai');
                         let namaPegawaiDisplay = '-';
-                        if (namaPegawaiData) {
+                        if (namaPegawaiDataEncoded) {
+                            const textarea = document.createElement('textarea');
+                            textarea.innerHTML = namaPegawaiDataEncoded;
+                            const namaPegawaiDataDecoded = textarea.value;
                             try {
-                                const namaArray = JSON.parse(namaPegawaiData);
+                                const namaArray = JSON.parse(namaPegawaiDataDecoded);
                                 if (Array.isArray(namaArray)) {
                                     namaPegawaiDisplay = namaArray.join(', ');
                                 } else {
-                                    namaPegawaiDisplay = namaPegawaiData; // Bukan JSON array, tampilkan asli
+                                    namaPegawaiDisplay = namaPegawaiDataDecoded;
                                 }
                             } catch (e) {
-                                namaPegawaiDisplay = namaPegawaiData; // Gagal parse JSON, tampilkan asli
+                                namaPegawaiDisplay = namaPegawaiDataDecoded;
                             }
                         }
                         document.getElementById('detailNamaPegawai').textContent = namaPegawaiDisplay;
+
                         document.getElementById('detailTitikAwal').textContent = button.getAttribute(
                             'data-titik-awal') || '-';
                         document.getElementById('detailTitikAkhir').textContent = button.getAttribute(
@@ -438,7 +447,7 @@
                         }
                     });
 
-                    
+
                 } else {
                     console.error("jQuery is not loaded. DataTable cannot be initialized.");
                 }

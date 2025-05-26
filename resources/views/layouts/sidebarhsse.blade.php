@@ -197,14 +197,17 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-sm">
-                                                    <img src="{{ Auth::user() && Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('kai/assets/img/default-user.jpg') }}"
-                                                        alt=" " class="avatar-img rounded">
+                                                    {{-- Tambahkan ID untuk modal --}}
+                                                    <a href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#profileModalHSSE">
+                                                        <img src="{{ Auth::user() && Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('kai/assets/img/default-user.jpg') }}"
+                                                            alt=" " class="avatar-img rounded">
+                                                    </a>
                                                 </div>
                                                 <div class="u-text">
                                                     <h4>{{ Auth::user()->nama }}</h4>
                                                     <p class="text-muted">{{ Auth::user()->role }}</p>
-                                                    <a href="#" {{--  Ganti route ke profile  --}}
-                                                        class="btn btn-xs btn-secondary btn-sm">View Profile</a>
+                                                    {{-- Hapus tombol View Profile --}}
                                                 </div>
                                             </div>
                                         </li>
@@ -237,6 +240,23 @@
                     </div>
                 </div>
             </footer>
+        </div>
+    </div>
+
+    {{-- Modal untuk menampilkan gambar profil HSSE --}}
+    <div class="modal fade" id="profileModalHSSE" tabindex="-1" aria-labelledby="profileModalHSSELabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalHSSELabel">Foto Profil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="{{ Auth::user() && Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('kai/assets/img/default-user.jpg') }}"
+                        alt="Foto Profil" class="img-fluid">
+                </div>
+            </div>
         </div>
     </div>
 

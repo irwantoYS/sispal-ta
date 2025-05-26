@@ -18,36 +18,31 @@ class ManagerAreaController extends Controller
         $totalKendaraan = Kendaraan::count();
         $totalDriver = User::where('role', 'Driver')->count();
 
-        // Hitung Total Keseluruhan (mengikuti logika History: estimasi_jarak * 2 dari perjalanan selesai)
-        $totalJarakSemua = 0; // Inisialisasi
-        $laporanJarak = LaporanPerjalanan::whereNotNull('estimasi_jarak')
-            ->whereNotNull('bbm_akhir')     // Filter Selesai
-            ->whereNotNull('jam_kembali') // Filter Selesai
-            ->get(['estimasi_jarak']);
-        foreach ($laporanJarak as $laporan) {
-            $totalJarakSemua += (float)$laporan->estimasi_jarak * 2;
-        }
+        // Hitung Total Keseluruhan Jarak (menggunakan km_akhir dari perjalanan selesai)
+        $totalJarakSemua = LaporanPerjalanan::whereNotNull('km_akhir')
+            ->whereNotNull('bbm_akhir')
+            ->whereNotNull('jam_kembali')
+            ->sum('km_akhir');
 
         // Hitung Total Estimasi BBM Keseluruhan (dari perjalanan selesai)
-        $totalBbmSemua = 0; // Inisialisasi
+        $totalBbmSemua = 0;
         $laporanBbm = LaporanPerjalanan::with('kendaraan')
-            ->whereNotNull('estimasi_jarak')
-            ->whereNotNull('bbm_akhir')     // Filter Selesai
-            ->whereNotNull('jam_kembali') // Filter Selesai
+            ->whereNotNull('km_akhir') // Gunakan km_akhir
+            ->whereNotNull('bbm_akhir')
+            ->whereNotNull('jam_kembali')
             ->get();
         foreach ($laporanBbm as $laporan) {
-            if ($laporan->kendaraan && $laporan->kendaraan->km_per_liter > 0) {
-                $jarakItem = (float)$laporan->estimasi_jarak * 2;
-                $totalBbmSemua += $jarakItem / (float)$laporan->kendaraan->km_per_liter;
+            if ($laporan->kendaraan && $laporan->kendaraan->km_per_liter > 0 && $laporan->km_akhir > 0) {
+                $totalBbmSemua += (float)$laporan->km_akhir / (float)$laporan->kendaraan->km_per_liter;
             }
         }
 
         // Hitung Total Waktu Keseluruhan (dari perjalanan selesai)
-        $totalWaktuDetikSemua = LaporanPerjalanan::whereNotNull('bbm_akhir') // Filter Selesai
-            ->whereNotNull('jam_kembali') // Filter Selesai
+        $totalWaktuDetikSemua = LaporanPerjalanan::whereNotNull('bbm_akhir')
+            ->whereNotNull('jam_kembali')
             ->sum(DB::raw('TIMESTAMPDIFF(SECOND, jam_pergi, jam_kembali)'));
 
-        // Filter Bulan dan Tahun (Sama seperti HSSE)
+        // Filter Bulan dan Tahun
         $selectedMonth = (int) $request->input('bulan', Carbon::now()->month);
         $selectedYear = (int) $request->input('tahun', Carbon::now()->year);
 
@@ -58,11 +53,12 @@ class ManagerAreaController extends Controller
             ->orderBy('year')
             ->pluck('year');
 
-        $topDriversByDistance = LaporanPerjalanan::select('pengemudi_id', DB::raw('SUM(estimasi_jarak) as total_jarak'))
+        // Mengambil Top Driver berdasarkan Jarak Tempuh (menggunakan km_akhir)
+        $topDriversByDistance = LaporanPerjalanan::select('pengemudi_id', DB::raw('SUM(km_akhir) as total_jarak'))
             ->with('user')
             ->whereMonth('jam_pergi', $selectedMonth)
             ->whereYear('jam_pergi', $selectedYear)
-            ->whereNotNull('estimasi_jarak')
+            ->whereNotNull('km_akhir') // Pastikan km_akhir ada
             ->groupBy('pengemudi_id')
             ->orderByDesc('total_jarak')
             ->limit(5)

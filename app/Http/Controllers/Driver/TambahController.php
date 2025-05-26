@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Events\PerjalananCreated;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class TambahController extends Controller
 {
@@ -46,10 +47,7 @@ class TambahController extends Controller
             return redirect()->back()->with('error', 'Kendaraan sedang digunakan.');
         }
 
-        // Simpan status SEBELUM diubah
-        $previousStatus = $kendaraan->status;  // <--- SIMPAN STATUS AWAL
-
-        // --- TAMBAHKAN LOGGING DI SINI ---
+        $previousStatus = $kendaraan->status;
         Log::info('TambahController@storePerjalanan:');
         Log::info('  Kendaraan ID: ' . $kendaraan->id);
         Log::info('  Status awal kendaraan: ' . $previousStatus);
@@ -59,6 +57,9 @@ class TambahController extends Controller
 
         Log::info('TambahController@storePerjalanan - Status Kendaraan setelah diubah: ' . $kendaraan->status);
 
+        $estimasi_jarak_numeric = floatval(str_replace(',', '.', $request->estimasi_jarak));
+        $km_akhir_calculated = $estimasi_jarak_numeric * 2;
+
         $perjalanan = LaporanPerjalanan::create([
             'pengemudi_id' => Auth::id(),
             'nama_pegawai' => json_encode($request->nama_pegawai),
@@ -67,7 +68,7 @@ class TambahController extends Controller
             'tujuan_perjalanan' => $request->tujuan_perjalanan,
             'kendaraan_id' => $request->kendaraan_id,
             'km_awal' => null,
-            'km_akhir' => null,
+            'km_akhir' => $km_akhir_calculated,
             'bbm_awal' => $request->bbm_awal,
             'bbm_akhir' => null,
             'jam_pergi' => $request->jam_pergi,
@@ -75,10 +76,10 @@ class TambahController extends Controller
             'foto_awal' => $request->file('foto_awal')->store('foto_perjalanan', 'public'),
             'foto_akhir' => null,
             'status' => 'menunggu validasi',
-            'estimasi_jarak' => $request->estimasi_jarak,
-            'previous_kendaraan_status' => $previousStatus, // <--- SIMPAN KE DATABASE
+            'estimasi_jarak' => $estimasi_jarak_numeric,
+            'estimasi_waktu' => null,
+            'previous_kendaraan_status' => $previousStatus,
         ]);
-
 
         PerjalananCreated::dispatch($perjalanan);
 
@@ -100,8 +101,8 @@ class TambahController extends Controller
 
         $request->validate([
             'bbm_akhir' => 'required|numeric',
-            'jam_kembali' => 'required',
-            'foto_akhir' => 'image|mimes:jpeg,png,jpg,gif,svg|max:6000',
+            'jam_kembali' => 'required|date',
+            'foto_akhir' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:6000',
         ]);
 
         $perjalanan->update([
@@ -110,9 +111,22 @@ class TambahController extends Controller
             'foto_akhir' => $request->hasFile('foto_akhir') ? $request->file('foto_akhir')->store('foto_perjalanan', 'public') : $perjalanan->foto_akhir,
         ]);
 
+        if ($perjalanan->jam_pergi && $perjalanan->jam_kembali) {
+            $jamPergi = Carbon::parse($perjalanan->jam_pergi);
+            $jamKembali = Carbon::parse($perjalanan->jam_kembali);
+
+            if ($jamKembali->greaterThan($jamPergi)) {
+                $durasi = $jamKembali->diff($jamPergi);
+                $perjalanan->estimasi_waktu = $durasi->format('%h jam %i menit');
+            } else {
+                $perjalanan->estimasi_waktu = 'Data waktu tidak valid';
+                Log::warning('Perhitungan durasi tidak valid: Jam kembali tidak lebih besar dari jam pergi.', ['perjalanan_id' => $perjalanan->id]);
+            }
+            $perjalanan->save();
+        }
+
         $kendaraan = $perjalanan->kendaraan;
 
-        // Logging untuk membantu debug
         Log::info('UpdatePerjalanan - Mengembalikan status kendaraan:');
         Log::info('  Kendaraan ID: ' . $kendaraan->id);
         Log::info('  Status sebelum update: ' . $kendaraan->status);

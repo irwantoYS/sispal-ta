@@ -45,7 +45,7 @@ class DriverhistoryController extends Controller
             $perjalananQuery->where('pengemudi_id', Auth::user()->id);
         }
 
-        $perjalanan = $perjalananQuery->get();
+        $perjalanan = $perjalananQuery->with('kendaraan')->get(); // Eager load kendaraan
 
         // --- Perhitungan di Luar Loop ---
         $totalEstimasiJarak = 0;
@@ -53,32 +53,28 @@ class DriverhistoryController extends Controller
         $totalDurasiMenit = 0;
 
         foreach ($perjalanan as $item) {
-            // Hitung Durasi (pastikan format tanggal/waktu konsisten)
-            $jam_pergi = Carbon::parse($item->jam_pergi); // Carbon::parse lebih reliable
-            $jam_kembali = Carbon::parse($item->jam_kembali);
-            $durasi = $jam_pergi->diffInMinutes($jam_kembali);
-            $totalDurasiMenit += $durasi;
+            // Durasi perjalanan sudah dihitung dan disimpan di $item->estimasi_waktu
+            // oleh TambahController@updatePerjalanan. Untuk total, kita masih hitung dari jam.
+            if ($item->jam_pergi && $item->jam_kembali) {
+                $jam_pergi = Carbon::parse($item->jam_pergi);
+                $jam_kembali = Carbon::parse($item->jam_kembali);
+                $durasi = $jam_pergi->diffInMinutes($jam_kembali);
+                $totalDurasiMenit += $durasi;
+                // $item->estimasi_waktu sudah memiliki format "X jam Y menit" dari database
+            }
 
-            $jam = floor($durasi / 60);
-            $menit = $durasi % 60;
-            // Simpan durasi yang diformat, TAPI simpan juga durasi dalam menit (untuk perhitungan total)
-            $item->estimasi_waktu = sprintf("%02d Jam %02d Menit", $jam, $menit);
+            // km_akhir sudah dihitung (estimasi_jarak * 2) dan disimpan di database
+            // oleh TambahController@storePerjalanan.
 
-
-            // Hitung km_akhir dan estimasi_bbm (pastikan Kendaraan ada)
-            $total_jarak = (float)$item->estimasi_jarak * 2;
-            $item->km_akhir = $total_jarak; // Simpan sebagai float/decimal!
-
-            if ($item->Kendaraan) { // Lebih ringkas, dan hindari error jika Kendaraan null
-                $estimasi_bbm = $item->km_akhir / $item->Kendaraan->km_per_liter;
-                $item->estimasi_bbm = $estimasi_bbm; // Simpan sebagai float/decimal!
+            if ($item->Kendaraan && $item->Kendaraan->km_per_liter > 0) {
+                $item->estimasi_bbm = (float)$item->km_akhir / $item->Kendaraan->km_per_liter;
             } else {
-                $item->estimasi_bbm = 0; // Default yang lebih baik daripada string kosong
+                $item->estimasi_bbm = 0;
             }
 
             // Akumulasi total
-            $totalEstimasiJarak += $item->km_akhir;
-            $totalEstimasiBBM += $item->estimasi_bbm;
+            $totalEstimasiJarak += (float)$item->km_akhir; // Gunakan km_akhir dari database
+            $totalEstimasiBBM += (float)$item->estimasi_bbm;
         }
         // --- Akhir Perhitungan ---
 

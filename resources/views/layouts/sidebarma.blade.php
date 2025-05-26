@@ -179,10 +179,7 @@
                                             </div>
                                         </div>
                                     </li>
-                                    <li>
-                                        <a class="see-all" href="#">Lihat Semua Notifikasi <i
-                                                class="fa fa-angle-right"></i></a>
-                                    </li>
+                                    
                                 </ul>
                             </li>
 
@@ -206,15 +203,17 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-sm">
-                                                    <img src="{{ asset('storage/' . (Auth::user()->image ?? 'images/default-user.jpg')) }}"
-                                                        alt=" " class="avatar-img rounded">
+                                                    {{-- Tambahkan ID untuk modal --}}
+                                                    <a href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#profileModalMA">
+                                                        <img src="{{ asset('storage/' . (Auth::user()->image ?? 'images/default-user.jpg')) }}"
+                                                            alt=" " class="avatar-img rounded">
+                                                    </a>
                                                 </div>
                                                 <div class="u-text">
                                                     <h4>{{ Auth::user()->nama }}</h4>
                                                     <p class="text-muted">{{ Auth::user()->role }}</p>
-                                                    {{-- Perbaiki route ke profile --}}
-                                                    <a href="#" class="btn btn-xs btn-secondary btn-sm">View
-                                                        Profile</a>
+                                                    {{-- Hapus tombol View Profile --}}
                                                 </div>
                                             </div>
                                         </li>
@@ -251,7 +250,22 @@
         </div>
     </div>
 
-
+    {{-- Modal untuk menampilkan gambar profil Manager Area --}}
+    <div class="modal fade" id="profileModalMA" tabindex="-1" aria-labelledby="profileModalMALabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalMALabel">Foto Profil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="{{ asset('storage/' . (Auth::user()->image ?? 'images/default-user.jpg')) }}"
+                        alt="Foto Profil" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- Pindahkan jQuery ke atas --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -307,7 +321,7 @@
 
             // Event listener untuk tombol "Tandai Sudah Dibaca"
             document.querySelector('.notif-box').addEventListener('click', function(
-            event) { // Gunakan event delegation
+                event) { // Gunakan event delegation
                 if (event.target.classList.contains('mark-as-read-btn')) {
                     event.preventDefault(); // Mencegah form di-submit secara normal
                     const form = event.target.closest('form'); // Cari form terdekat
@@ -326,7 +340,7 @@
                             if (data.success) {
                                 // Hapus notifikasi dari tampilan
                                 form.closest('.notif-item')
-                            .remove(); //Hapus parent element yang terdekat dengan class notif-item
+                                    .remove(); //Hapus parent element yang terdekat dengan class notif-item
                                 // Update jumlah notifikasi
                                 updateUnreadCount();
                             } else {

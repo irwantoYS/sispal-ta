@@ -29,16 +29,12 @@ class DriverController extends Controller
             ->count('kendaraan_id');
 
         // Hitung Total Keseluruhan (HANYA dari perjalanan SELESAI oleh driver ini)
-        // Jarak (mengikuti logika History: estimasi_jarak * 2)
-        $totalJarakDriverSelesai = 0;
-        $laporanJarakDriver = LaporanPerjalanan::where('pengemudi_id', $driverId)
-            ->whereNotNull('estimasi_jarak')
+        // Jarak (menggunakan km_akhir dari database)
+        $totalJarakDriverSelesai = LaporanPerjalanan::where('pengemudi_id', $driverId)
+            ->whereNotNull('km_akhir') // Gunakan km_akhir
             ->whereNotNull('bbm_akhir')
             ->whereNotNull('jam_kembali')
-            ->get(['estimasi_jarak']);
-        foreach ($laporanJarakDriver as $laporan) {
-            $totalJarakDriverSelesai += (float)$laporan->estimasi_jarak * 2;
-        }
+            ->sum('km_akhir'); // Jumlahkan km_akhir
 
         // Waktu
         $totalWaktuDetikDriverSelesai = LaporanPerjalanan::where('pengemudi_id', $driverId)
@@ -47,17 +43,16 @@ class DriverController extends Controller
             ->sum(DB::raw('TIMESTAMPDIFF(SECOND, jam_pergi, jam_kembali)'));
 
         // Hitung Total Estimasi BBM Keseluruhan (dari perjalanan SELESAI oleh driver ini)
-        $totalBbmDriverSelesai = 0; // Ganti nama variabel & filter
+        $totalBbmDriverSelesai = 0;
         $laporanBbmDriver = LaporanPerjalanan::with('kendaraan')
-            ->where('pengemudi_id', $driverId) // Filter driver
-            ->whereNotNull('estimasi_jarak')
+            ->where('pengemudi_id', $driverId)
+            ->whereNotNull('km_akhir') // Pastikan km_akhir ada
             ->whereNotNull('bbm_akhir')
             ->whereNotNull('jam_kembali')
-            ->get();
+            ->get(); // Ambil semua kolom yang dibutuhkan, termasuk km_akhir
         foreach ($laporanBbmDriver as $laporan) {
-            if ($laporan->kendaraan && $laporan->kendaraan->km_per_liter > 0) {
-                $jarakItem = (float)$laporan->estimasi_jarak * 2;
-                $totalBbmDriverSelesai += $jarakItem / (float)$laporan->kendaraan->km_per_liter;
+            if ($laporan->kendaraan && $laporan->kendaraan->km_per_liter > 0 && $laporan->km_akhir > 0) {
+                $totalBbmDriverSelesai += (float)$laporan->km_akhir / (float)$laporan->kendaraan->km_per_liter;
             }
         }
 
@@ -73,11 +68,12 @@ class DriverController extends Controller
             ->orderBy('year')
             ->pluck('year');
 
+        // Statistik Jarak bulanan (menggunakan km_akhir)
         $statsJarak = LaporanPerjalanan::where('pengemudi_id', $driverId)
             ->whereMonth('jam_pergi', $selectedMonth)
             ->whereYear('jam_pergi', $selectedYear)
-            ->whereNotNull('estimasi_jarak')
-            ->sum('estimasi_jarak');
+            ->whereNotNull('km_akhir') // Pastikan km_akhir ada
+            ->sum('km_akhir'); // Jumlahkan km_akhir
 
         $statsJumlahPerjalanan = LaporanPerjalanan::where('pengemudi_id', $driverId)
             ->whereMonth('jam_pergi', $selectedMonth)
