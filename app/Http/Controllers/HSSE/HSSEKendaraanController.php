@@ -23,7 +23,8 @@ class HSSEKendaraanController extends Controller
         // Validasi data permintaan
         $validatedData = $request->validate([
             'no_kendaraan' => 'required|string|max:255',
-            'tipe_kendaraan' => 'required|string|max:255',
+            'merk_kendaraan' => 'required|string|max:255',
+            'model_mobil' => 'required|string|max:255',
             'km_per_liter' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:6000',
         ]);
@@ -41,7 +42,7 @@ class HSSEKendaraanController extends Controller
         // Membuat entri Kendaraan baru dengan status default 'ready'
         Kendaraan::create([
             'no_kendaraan' => $request->no_kendaraan,
-            'tipe_kendaraan' => $request->tipe_kendaraan,
+            'tipe_kendaraan' => $request->merk_kendaraan . ' || ' . $request->model_mobil,
             'km_per_liter' => $request->km_per_liter,
             'status' => 'ready', // Status default diatur menjadi 'ready'
             'image' => $imagePath,
@@ -55,7 +56,8 @@ class HSSEKendaraanController extends Controller
         // Validasi data permintaan
         $validatedData = $request->validate([
             'no_kendaraan' => 'required|string|max:255',
-            'tipe_kendaraan' => 'required|string|max:255',
+            'merk_kendaraan' => 'required|string|max:255',
+            'model_mobil' => 'required|string|max:255',
             'km_per_liter' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:6000',
         ]);
@@ -63,7 +65,7 @@ class HSSEKendaraanController extends Controller
         $kendaraan = Kendaraan::findOrFail($id);
 
         $kendaraan->no_kendaraan = $request->no_kendaraan;
-        $kendaraan->tipe_kendaraan = $request->tipe_kendaraan;
+        $kendaraan->tipe_kendaraan = $request->merk_kendaraan . ' || ' . $request->model_mobil;
         $kendaraan->km_per_liter = $request->km_per_liter;
 
         if ($request->hasFile('image')) {

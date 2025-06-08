@@ -52,12 +52,18 @@
                                                             name="no_kendaraan" placeholder="BE 1000 AA" required />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12">
+                                                <div class="col-md-6">
                                                     <div class="form-group form-group-default">
-                                                        <label>Tipe Kendaraan</label>
-                                                        <input type="text" class="form-control" id="tipeKendaraan"
-                                                            name="tipe_kendaraan"
-                                                            placeholder="Merk Kendaraan || Model Mobil" required />
+                                                        <label>Merk Kendaraan</label>
+                                                        <input type="text" class="form-control" id="merkKendaraan"
+                                                            name="merk_kendaraan" placeholder="Contoh: Toyota" required />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Model Mobil</label>
+                                                        <input type="text" class="form-control" id="modelMobil"
+                                                            name="model_mobil" placeholder="Contoh: Avanza" required />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12">
@@ -79,7 +85,8 @@
                                         </form>
                                     </div>
                                     <div class="modal-footer border-0">
-                                        <button type="button" id="addKendaraanButton" class="btn btn-primary">Tambah</button>
+                                        <button type="button" id="addKendaraanButton"
+                                            class="btn btn-primary">Tambah</button>
                                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
                                     </div>
 
@@ -94,7 +101,8 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama Kendaraan</th>
-                                        <th>Tipe Kendaraan</th>
+                                        <th>Merk Kendaraan</th>
+                                        <th>Model Mobil</th>
                                         <th>KM/L</th>
                                         <th>Status</th>
                                         <th>Gambar</th>
@@ -107,7 +115,13 @@
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $tambahkendaraan->no_kendaraan }}</td>
-                                            <td>{{ $tambahkendaraan->tipe_kendaraan }}</td>
+                                            @php
+                                                $tipe = explode(' || ', $tambahkendaraan->tipe_kendaraan);
+                                                $merk = $tipe[0] ?? '';
+                                                $model = $tipe[1] ?? '';
+                                            @endphp
+                                            <td>{{ $merk }}</td>
+                                            <td>{{ $model }}</td>
                                             <td>{{ $tambahkendaraan->km_per_liter }}</td>
                                             <td>
                                                 @if ($tambahkendaraan->status === 'ready')
@@ -127,17 +141,27 @@
                                             </td>
                                             <!-- Action Buttons in Table -->
                                             <td>
-                                                <a href="{{ route('hsse.showinspeksi', ['inspeksi' => $tambahkendaraan->riwayatInspeksi->sortByDesc('tanggal_inspeksi')->sortByDesc('id')->first()->id]) }}"
-                                                    class="btn btn-info btn-sm">
-                                                    Detail
-                                                </a>
+                                                @php
+                                                    $latestInspeksi = $tambahkendaraan->riwayatInspeksi
+                                                        ->sortByDesc('tanggal_inspeksi')
+                                                        ->sortByDesc('id')
+                                                        ->first();
+                                                @endphp
+                                                @if ($latestInspeksi)
+                                                    <a href="{{ route('hsse.showinspeksi', ['inspeksi' => $latestInspeksi->id]) }}"
+                                                        class="btn btn-info btn-sm">
+                                                        Detail
+                                                    </a>
+                                                @else
+                                                    <button class="btn btn-info btn-sm" disabled>Detail</button>
+                                                @endif
                                             </td>
                                             <td>
                                                 <div class="form-button-action">
                                                     <!-- Edit Button -->
                                                     <button type="button" class="btn btn-link btn-primary btn-lg"
                                                         data-bs-toggle="modal" data-bs-target="#editModal"
-                                                        onclick="openEditModal({{ $tambahkendaraan->id }}, '{{ $tambahkendaraan->no_kendaraan }}', '{{ $tambahkendaraan->tipe_kendaraan }}', {{ $tambahkendaraan->km_per_liter }})">
+                                                        onclick="openEditModal({{ $tambahkendaraan->id }}, '{{ $tambahkendaraan->no_kendaraan }}', '{{ $merk }}', '{{ $model }}', {{ $tambahkendaraan->km_per_liter }})">
                                                         <i class="fa fa-edit"></i>
                                                     </button>
 
@@ -173,10 +197,15 @@
                                                                         id="editNoKendaraan" name="no_kendaraan" required>
                                                                 </div>
                                                                 <div class="form-group">
-                                                                    <label>Tipe Kendaraan</label>
+                                                                    <label>Merk Kendaraan</label>
                                                                     <input type="text" class="form-control"
-                                                                        id="editTipeKendaraan" name="tipe_kendaraan"
+                                                                        id="editMerkKendaraan" name="merk_kendaraan"
                                                                         required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Model Mobil</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="editModelMobil" name="model_mobil" required>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label>KM/L</label>
@@ -359,29 +388,30 @@
         }
 
         // Function to open edit modal with pre-filled data
-        function openEditModal(id, noKendaraan, tipeKendaraan, kmPerLiter) {
+        function openEditModal(id, noKendaraan, merkKendaraan, modelMobil, kmPerLiter) {
             $('#editKendaraanId').val(id);
             $('#editNoKendaraan').val(noKendaraan);
-            $('#editTipeKendaraan').val(tipeKendaraan);
+            $('#editMerkKendaraan').val(merkKendaraan);
+            $('#editModelMobil').val(modelMobil);
             $('#editKmPerLiter').val(kmPerLiter);
         }
     </script>
 
-<script>
-    $(document).ready(function() {
-        $('#kendaraanTable').DataTable({
-            "paging": true,
-            "searching": true,
-            "ordering": true,
-            "responsive": true,
-            "language": {
-                "paginate": {
-                    "previous": "&laquo;",
-                    "next": "&raquo;"
+    <script>
+        $(document).ready(function() {
+            $('#kendaraanTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "responsive": true,
+                "language": {
+                    "paginate": {
+                        "previous": "&laquo;",
+                        "next": "&raquo;"
+                    }
                 }
-            }
+            });
         });
-    });
-</script>
+    </script>
 
 @endsection
