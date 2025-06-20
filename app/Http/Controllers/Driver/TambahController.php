@@ -27,6 +27,15 @@ class TambahController extends Controller
     // Menyimpan data perjalanan
     public function storePerjalanan(Request $request)
     {
+        // Cek apakah user sudah punya perjalanan aktif
+        $perjalananAktif = LaporanPerjalanan::where('pengemudi_id', Auth::id())
+            ->whereIn('status', ['menunggu validasi', 'disetujui', 'in_use'])
+            ->whereNull('jam_kembali')
+            ->first();
+        if ($perjalananAktif) {
+            return redirect()->back()->with('error', 'Anda masih memiliki perjalanan yang sedang berjalan atau menunggu persetujuan. Selesaikan perjalanan tersebut sebelum membuat perjalanan baru.');
+        }
+
         $request->validate([
             // 'pengemudi_id' => 'required', // Ini tidak perlu, karena pakai Auth::id()
             'nama_pegawai' => 'required|array',

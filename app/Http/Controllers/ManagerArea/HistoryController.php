@@ -95,14 +95,14 @@ class HistoryController extends Controller
             // Hitung estimasi BBM menggunakan km_akhir dari DB
             // Buat properti baru agar tidak menimpa field asli dari DB jika ada.
             if ($item->Kendaraan && $item->Kendaraan->km_per_liter > 0 && is_numeric($item->km_akhir) && $item->km_akhir > 0) {
-                $item->estimasi_bbm_calculated = (float)$item->km_akhir / $item->Kendaraan->km_per_liter;
+                $item->estimasi_bbm = (float)$item->km_akhir / $item->Kendaraan->km_per_liter;
             } else {
-                $item->estimasi_bbm_calculated = 0;
+                $item->estimasi_bbm = 0;
             }
 
             //Tambahkan ke total
             $totalEstimasiJarak += (float)$item->km_akhir;
-            $totalEstimasiBBM += (float)($item->estimasi_bbm_calculated ?? 0);
+            $totalEstimasiBBM += (float)($item->estimasi_bbm ?? 0);
         }
 
         $totalDurasiJam = floor($totalDurasiMenit / 60);

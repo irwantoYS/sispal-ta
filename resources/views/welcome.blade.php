@@ -264,6 +264,45 @@
     </div>
     {{-- AKHIR SECTION TOP DRIVER --}}
 
+    {{-- SECTION TOP INSPECTOR --}}
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                <h6 class="text-primary text-uppercase">
+                    TOP INSPECTOR
+                </h6>
+                <h1 class="mb-5">
+                    Inspektur Terbaik Bulan {{ $monthName ?? 'Ini' }}
+                </h1>
+            </div>
+            <div class="row g-4 justify-content-center">
+                @forelse ($topInspectors as $index => $inspector)
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ 0.1 + $index * 0.2 }}s">
+                        <div class="card h-100 shadow-sm">
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-primary rounded-pill fs-4">#{{ $index + 1 }}</span>
+                            </div>
+                            <img class="card-img-top"
+                                src="{{ $inspector->image ? asset('storage/' . $inspector->image) : asset('kai/assets/img/default-user.jpg') }}"
+                                alt="Foto {{ $inspector->nama }}" style="height: 300px; object-fit: cover;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title fw-bold">{{ $inspector->nama }}</h5>
+                                <p class="card-text mb-1"><i class="fas fa-check-circle me-2"></i>Total Inspeksi:
+                                    {{ $inspector->total_inspeksi }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s">
+                        <p class="text-muted fs-5">Belum ada data inspektur terbaik untuk bulan
+                            {{ $monthName ?? 'ini' }}.</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+    {{-- AKHIR SECTION TOP INSPECTOR --}}
+
     <footer class="text-white text-center text-lg-start bg-primary wow fadeInUp" data-wow-delay="0.5s">
         <div class="container p-4">
             <div class="row mt-4">

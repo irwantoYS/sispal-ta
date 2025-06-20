@@ -8,18 +8,89 @@ use App\Models\Kendaraan;
 use App\Models\InspeksiKendaraan; // Import model InspeksiKendaraan
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class DriverKendaraanController extends Controller
 {
-    public function viewKendaraan()
+    public function viewKendaraan(Request $request)
     {
-        $kendaraan = Kendaraan::with(['riwayatInspeksi' => function ($query) {
-            $query->latest('tanggal_inspeksi'); // Urutkan berdasarkan tanggal inspeksi
-        }])->get();
+        // Mengambil semua data kendaraan
+        $kendaraan = Kendaraan::with('inspeksis')->get();
 
-        return view('driver.kendaraan', compact('kendaraan'));
+        // --- Logika untuk Laporan Inspeksi Pengemudi ---
+        $selectedMonth = $request->input('bulan', Carbon::now()->month);
+        $selectedYear = $request->input('tahun', Carbon::now()->year);
+
+        // Query untuk rekap inspeksi
+        $inspeksiSummary = DB::table('inspeksi_kendaraan')
+            ->join('users', 'inspeksi_kendaraan.user_id', '=', 'users.id')
+            ->select('users.nama as nama_pengemudi', DB::raw('count(inspeksi_kendaraan.id) as total_inspeksi'))
+            ->whereYear('inspeksi_kendaraan.tanggal_inspeksi', $selectedYear)
+            ->whereMonth('inspeksi_kendaraan.tanggal_inspeksi', $selectedMonth)
+            ->whereNotNull('inspeksi_kendaraan.user_id')
+            ->groupBy('users.id', 'users.nama')
+            ->orderBy('total_inspeksi', 'desc')
+            ->get();
+
+        // Ambil tahun yang tersedia untuk filter
+        $availableYears = DB::table('inspeksi_kendaraan')
+            ->select(DB::raw('DISTINCT YEAR(tanggal_inspeksi) as year'))
+            ->whereNotNull('tanggal_inspeksi')
+            ->orderBy('year', 'desc')
+            ->pluck('year');
+
+        // Buat daftar 12 bulan untuk filter
+        $allMonths = collect(range(1, 12));
+
+        return view('driver.kendaraan', compact(
+            'kendaraan',
+            'inspeksiSummary',
+            'selectedMonth',
+            'selectedYear',
+            'availableYears',
+            'allMonths'
+        ));
     }
 
+    public function showInspectionHistory(Request $request, Kendaraan $kendaraan)
+    {
+        $inspectionsQuery = $kendaraan->inspeksis()->with('user');
+
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        if ($startDate) {
+            $inspectionsQuery->whereDate('tanggal_inspeksi', '>=', $startDate);
+        }
+        if ($endDate) {
+            $inspectionsQuery->whereDate('tanggal_inspeksi', '<=', $endDate);
+        }
+
+        $inspections = $inspectionsQuery->latest('tanggal_inspeksi')->get();
+
+        // The top inspector card should reflect all-time stats for this vehicle.
+        // So we calculate it from all inspections, not the filtered ones.
+        $allInspectionsForVehicle = $kendaraan->inspeksis()->with('user')->get();
+        $topInspector = null;
+        if ($allInspectionsForVehicle->isNotEmpty()) {
+            $topInspector = $allInspectionsForVehicle->groupBy('user_id')
+                ->map(function ($group) {
+                    if ($group->first()->user) {
+                        return [
+                            'user' => $group->first()->user,
+                            'count' => $group->count(),
+                        ];
+                    }
+                    return null;
+                })
+                ->filter()
+                ->sortByDesc('count')
+                ->first();
+        }
+
+        return view('driver.history_inspeksi', compact('kendaraan', 'inspections', 'topInspector', 'startDate', 'endDate'));
+    }
 
     public function viewInspeksi($kendaraanId)
     {
@@ -34,11 +105,8 @@ class DriverKendaraanController extends Controller
         return view('driver.inspeksi_kendaraan', compact('kendaraan'));
     }
 
-
-
     public function storeInspeksi(Request $request, $kendaraanId)
     {
-
         $kendaraan = Kendaraan::findOrFail($kendaraanId);
 
         // --- VALIDASI ---
@@ -139,7 +207,6 @@ class DriverKendaraanController extends Controller
 
         ]);
 
-
         // --- LOGIKA PENENTUAN STATUS KENDARAAN ---
         $status = 'ready';  // Default: baik
         // Cek *semua* field boolean yang terkait dengan kondisi *KENDARAAN*.
@@ -166,8 +233,6 @@ class DriverKendaraanController extends Controller
             $status = 'perlu_perbaikan';
         }
         // Kondisi pengemudi *TIDAK* memengaruhi status kendaraan.
-
-
 
         // --- PENYIMPANAN DATA ---
         $inspeksi = InspeksiKendaraan::create([
@@ -271,12 +336,15 @@ class DriverKendaraanController extends Controller
             'status' => $status, // Status *kendaraan* (bukan status perjalanan)
         ]);
 
-
         // Update status kendaraan *berdasarkan hasil inspeksi kendaraan*.
         // Kondisi pengemudi TIDAK memengaruhi status kendaraan.
         $kendaraan->update(['status' => $status]);
 
-
         return redirect()->route('driver.kendaraan')->with('success', 'Inspeksi kendaraan berhasil disimpan.');
+    }
+
+    public function create()
+    {
+        return view('driver.create_kendaraan');
     }
 }

@@ -77,7 +77,13 @@
                                     @foreach ($perjalanan as $key => $perjalanan)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
-                                            <td>{{ $perjalanan->user->nama }}</td>
+                                            <td>
+                                                @if (in_array($perjalanan->status, ['dipinjam', 'selesai']))
+                                                    <span class="badge bg-secondary">Dipinjamkan (HSSE)</span>
+                                                @else
+                                                    {{ $perjalanan->user->nama }}
+                                                @endif
+                                            </td>
                                             <td>
                                                 @php
                                                     $namaArray = json_decode($perjalanan->nama_pegawai);

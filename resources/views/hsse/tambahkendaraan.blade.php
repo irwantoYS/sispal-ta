@@ -16,10 +16,19 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Tabel Tambah Kendaraan</h4>
-                            <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal"
+                            <a href="{{ route('hsse.kendaraan.nonaktif') }}" class="btn btn-warning btn-round ms-auto">
+                                <i class="fa fa-car-side"></i>
+                                Nonaktif
+                            </a>
+                            <button class="btn btn-success btn-round ms-2" data-bs-toggle="modal"
+                                data-bs-target="#laporanModal">
+                                <i class="fa fa-file-alt"></i>
+                                Inspeksi
+                            </button>
+                            <button class="btn btn-primary btn-round ms-2" data-bs-toggle="modal"
                                 data-bs-target="#addRowModal">
                                 <i class="fa fa-plus"></i>
-                                Tambah Data
+                                Data
                             </button>
                         </div>
                     </div>
@@ -106,7 +115,6 @@
                                         <th>KM/L</th>
                                         <th>Status</th>
                                         <th>Gambar</th>
-                                        <th style="width: 10%">Inspeksi</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
                                 </thead>
@@ -135,42 +143,33 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <button class="btn btn-secondary" data-bs-toggle="modal"
+                                                <button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                                     data-bs-target="#imageModal"
-                                                    onclick="showImage('{{ asset('storage/' . $tambahkendaraan->image) }}')">Lihat</button>
-                                            </td>
-                                            <!-- Action Buttons in Table -->
-                                            <td>
-                                                @php
-                                                    $latestInspeksi = $tambahkendaraan->riwayatInspeksi
-                                                        ->sortByDesc('tanggal_inspeksi')
-                                                        ->sortByDesc('id')
-                                                        ->first();
-                                                @endphp
-                                                @if ($latestInspeksi)
-                                                    <a href="{{ route('hsse.showinspeksi', ['inspeksi' => $latestInspeksi->id]) }}"
-                                                        class="btn btn-info btn-sm">
-                                                        Detail
-                                                    </a>
-                                                @else
-                                                    <button class="btn btn-info btn-sm" disabled>Detail</button>
-                                                @endif
+                                                    onclick="showImage('{{ asset('storage/' . $tambahkendaraan->image) }}')">Lihat
+                                                    Gambar</button>
                                             </td>
                                             <td>
                                                 <div class="form-button-action">
+                                                    <!-- Riwayat Button -->
+                                                    <a href="{{ route('hsse.kendaraan.history', $tambahkendaraan->id) }}"
+                                                        class="btn btn-warning btn-sm" title="Lihat Riwayat Inspeksi">
+                                                        Riwayat
+                                                    </a>
+
                                                     <!-- Edit Button -->
-                                                    <button type="button" class="btn btn-link btn-primary btn-lg"
+                                                    <button type="button" class="btn btn-primary btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#editModal"
                                                         onclick="openEditModal({{ $tambahkendaraan->id }}, '{{ $tambahkendaraan->no_kendaraan }}', '{{ $merk }}', '{{ $model }}', {{ $tambahkendaraan->km_per_liter }})">
-                                                        <i class="fa fa-edit"></i>
+                                                        Edit
                                                     </button>
 
-                                                    <!-- Delete Button -->
-                                                    <button type="button" class="btn btn-link btn-danger"
-                                                        data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        onclick="openDeleteModal({{ $tambahkendaraan->id }})">
-                                                        <i class="fa fa-times"></i>
+                                                    <!-- Deactivate Button -->
+                                                    <button type="button" class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal" data-bs-target="#deactivateModal"
+                                                        onclick="openDeactivateModal({{ $tambahkendaraan->id }})">
+                                                        Nonaktifkan
                                                     </button>
+
                                                 </div>
                                             </td>
 
@@ -229,49 +228,33 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Delete Confirmation Modal -->
-                                            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+                                            <!-- Deactivate Confirmation Modal -->
+                                            <div class="modal fade" id="deactivateModal" tabindex="-1" role="dialog"
                                                 aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header border-0">
-                                                            <h5 class="modal-title">Confirm Delete</h5>
+                                                            <h5 class="modal-title">Konfirmasi Nonaktifkan</h5>
                                                             <button type="button" class="close" data-bs-dismiss="modal"
                                                                 aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Apakah Anda Ingin Menghapus Kendaraan?</p>
-                                                            <input type="hidden" id="deleteKendaraanId">
+                                                            <p>Apakah Anda yakin ingin menonaktifkan kendaraan ini?</p>
+                                                            <input type="hidden" id="deactivateKendaraanId">
                                                         </div>
                                                         <div class="modal-footer border-0">
                                                             <button type="button" class="btn btn-danger"
-                                                                onclick="confirmDelete()">Delete</button>
+                                                                onclick="confirmDeactivate()">Nonaktifkan</button>
                                                             <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Cancel</button>
+                                                                data-bs-dismiss="modal">Batal</button>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                     @endforeach
                                 </tbody>
-                                <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="imageModalLabel">Gambar Kendaraan</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <img id="modalImage" src="" alt="Kendaraan Image"
-                                                    style="width: 100%; height: auto;" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </table>
                         </div>
                     </div>
@@ -280,31 +263,120 @@
         </div>
     </div>
 
+    <!-- Image Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Gambar Kendaraan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalImage" src="" alt="Kendaraan Image" style="width: 100%; height: auto;" />
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Modal Laporan -->
+    <div class="modal fade" id="laporanModal" tabindex="-1" aria-labelledby="laporanModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="laporanModalLabel">Laporan Inspeksi Pengemudi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="GET" action="{{ route('hsse.kendaraan') }}" class="mb-4">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label for="bulan">Bulan</label>
+                                    <select name="bulan" id="bulan" class="form-control">
+                                        @foreach ($allMonths as $month)
+                                            <option value="{{ $month }}"
+                                                {{ $selectedMonth == $month ? 'selected' : '' }}>
+                                                {{ \Carbon\Carbon::create()->month($month)->format('F') }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label for="tahun">Tahun</label>
+                                    <select name="tahun" id="tahun" class="form-control">
+                                        @forelse ($availableYears as $year)
+                                            <option value="{{ $year }}"
+                                                {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}
+                                            </option>
+                                        @empty
+                                            <option value="{{ date('Y') }}">{{ date('Y') }}</option>
+                                        @endforelse
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Filter</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table id="summaryTable" class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Pengemudi</th>
+                                    <th>Total Inspeksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($inspeksiSummary as $index => $summary)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $summary->nama_pengemudi }}</td>
+                                        <td>{{ $summary->total_inspeksi }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center">Tidak ada data inspeksi untuk periode yang
+                                            dipilih.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // SweetAlert to confirm deletion
-        function openDeleteModal(id) {
-            $('#deleteKendaraanId').val(id);
-            $('#deleteModal').modal('show');
+        // SweetAlert to confirm deactivation
+        function openDeactivateModal(id) {
+            $('#deactivateKendaraanId').val(id);
+            $('#deactivateModal').modal('show');
         }
 
-        function confirmDelete() {
-            let id = $('#deleteKendaraanId').val();
+        function confirmDeactivate() {
+            let id = $('#deactivateKendaraanId').val();
 
             $.ajax({
-                url: '{{ route('hsse.tambahkendaraan.destroy', '') }}/' + id,
+                url: '{{ route('hsse.tambahkendaraan.deactivate', '') }}/' + id,
                 type: 'DELETE',
                 data: {
-                    id: id,
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
                     Swal.fire(
-                        'Deleted!',
-                        'Kendaraan Berhasil Dihapus.',
+                        'Dinonaktifkan!',
+                        'Kendaraan Berhasil Dinonaktifkan.',
                         'success'
                     ).then(() => {
                         location.reload();
@@ -313,7 +385,7 @@
                 error: function(response) {
                     Swal.fire(
                         'Gagal!',
-                        'kendaraan Tidak dapat dihapus, data kendaraan sudah digunakan pada Perjalanan.',
+                        response.responseJSON.message || 'Kendaraan tidak dapat dinonaktifkan.',
                         'error'
                     );
                 }
@@ -352,8 +424,7 @@
 
         // Function to show image in modal
         function showImage(imageUrl) {
-            $('#imageModal .modal-body img').attr('src', imageUrl);
-            $('#imageModal').modal('show');
+            $('#modalImage').attr('src', imageUrl);
         }
 
         // SweetAlert for updating kendaraan
@@ -395,6 +466,24 @@
             $('#editModelMobil').val(modelMobil);
             $('#editKmPerLiter').val(kmPerLiter);
         }
+
+        // Inisialisasi DataTable untuk modal hanya saat modal tersebut ditampilkan
+        $('#laporanModal').on('shown.bs.modal', function() {
+            if (!$.fn.DataTable.isDataTable('#summaryTable')) {
+                $('#summaryTable').DataTable({
+                    "paging": true,
+                    "searching": true,
+                    "ordering": true,
+                    "responsive": true,
+                    "language": {
+                        "paginate": {
+                            "previous": "&laquo;",
+                            "next": "&raquo;"
+                        }
+                    }
+                });
+            }
+        });
     </script>
 
     <script>

@@ -7,6 +7,7 @@ use App\Models\User; // Tambahkan model User
 use Illuminate\Support\Facades\DB; // Untuk OrderByRaw
 use App\Models\LaporanPerjalanan; // Tambahkan model LaporanPerjalanan
 use Carbon\Carbon; // Tambahkan Carbon
+use App\Models\InspeksiKendaraan;
 
 class HomeController extends Controller
 {
@@ -53,7 +54,20 @@ class HomeController extends Controller
             $driver->total_durasi_format = sprintf("%02d Jam %02d Menit", $jam, $menit);
         }
 
+        $topInspectors = InspeksiKendaraan::query()
+            ->join('users', 'inspeksi_kendaraan.user_id', '=', 'users.id')
+            ->whereBetween('inspeksi_kendaraan.tanggal_inspeksi', [$startOfMonth, $endOfMonth])
+            ->select(
+                'users.nama',
+                'users.image',
+                DB::raw('COUNT(inspeksi_kendaraan.id) as total_inspeksi')
+            )
+            ->groupBy('users.nama', 'users.image')
+            ->orderByDesc('total_inspeksi')
+            ->limit(3)
+            ->get();
+
         // Kirim data staff, topDrivers, dan monthName ke view
-        return view('welcome', compact('staff', 'topDrivers', 'monthName'));
+        return view('welcome', compact('staff', 'topDrivers', 'monthName', 'topInspectors'));
     }
 }

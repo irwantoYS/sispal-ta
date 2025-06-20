@@ -261,7 +261,8 @@
                             </tr>
                         </tbody>
                     </table>
-                    <a href="{{ route('driver.kendaraan') }}" class="btn btn-secondary mt-3">Kembali</a>
+                    <a href="{{ route('driver.kendaraan.inspeksi.history', ['kendaraan' => $inspeksi->kendaraan_id]) }}"
+                        class="btn btn-secondary mt-3">Kembali</a>
                 </div>
             </div>
         </div>

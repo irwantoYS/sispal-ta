@@ -1,14 +1,38 @@
-@extends('layouts.sidebarma') {{-- Mengubah layout dari sidebardriver menjadi sidebarma --}}
+@extends('layouts.sidebarsmanagerarea')
 
 @section('title', 'Detail Inspeksi')
 
 @section('content')
     <div class="container">
         <div class="page-inner">
-            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
-                <div>
-                    <h1>Detail Inspeksi Kendaraan</h1>
-                </div>
+            <div class="page-header">
+                <h4 class="page-title">Detail Inspeksi Kendaraan</h4>
+                <ul class="breadcrumbs">
+                    <li class="nav-home">
+                        <a href="{{ route('managerarea.dashboard') }}">
+                            <i class="flaticon-home"></i>
+                        </a>
+                    </li>
+                    <li class="separator">
+                        <i class="flaticon-right-arrow"></i>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('managerarea.kendaraan') }}">Data Kendaraan</a>
+                    </li>
+                    <li class="separator">
+                        <i class="flaticon-right-arrow"></i>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('managerarea.kendaraan.history', ['kendaraan' => $inspeksi->kendaraan_id]) }}">Riwayat
+                            Inspeksi</a>
+                    </li>
+                    <li class="separator">
+                        <i class="flaticon-right-arrow"></i>
+                    </li>
+                    <li class="nav-item">
+                        <span>Detail Inspeksi</span>
+                    </li>
+                </ul>
             </div>
 
 
@@ -261,7 +285,8 @@
                             </tr>
                         </tbody>
                     </table>
-                    <a href="{{ route('managerarea.kendaraan') }}" class="btn btn-secondary mt-3">Kembali</a>
+                    <a href="{{ route('managerarea.kendaraan.history', ['kendaraan' => $inspeksi->kendaraan_id]) }}"
+                        class="btn btn-secondary mt-3">Kembali</a>
                 </div>
             </div>
         </div>

@@ -188,28 +188,24 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            @if (session('success'))
-                const toastEl = document.getElementById('successToast');
-                const toast = new bootstrap.Toast(toastEl);
-                toast.show();
-            @endif
-        });
-    </script>
-
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
         <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert"
             aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
-                    <ul id="error-messages">
-                        @if ($errors->any())
+                    {{-- Display custom session error --}}
+                    @if (session('error'))
+                        {{ session('error') }}
+                    @endif
+
+                    {{-- Display validation errors --}}
+                    @if ($errors->any())
+                        <ul class="mb-0" style="padding-left: 1rem;">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
-                        @endif
-                    </ul>
+                        </ul>
+                    @endif
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                     aria-label="Close"></button>
@@ -219,7 +215,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            @if ($errors->any())
+            @if (session('success'))
+                const toastEl = document.getElementById('successToast');
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            @endif
+
+            // Show error toast if there are any errors
+            @if ($errors->any() || session('error'))
                 const errorToastEl = document.getElementById('errorToast');
                 const errorToast = new bootstrap.Toast(errorToastEl);
                 errorToast.show();
@@ -275,7 +278,7 @@
                 );
                 alert(
                     "PENTING: Kunci API Google Maps tidak ditemukan. Fitur peta dan pencarian alamat tidak akan berfungsi."
-                    );
+                );
                 return;
             }
 
@@ -295,7 +298,7 @@
                 );
                 alert(
                     "KESALAHAN KRITIS: Gagal memuat skrip Google Maps. Pastikan kunci API valid, tidak ada masalah kuota/tagihan, dan periksa pembatasan API di Google Cloud Console. Fitur peta tidak akan berfungsi."
-                    );
+                );
             };
             document.head.appendChild(script);
             console.log("LOAD_MAPS: Google Maps API script appended to head. Waiting for callback or onload.");

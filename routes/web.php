@@ -22,6 +22,8 @@ use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PDFController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\HSSE\PegawaiController;
+use App\Http\Controllers\HSSE\PeminjamanController;
 
 
 
@@ -52,7 +54,8 @@ Route::middleware(['auth', 'ManagerAreaMiddleware'])->group(function () {
     Route::put('/perjalanan/{id}/tolak', [PersetujuanController::class, 'tolak'])->name('perjalanan.tolak');
     Route::get('/managerarea/history', [HistoryController::class,  'viewHistory'])->name('managerarea.history');
     Route::get('/managerarea/kendaraan', [KendaraanController::class, 'viewKendaraan'])->name('managerarea.kendaraan');
-    Route::get('/managerarea/inspeksi/show/{inspeksi}', [KendaraanController::class, 'show'])->name('managerarea.showinspeksi');
+    Route::get('/managerarea/kendaraan/{kendaraan}/history', [KendaraanController::class, 'showInspectionHistory'])->name('managerarea.kendaraan.history');
+    Route::get('/managerarea/inspeksi/show/{inspeksi}', [KendaraanController::class, 'showInspectionDetail'])->name('managerarea.showinspeksi');
 });
 
 //hsse
@@ -63,8 +66,13 @@ Route::middleware(['auth', 'HSSEMiddleware'])->group(function () {
     Route::get('/hsse/kendaraan', [HSSEKendaraanController::class, 'viewTambahKendaraan'])->name('hsse.kendaraan');
     Route::post('/hsse/tambahkendaraan', [HSSEKendaraanController::class, 'storeTambahKendaraan'])->name('hsse.tambahkendaraan.store');
     Route::post('/hsse/tambahkendaraan/{id}', [HSSEKendaraanController::class, 'updateTambahKendaraan'])->name('hsse.tambahkendaraan.update');
-    Route::delete('/hsse/tambahkendaraan/{id}', [HSSEKendaraanController::class, 'destroyTambahKendaraan'])->name('hsse.tambahkendaraan.destroy');
+    Route::delete('/hsse/tambahkendaraan/{id}', [HSSEKendaraanController::class, 'deactivateKendaraan'])->name('hsse.tambahkendaraan.deactivate');
+    Route::get('/hsse/kendaraan/{kendaraan}/history', [HSSEKendaraanController::class, 'showInspectionHistory'])->name('hsse.kendaraan.history');
     Route::get('/hsse/inspeksi/show/{inspeksi}', [HSSEKendaraanController::class, 'show'])->name('hsse.showinspeksi');
+
+    // Routes for deactivated vehicles
+    Route::get('/hsse/kendaraan/nonaktif', [HSSEKendaraanController::class, 'showDeactivated'])->name('hsse.kendaraan.nonaktif');
+    Route::patch('/hsse/kendaraan/{id}/activate', [HSSEKendaraanController::class, 'activate'])->name('hsse.kendaraan.activate');
 
     // Route Kelola Akun
     Route::get('/hsse/kelola-akun/', [HSSEKelolaAkunController::class, 'index'])->name('hsse.kelolaakun');
@@ -84,6 +92,11 @@ Route::middleware(['auth', 'HSSEMiddleware'])->group(function () {
     Route::resource('hsse/pegawai', App\Http\Controllers\HSSE\PegawaiController::class)
         ->except(['show']) // Tidak butuh halaman show detail pegawai
         ->names('hsse.pegawai'); // Memberi nama route (hsse.pegawai.index, hsse.pegawai.create, dll)
+
+    // Rute untuk Peminjaman Kendaraan oleh Pegawai
+    Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('hsse.peminjaman.index');
+    Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('hsse.peminjaman.store');
+    Route::patch('/peminjaman/{id}/complete', [PeminjamanController::class, 'complete'])->name('hsse.peminjaman.complete');
 });
 
 //driver
@@ -93,13 +106,14 @@ Route::middleware(['auth', 'DriverMiddleware'])->group(function () {
     Route::get('/driver/status', [StatusController::class, 'viewStatus'])->name('driver.status');
     Route::get('/driver/history', [DriverhistoryController::class, 'viewHistory'])->name('driver.history');
     Route::get('/driver/kendaraan', [DriverKendaraanController::class, 'viewKendaraan'])->name('driver.kendaraan');
+    Route::get('/driver/kendaraan/{kendaraan}/inspeksi', [DriverKendaraanController::class, 'showInspectionHistory'])->name('driver.kendaraan.inspeksi.history');
     Route::post('/driver/store-perjalanan', [TambahController::class, 'storePerjalanan'])->name('storePerjalanan');
     Route::put('/driver/status/{id}', [TambahController::class, 'updatePerjalanan'])->name('update.perjalanan');
     Route::delete('/perjalanan/delete/{id}', [StatusController::class, 'destroyStatus'])->name('perjalanan.delete');
     //inspeksi kendaraan
     Route::get('/kendaraan/{id}/inspeksi', [DriverKendaraanController::class, 'viewInspeksi'])->name('driver.viewinspeksi');
     Route::post('/kendaraan/{id}/inspeksi', [DriverKendaraanController::class, 'storeInspeksi'])->name('driver.storeinspeksi');
-    Route::get('/inspeksi/show/{inspeksi}', [InspeksiKendaraanController::class, 'show'])->name('driver.showinspeksi');
+    Route::get('/inspeksi/show/{inspeksi}', [InspeksiKendaraanController::class, 'show'])->name('driver.inspeksi.show');
 });
 
 //pdf_laravel

@@ -12,7 +12,8 @@ class InspeksiKendaraanController extends Controller
     {
         // $inspeksi = InspeksiKendaraan::findOrFail($id);
 
-        
+        // Memuat relasi 'kendaraan' untuk efisiensi dan mengirimkannya ke view
+        $inspeksi->load('kendaraan');
 
         return view('driver.showinspeksi', compact('inspeksi'));
     }

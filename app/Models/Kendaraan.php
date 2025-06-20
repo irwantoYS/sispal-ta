@@ -13,7 +13,8 @@ class Kendaraan extends Model
     use HasFactory;
     protected $table = 'kendaraan';
     protected $primaryKey = 'id';
-    protected $fillable = ['no_kendaraan', 'tipe_kendaraan', 'km_per_liter', 'status', 'image'];
+    protected $fillable = ['no_kendaraan', 'tipe_kendaraan', 'km_per_liter', 'status', 'image', 'is_active'];
+    protected $dates = ['masa_berlaku_pajak', 'masa_berlaku_kir'];
 
     public function perjalanan()
     {
@@ -25,7 +26,7 @@ class Kendaraan extends Model
         return $this->hasMany(InspeksiKendaraan::class, 'kendaraan_id');
     }
 
-    public function inspeksiKendaraan(): HasMany
+    public function inspeksis(): HasMany
     {
         return $this->hasMany(InspeksiKendaraan::class, 'kendaraan_id');
     }

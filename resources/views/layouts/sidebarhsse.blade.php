@@ -61,22 +61,29 @@
                             </a>
                         </li>
 
-                        <li class="nav-item {{ Request::is('hsse/perjalanan*') ? 'active' : '' }}">
+                        <li
+                            class="nav-item {{ request()->routeIs('hsse.persetujuan') || request()->routeIs('hsse.history') || request()->routeIs('hsse.peminjaman.index') ? 'active' : '' }}">
                             <a data-bs-toggle="collapse" href="#perjalanan"
-                                class="{{ Request::is('hsse/perjalanan*') ? '' : 'collapsed' }}"
-                                aria-expanded="{{ Request::is('hsse/perjalanan*') ? 'true' : 'false' }}">
+                                class="{{ request()->routeIs('hsse.persetujuan') || request()->routeIs('hsse.history') || request()->routeIs('hsse.peminjaman.index') ? '' : 'collapsed' }}"
+                                aria-expanded="{{ request()->routeIs('hsse.persetujuan') || request()->routeIs('hsse.history') || request()->routeIs('hsse.peminjaman.index') ? 'true' : 'false' }}">
                                 <i class="fa-solid fa-map-location-dot"></i>
                                 <p>Perjalanan</p>
                                 <span class="caret"></span>
                             </a>
-                            <div class="collapse {{ Request::is('hsse/perjalanan*') ? 'show' : '' }}" id="perjalanan">
+                            <div class="collapse {{ request()->routeIs('hsse.persetujuan') || request()->routeIs('hsse.history') || request()->routeIs('hsse.peminjaman.index') ? 'show' : '' }}"
+                                id="perjalanan">
                                 <ul class="nav nav-collapse">
-                                    <li class="{{ Request::is('hsse/persetujuan') ? 'active' : '' }}">
+                                    <li class="{{ request()->routeIs('hsse.persetujuan') ? 'active' : '' }}">
                                         <a href="{{ route('hsse.persetujuan') }}">
                                             <span class="sub-item">Persetujuan Perjalanan</span>
                                         </a>
                                     </li>
-                                    <li class="{{ Request::is('hsse/history') ? 'active' : '' }}">
+                                    <li class="{{ request()->routeIs('hsse.peminjaman.index') ? 'active' : '' }}">
+                                        <a href="{{ route('hsse.peminjaman.index') }}">
+                                            <span class="sub-item">Peminjaman Kendaraan</span>
+                                        </a>
+                                    </li>
+                                    <li class="{{ request()->routeIs('hsse.history') ? 'active' : '' }}">
                                         <a href="{{ route('hsse.history') }}">
                                             <span class="sub-item">History Perjalanan</span>
                                         </a>

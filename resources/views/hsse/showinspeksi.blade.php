@@ -5,6 +5,34 @@
 @section('content')
     <div class="container">
         <div class="page-inner">
+            <div class="page-header">
+                <h3 class="fw-bold mb-3">Detail Inspeksi</h3>
+                <ul class="breadcrumbs">
+                    <li class="nav-home">
+                        <a href="{{ route('hsse.dashboard') }}">
+                            <i class="icon-home"></i>
+                        </a>
+                    </li>
+                    <li class="separator">
+                        <i class="icon-arrow-right"></i>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('hsse.kendaraan') }}">Data Kendaraan</a>
+                    </li>
+                    <li class="separator">
+                        <i class="icon-arrow-right"></i>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('hsse.kendaraan.history', $inspeksi->kendaraan_id) }}">Riwayat Inspeksi</a>
+                    </li>
+                    <li class="separator">
+                        <i class="icon-arrow-right"></i>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">Detail Inspeksi</a>
+                    </li>
+                </ul>
+            </div>
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                 <div>
                     <h1>Detail Inspeksi Kendaraan</h1>
@@ -261,8 +289,11 @@
                             </tr>
                         </tbody>
                     </table>
-                    <a href="{{ route('hsse.kendaraan') }}" class="btn btn-secondary mt-3">Kembali</a>
                 </div>
+            </div>
+            <div class="card-footer">
+                <a href="{{ route('hsse.kendaraan.history', ['kendaraan' => $inspeksi->kendaraan_id]) }}"
+                    class="btn btn-secondary">Kembali</a>
             </div>
         </div>
     </div>
