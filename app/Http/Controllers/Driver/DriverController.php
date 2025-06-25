@@ -137,4 +137,21 @@ class DriverController extends Controller
 
         return trim($timeString);
     }
+
+    public function statusPerjalanan()
+    {
+        $user = Auth::user();
+
+        // Ambil ID pengemudi yang sedang login
+        $pengemudi_id = $user->id;
+
+        // Ambil data perjalanan yang sesuai dengan pengemudi_id dan status 'menunggu validasi' atau 'disetujui'
+        $perjalanan = LaporanPerjalanan::with('validator')->where('pengemudi_id', $pengemudi_id)
+            ->whereIn('status', ['menunggu validasi', 'disetujui', 'ditolak'])
+            ->orderByRaw("FIELD(status, 'menunggu validasi', 'disetujui', 'ditolak')")
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        return view('driver.statusperjalanan', compact('perjalanan'));
+    }
 }

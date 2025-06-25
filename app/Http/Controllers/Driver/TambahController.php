@@ -69,9 +69,18 @@ class TambahController extends Controller
         $estimasi_jarak_numeric = floatval(str_replace(',', '.', $request->estimasi_jarak));
         $km_akhir_calculated = $estimasi_jarak_numeric * 2;
 
+        // --- PERBAIKAN UNTUK NAMA PEGAWAI ---
+        $namaPegawaiInput = $request->nama_pegawai;
+        // Cek jika inputnya adalah array, langsung encode. Jika tidak, anggap sudah JSON.
+        $namaPegawaiJson = is_array($namaPegawaiInput) ? json_encode($namaPegawaiInput) : $namaPegawaiInput;
+        // Membersihkan jika ada JSON yang tidak valid atau string kosong
+        if (!json_decode($namaPegawaiJson)) {
+            $namaPegawaiJson = '[]';
+        }
+
         $perjalanan = LaporanPerjalanan::create([
             'pengemudi_id' => Auth::id(),
-            'nama_pegawai' => json_encode($request->nama_pegawai),
+            'nama_pegawai' => $namaPegawaiJson, // Menggunakan variabel yang sudah dibersihkan
             'titik_awal' => $request->titik_awal,
             'titik_akhir' => $request->titik_akhir,
             'tujuan_perjalanan' => $request->tujuan_perjalanan,
@@ -110,12 +119,14 @@ class TambahController extends Controller
 
         $request->validate([
             'bbm_akhir' => 'required|numeric',
+            'jenis_bbm' => 'required|in:Solar,Pertalite,Pertamax',
             'jam_kembali' => 'required|date',
             'foto_akhir' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:6000',
         ]);
 
         $perjalanan->update([
             'bbm_akhir' => $request->bbm_akhir,
+            'jenis_bbm' => $request->jenis_bbm,
             'jam_kembali' => $request->jam_kembali,
             'foto_akhir' => $request->hasFile('foto_akhir') ? $request->file('foto_akhir')->store('foto_perjalanan', 'public') : $perjalanan->foto_akhir,
         ]);

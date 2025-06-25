@@ -63,7 +63,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama Pengemudi</th>
-                                        <th>Nama Pegawai</th>
+                                        <th>Nama Pengguna</th>
                                         <th>Titik Akhir</th>
                                         <th>Tujuan Perjalanan</th>
                                         <th>Jam Pergi</th>
@@ -74,35 +74,35 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($perjalanan as $key => $perjalanan)
+                                    @foreach ($perjalanan as $key => $item)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
                                             <td>
-                                                @if (in_array($perjalanan->status, ['dipinjam', 'selesai']))
+                                                @if (in_array($item->status, ['dipinjam', 'selesai']))
                                                     <span class="badge bg-secondary">Dipinjamkan (HSSE)</span>
                                                 @else
-                                                    {{ $perjalanan->user->nama }}
+                                                    {{ $item->user->nama }}
                                                 @endif
                                             </td>
                                             <td>
                                                 @php
-                                                    $namaArray = json_decode($perjalanan->nama_pegawai);
+                                                    $namaArray = json_decode($item->nama_pegawai);
                                                     if (is_array($namaArray)) {
                                                         echo e(implode(', ', $namaArray));
                                                     } else {
-                                                        echo e($perjalanan->nama_pegawai);
+                                                        echo e($item->nama_pegawai);
                                                     }
                                                 @endphp
                                             </td>
-                                            <td>{{ $perjalanan->titik_akhir }}</td>
-                                            <td>{{ $perjalanan->tujuan_perjalanan }}</td>
-                                            <td>{{ $perjalanan->jam_pergi }}</td>
-                                            <td>{{ $perjalanan->jam_kembali }}</td>
+                                            <td>{{ $item->titik_akhir }}</td>
+                                            <td>{{ $item->tujuan_perjalanan }}</td>
+                                            <td>{{ $item->jam_pergi }}</td>
+                                            <td>{{ $item->jam_kembali }}</td>
                                             <td>
-                                                @if ($perjalanan->foto_awal)
+                                                @if ($item->foto_awal)
                                                     <button class="btn btn-info btn-sm foto-link" data-bs-toggle="modal"
                                                         data-bs-target="#fotoModal"
-                                                        data-foto="{{ asset('storage/' . $perjalanan->foto_awal) }}">
+                                                        data-foto="{{ asset('storage/' . $item->foto_awal) }}">
                                                         <i class="fa fa-eye"></i>
                                                     </button>
                                                 @else
@@ -110,10 +110,10 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($perjalanan->foto_akhir)
+                                                @if ($item->foto_akhir)
                                                     <button class="btn btn-info btn-sm foto-link" data-bs-toggle="modal"
                                                         data-bs-target="#fotoModal"
-                                                        data-foto="{{ asset('storage/' . $perjalanan->foto_akhir) }}">
+                                                        data-foto="{{ asset('storage/' . $item->foto_akhir) }}">
                                                         <i class="fa fa-eye"></i>
                                                     </button>
                                                 @else
@@ -123,20 +123,22 @@
                                             <td>
                                                 <button class="btn btn-info btn-sm detail-button" data-bs-toggle="modal"
                                                     data-bs-target="#detailModal"
-                                                    data-nama-pengemudi="{{ $perjalanan->user->nama }}"
-                                                    data-nama-pegawai="{{ e($perjalanan->nama_pegawai ?? '') }}"
-                                                    data-titik-awal="{{ $perjalanan->titik_awal }}"
-                                                    data-titik-akhir="{{ $perjalanan->titik_akhir }}"
-                                                    data-tujuan="{{ $perjalanan->tujuan_perjalanan }}"
-                                                    data-no-kendaraan="{{ $perjalanan->Kendaraan->no_kendaraan ?? '-' }}"
-                                                    data-tipe-kendaraan="{{ $perjalanan->Kendaraan->tipe_kendaraan ?? '-' }}"
-                                                    {{-- data-km-awal="{{ $perjalanan->km_awal }}" --}} data-km-akhir="{{ $perjalanan->km_akhir }}"
-                                                    data-bbm-awal="{{ $perjalanan->bbm_awal }}"
-                                                    data-bbm-akhir="{{ $perjalanan->bbm_akhir }}"
-                                                    data-jam-pergi="{{ $perjalanan->jam_pergi }}"
-                                                    data-jam-kembali="{{ $perjalanan->jam_kembali }}"
-                                                    data-estimasi-waktu="{{ $perjalanan->estimasi_waktu ?? '-' }}"
-                                                    data-estimasi-bbm="{{ $perjalanan->estimasi_bbm ?? '-' }}">
+                                                    data-nama-pengemudi="{{ $item->user->nama }}"
+                                                    data-nama-pegawai="{{ e($item->nama_pegawai ?? '') }}"
+                                                    data-titik-awal="{{ $item->titik_awal }}"
+                                                    data-titik-akhir="{{ $item->titik_akhir }}"
+                                                    data-tujuan="{{ $item->tujuan_perjalanan ?? '-' }}"
+                                                    data-no-kendaraan="{{ $item->Kendaraan->no_kendaraan ?? '-' }}"
+                                                    data-tipe-kendaraan="{{ $item->Kendaraan->tipe_kendaraan ?? '-' }}"
+                                                    data-jenis-bbm="{{ $item->jenis_bbm ?? '-' }}"
+                                                    data-estimasi-jarak="{{ $item->km_akhir ? number_format((float) $item->km_akhir, 2, ',', '.') . ' KM' : '-' }}"
+                                                    data-bbm-awal="{{ $item->bbm_awal ?? '-' }}"
+                                                    data-bbm-akhir="{{ $item->bbm_akhir ?? '-' }}"
+                                                    data-jam-pergi="{{ $item->jam_pergi }}"
+                                                    data-jam-kembali="{{ $item->jam_kembali }}"
+                                                    data-estimasi-waktu="{{ $item->estimasi_waktu ?? '-' }}"
+                                                    data-estimasi-bbm="{{ $item->estimasi_bbm ?? '-' }}"
+                                                    data-validator="{{ $item->validator->nama ?? '-' }}">
                                                     Lihat Detail
                                                 </button>
                                             </td>
@@ -165,7 +167,7 @@
                                     <td id="detailNamaPengemudi"></td>
                                 </tr>
                                 <tr>
-                                    <th>Nama Pegawai</th>
+                                    <th>Nama Pengguna</th>
                                     <td id="detailNamaPegawai"></td>
                                 </tr>
                                 <tr>
@@ -188,10 +190,14 @@
                                     <th>Tipe Kendaraan</th>
                                     <td id="detailTipeKendaraan"></td>
                                 </tr>
-                                {{-- <tr>
-                                    <th>KM Awal</th>
-                                    <td id="detailKmAwal"></td>
-                                </tr> --}}
+                                <tr>
+                                    <th>Jenis BBM</th>
+                                    <td id="detailJenisBbm"></td>
+                                </tr>
+                                <tr>
+                                    <th>Total Jarak Tempuh</th>
+                                    <td id="detailEstimasiJarak"></td>
+                                </tr>
                                 <tr>
                                     <th>KM Akhir</th>
                                     <td id="detailKmAkhir"></td>
@@ -235,6 +241,10 @@
                                 <tr>
                                     <th>Estimasi BBM</th>
                                     <td id="detailEstimasiBBM"></td>
+                                </tr>
+                                <tr>
+                                    <th>Divalidasi Oleh</th>
+                                    <td id="detailValidator"></td>
                                 </tr>
                             </table>
                         </div>
@@ -356,7 +366,10 @@
                             'data-no-kendaraan') || '-';
                         document.getElementById('detailTipeKendaraan').textContent = button.getAttribute(
                             'data-tipe-kendaraan') || '-';
-                        // document.getElementById('detailKmAwal').textContent = button.getAttribute('data-km-awal') || '-'; // Jika KM awal ingin ditampilkan
+                        document.getElementById('detailJenisBbm').textContent = button.getAttribute(
+                            'data-jenis-bbm') || '-';
+                        document.getElementById('detailEstimasiJarak').textContent = button.getAttribute(
+                            'data-estimasi-jarak') || '-';
                         document.getElementById('detailKmAkhir').textContent = button.getAttribute(
                             'data-km-akhir') || '-';
                         document.getElementById('detailJamPergi').textContent = button.getAttribute(
@@ -370,6 +383,8 @@
                         document.getElementById('detailEstimasiWaktu').textContent = estimasiWaktu;
                         document.getElementById('detailEstimasiBBM').textContent = estimasiBBM !== '-' ?
                             estimasiBBM + ' Liter' : '-';
+                        document.getElementById('detailValidator').textContent = button.getAttribute(
+                            'data-validator') || '-';
 
                         // Update progress bar BBM Awal
                         const bbmAwal = button.getAttribute('data-bbm-awal') || 0;

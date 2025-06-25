@@ -20,7 +20,7 @@
                                     <tr>
                                         <th style="width: 5%">No</th>
                                         <th style="width: 8%">Status</th>
-                                        <th style="width: 13%">Nama Pegawai</th>
+                                        <th style="width: 13%">Nama Pengguna</th>
                                         <th style="width: 10%">Titik Akhir</th>
                                         <th style="width: 13%">Tujuan</th>
                                         <th style="width: 8%">Foto</th>
@@ -34,22 +34,43 @@
                                     @foreach ($perjalanan as $key => $item)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if ($item->status == 'menunggu validasi')
                                                     <span class="badge bg-warning text-dark">Menunggu Validasi</span>
-                                                @elseif($item->status == 'disetujui')
-                                                    <span class="badge bg-success">Disetujui</span>
                                                 @else
-                                                    <span class="badge bg-danger">Ditolak</span>
+                                                    @php
+                                                        $isDisetujui = $item->status == 'disetujui';
+                                                        $badgeClass = $isDisetujui ? 'bg-success' : 'bg-danger';
+                                                        $statusText = $isDisetujui ? 'Disetujui' : 'Ditolak';
+                                                    @endphp
+                                                    <div>
+                                                        <span class="badge {{ $badgeClass }}">{{ $statusText }}</span>
+                                                        @if ($item->validator)
+                                                            <div class="text-muted"
+                                                                style="font-size: 0.8em; margin-top: 4px;">
+                                                                Oleh: {{ $item->validator->nama }}
+                                                            </div>
+                                                        @endif
+                                                    </div>
                                                 @endif
                                             </td>
                                             <td>
                                                 @php
-                                                    $namaArray = json_decode($item->nama_pegawai);
-                                                    if (is_array($namaArray)) {
+                                                    $namaPegawaiJson = $item->nama_pegawai ?? '[]';
+                                                    $namaArray = json_decode($namaPegawaiJson, true);
+
+                                                    if (is_array($namaArray) && !empty($namaArray)) {
+                                                        // Jika berhasil di-decode dan tidak kosong
                                                         echo e(implode(', ', $namaArray));
                                                     } else {
-                                                        echo e($item->nama_pegawai); // Tampilkan asli jika bukan array JSON
+                                                        // Fallback jika data bukan JSON valid atau kosong
+                                                        // Membersihkan karakter yang tidak diinginkan
+                                                        $cleaned_text = str_replace(
+                                                            ['[', ']', '"', '\\'],
+                                                            '',
+                                                            $namaPegawaiJson,
+                                                        );
+                                                        echo e($cleaned_text ?: '-');
                                                     }
                                                 @endphp
                                             </td>
@@ -192,6 +213,21 @@
                                                                         value="0" required>
                                                                 </div>
                                                             </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group form-group-default">
+                                                                    <label for="jenis_bbm-{{ $item->id }}">Jenis
+                                                                        BBM</label>
+                                                                    <select class="form-select"
+                                                                        id="jenis_bbm-{{ $item->id }}"
+                                                                        name="jenis_bbm" required>
+                                                                        <option value="" disabled selected>Pilih
+                                                                            Jenis BBM</option>
+                                                                        <option value="Solar">Solar</option>
+                                                                        <option value="Pertalite">Pertalite</option>
+                                                                        <option value="Pertamax">Pertamax</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
                                                             <div class="mb-3">
                                                                 <label for="foto_akhir-{{ $item->id }}"
                                                                     class="form-label">Foto KM & BBM Akhir</label>
@@ -266,7 +302,7 @@
                                 <td id="detailNamaPengemudi"></td>
                             </tr>
                             <tr>
-                                <th>Nama Pegawai</th>
+                                <th>Nama Pengguna</th>
                                 <td id="detailNamaPegawai"></td>
                             </tr>
                             <tr>
@@ -288,6 +324,10 @@
                             <tr>
                                 <th>Tipe Kendaraan</th>
                                 <td id="detailTipeKendaraan"></td>
+                            </tr>
+                            <tr>
+                                <th>Jenis BBM</th>
+                                <td id="detailJenisBbm"></td>
                             </tr>
                             <tr>
                                 <th>Estimasi Jarak Pergi</th>
@@ -398,6 +438,8 @@
                         'data-no-kendaraan') || '-';
                     document.getElementById('detailTipeKendaraan').textContent = button.getAttribute(
                         'data-tipe-kendaraan') || '-';
+                    document.getElementById('detailJenisBbm').textContent = button.getAttribute(
+                        'data-jenis-bbm') || '-';
                     document.getElementById('detailEstimasiJarak').textContent = button.getAttribute(
                         'data-estimasi-jarak') || '-';
                     document.getElementById('detailJamPergi').textContent = button.getAttribute(

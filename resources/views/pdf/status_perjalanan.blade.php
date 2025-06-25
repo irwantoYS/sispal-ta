@@ -7,12 +7,64 @@
 </head>
 
 <body>
-    <div class="header">
-        <img src="{{ public_path('kai/assets/img/kaiadmin/pgncom-logo.png') }}" alt="Logo">
-        <h2>PT. PGAS TELEKOMUNIKASI NUSANTARA</h2>
-        <p>Bandar Lampung</p>
-        <p>Telp: (021) xxx-xxxx, Email: info@namaperusahaan.com</p>
-    </div>
+    <header>
+        @php
+            // Logo Kiri
+            $logoPath1 = public_path('kai/assets/img/kaiadmin/pgncom-logo.png');
+            $logoDataUri1 = null;
+            if (file_exists($logoPath1)) {
+                try {
+                    $logoContent1 = file_get_contents($logoPath1);
+                    $logoBase64_1 = base64_encode($logoContent1);
+                    $logoMime1 = mime_content_type($logoPath1);
+                    if ($logoMime1) {
+                        $logoDataUri1 = 'data:' . $logoMime1 . ';base64,' . $logoBase64_1;
+                    }
+                } catch (\Exception $e) {
+                }
+            }
+
+            // Logo Kanan
+            $logoPath2 = public_path('kai/assets/img/kaiadmin/pertamina-logo.png');
+            $logoDataUri2 = null;
+            if (file_exists($logoPath2)) {
+                try {
+                    $logoContent2 = file_get_contents($logoPath2);
+                    $logoBase64_2 = base64_encode($logoContent2);
+                    $logoMime2 = mime_content_type($logoPath2);
+                    if ($logoMime2) {
+                        $logoDataUri2 = 'data:' . $logoMime2 . ';base64,' . $logoBase64_2;
+                    }
+                } catch (\Exception $e) {
+                }
+            }
+        @endphp
+        <table style="width: 100%; border-collapse: collapse; border: none;">
+            <tbody>
+                <tr>
+                    <td style="width: 25%; text-align: left; vertical-align: middle; border: none; padding: 0;">
+                        @if ($logoDataUri1)
+                            <img src="{{ $logoDataUri1 }}" alt="Logo PGNCOM" style="max-width: 150px; height: auto;">
+                        @endif
+                    </td>
+                    <td style="width: 50%; text-align: center; vertical-align: middle; border: none; padding: 0;">
+                        <div class="header-center">
+                            <h1>PT. Perusahaan Gas Negara, Tbk</h1>
+                            <p>35125, Jl. Sam Ratulangi No.15, Penengahan, Kec. Tj. Karang Pusat, Kota Bandar
+                                Lampung, Lampung 35126</p>
+                            <p>Telp. (0721) 7626359</p>
+                            <p>Email: sales@pgncom.co.id</p>
+                        </div>
+                    </td>
+                    <td style="width: 25%; text-align: right; vertical-align: middle; border: none; padding: 0;">
+                        @if ($logoDataUri2)
+                            <img src="{{ $logoDataUri2 }}" alt="Logo Pertamina" style="max-width: 150px; height: auto;">
+                        @endif
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </header>
 
     <div class="title">
         <h3>FORUM PEMAKAIAN KENDARAAN</h3>
@@ -29,12 +81,13 @@
     <table>
         <thead>
             <tr>
-                <th>Nama Pegawai</th>
+                <th>Nama Pengguna</th>
                 <th>Titik Awal</th>
                 <th>Titik Akhir</th>
                 <th>Tujuan Perjalanan</th>
                 <th>No. Kendaraan</th>
                 <th>Tipe Kendaraan</th>
+                <th>Jenis BBM</th>
                 <th>Estimasi Jarak Pergi</th>
                 <th>BBM Awal</th>
                 <th>Jam Pergi</th>
@@ -59,15 +112,39 @@
                 <td>{{ $perjalanan->tujuan_perjalanan }}</td>
                 <td>{{ $perjalanan->kendaraan->no_kendaraan }}</td>
                 <td>{{ $perjalanan->kendaraan->tipe_kendaraan }}</td>
-                <td>{{ $perjalanan->estimasi_jarak }}</td>
+                <td>{{ $perjalanan->jenis_bbm ?? '-' }}</td>
+                <td>{{ $perjalanan->estimasi_jarak ?? '-' }} KM</td>
                 <td>{{ $perjalanan->bbm_awal }}/8</td>
                 <td>{{ $perjalanan->jam_pergi }}</td>
             </tr>
         </tbody>
     </table>
 
+    <div class="status-section" style="margin-top: 20px;">
+        <p>
+            <strong>Status Perjalanan:</strong>
+            <span
+                style="
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    color: white;
+                    background-color: @if ($perjalanan->status == 'disetujui') #28a745
+                                     @elseif($perjalanan->status == 'ditolak') #dc3545
+                                     @else #ffc107 @endif;
+                ">
+                {{ ucfirst($perjalanan->status) }}
+            </span>
+        </p>
+        @if ($perjalanan->validator)
+            <p><strong>Divalidasi Oleh:</strong> {{ $perjalanan->validator->nama ?? '-' }}</p>
+        @endif
+        @if ($perjalanan->status == 'ditolak' && $perjalanan->alasan)
+            <p><strong>Alasan Penolakan:</strong> {{ $perjalanan->alasan }}</p>
+        @endif
+    </div>
+
     <div class="signature">
-        <p>Jakarta, {{ date('d F Y', strtotime($perjalanan->created_at)) }}</p>
+        <p>Bandar Lampung, {{ date('d F Y', strtotime($perjalanan->created_at)) }}</p>
         <p>Hormat Saya,</p>
         <div class="signature-image">
             @if ($perjalanan->user->ttd)
@@ -88,9 +165,11 @@
             font-size: 12px;
         }
 
-        .header {
-            text-align: center;
+        header {
             margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid black;
+            width: 100%;
         }
 
         .title {
@@ -98,31 +177,20 @@
             margin-bottom: 20px;
         }
 
-        .header img {
-            width: 100px;
-            /* Sesuaikan ukuran logo */
-            height: auto;
-            margin-bottom: 10px;
-        }
-
-        .header h2 {
-            margin: 0;
-            font-size: 16px;
-        }
-
-        .header {
-            display: flex;
-            /* Menggunakan Flexbox */
-            justify-content: space-between;
-            /* Meletakkan logo dan info perusahaan di ujung */
-            align-items: center;
-            /* Memposisikan elemen secara vertikal di tengah */
+        .header-center {
             text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid black;
-            /* Tambahkan garis pembatas di bawah header */
-            padding-bottom: 10px;
-            /* Beri sedikit ruang antara garis dan konten di bawahnya */
+        }
+
+        .header-center h1 {
+            font-size: 16px;
+            margin: 0 0 5px;
+            font-weight: bold;
+        }
+
+        .header-center p {
+            font-size: 10px;
+            color: #666;
+            margin: 0;
         }
 
         .info {

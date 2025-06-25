@@ -39,7 +39,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group form-group-default">
-                                        <label>Nama Pegawai</label>
+                                        <label>Nama Pengguna</label>
                                         <select class="js-example-basic-multiple form-control" name="nama_pegawai[]"
                                             multiple="multiple" required style="width: 100%;">
                                             @foreach ($pegawaiList as $pegawai)

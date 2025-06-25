@@ -21,7 +21,7 @@
                                         <th>No</th>
                                         <th>status</th>
                                         <th>Nama Pengemudi</th>
-                                        <th>Nama Pegawai</th>
+                                        <th>Nama Pengguna</th>
                                         <th>Titik Akhir</th>
                                         <th>Tujuan Perjalanan</th>
                                         <th>Jam Pergi</th>
@@ -171,7 +171,7 @@
                                 <td id="detailNamaPengemudi"></td>
                             </tr>
                             <tr>
-                                <th>Nama Pegawai</th>
+                                <th>Nama Pengguna</th>
                                 <td id="detailNamaPegawai"></td>
                             </tr>
                             <tr>

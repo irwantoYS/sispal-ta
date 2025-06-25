@@ -21,6 +21,7 @@ class LaporanPerjalanan extends Model
         'km_akhir',
         'bbm_awal',
         'bbm_akhir',
+        'jenis_bbm',
         'jam_pergi',
         'jam_kembali',
         'status',
@@ -41,5 +42,10 @@ class LaporanPerjalanan extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'pengemudi_id');
+    }
+
+    public function validator()
+    {
+        return $this->belongsTo(User::class, 'validated_by');
     }
 }

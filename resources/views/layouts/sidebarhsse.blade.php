@@ -106,7 +106,7 @@
                         <li class="nav-item {{ Request::is('hsse/pegawai*') ? 'active' : '' }}">
                             <a href="{{ route('hsse.pegawai.index') }}">
                                 <i class="fa-solid fa-id-card"></i>
-                                <p>Master Pegawai</p>
+                                <p>Master Pengguna</p>
                             </a>
                         </li>
                     </ul>

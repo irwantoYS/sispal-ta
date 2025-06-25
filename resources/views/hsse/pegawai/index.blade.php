@@ -1,24 +1,24 @@
 @extends('layouts.sidebarhsse')
 
-@section('title', 'Kelola Nama Pegawai | HSSE')
+@section('title', 'Kelola Nama Pengguna | HSSE')
 
 @section('content')
     <div class="container">
         <div class="page-inner">
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                 <div>
-                    <h3 class="fw-bold mb-3">Kelola Nama Pegawai</h3>
-                    <h6 class="op-7 mb-2">Daftar Nama Pegawai</h6>
+                    <h3 class="fw-bold mb-3">Kelola Nama Pengguna</h3>
+                    <h6 class="op-7 mb-2">Daftar Nama Pengguna</h6>
                 </div>
             </div>
 
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="card-title">Daftar Pegawai</h4>
+                        <h4 class="card-title">Daftar Pengguna</h4>
                         <a href="{{ route('hsse.pegawai.create') }}" class="btn btn-primary btn-round ms-auto">
                             <i class="fa fa-plus"></i>
-                            Tambah Pegawai
+                            Tambah Pengguna
                         </a>
                     </div>
                     <div class="card-body">
@@ -41,7 +41,7 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Nama Pegawai</th>
+                                        <th>Nama Pengguna</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -66,7 +66,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="3" class="text-center">Tidak ada data pegawai.</td>
+                                                <td colspan="3" class="text-center">Tidak ada data pengguna.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -102,7 +102,7 @@
 
                     Swal.fire({
                         title: 'Apakah anda yakin?',
-                        text: `Anda akan menghapus pegawai "${pegawaiNama}"!`,
+                        text: `Anda akan menghapus pengguna "${pegawaiNama}"!`,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#d33',

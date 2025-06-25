@@ -27,6 +27,7 @@ class PDFController extends Controller
 
         // Query dasar
         $query = LaporanPerjalanan::query()
+            ->with('validator')
             ->whereNotNull('bbm_akhir')
             ->whereNotNull('jam_kembali');
 
@@ -150,7 +151,8 @@ class PDFController extends Controller
 
         // Cari data perjalanan berdasarkan ID dan pengemudi yang sedang login
         $data['title'] = 'Status Perjalanan';
-        $perjalanan = LaporanPerjalanan::where('id', $id)
+        $perjalanan = LaporanPerjalanan::with('validator')
+            ->where('id', $id)
             ->where('pengemudi_id', $user->id)
             ->first();
 

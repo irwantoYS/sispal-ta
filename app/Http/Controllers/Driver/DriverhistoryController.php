@@ -45,7 +45,7 @@ class DriverhistoryController extends Controller
             $perjalananQuery->where('pengemudi_id', Auth::user()->id);
         }
 
-        $perjalanan = $perjalananQuery->with('kendaraan')->get(); // Eager load kendaraan
+        $perjalanan = $perjalananQuery->with('kendaraan', 'validator')->get(); // Eager load kendaraan
 
         // --- Perhitungan di Luar Loop ---
         $totalEstimasiJarak = 0;

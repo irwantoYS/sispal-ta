@@ -53,7 +53,7 @@ class HSSEHistoryController extends Controller
 
         // --- Data Detail Perjalanan ---
         $perjalananQuery = LaporanPerjalanan::query()
-            ->with(['user', 'Kendaraan'])
+            ->with(['user', 'Kendaraan', 'validator'])
             ->whereNotNull('bbm_akhir')
             ->whereNotNull('jam_kembali')
             ->orderBy('jam_pergi', 'desc');

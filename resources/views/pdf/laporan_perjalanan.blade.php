@@ -12,15 +12,33 @@
     <div class="container">
         <header>
             @php
-                $logoPath = public_path('kai/assets/img/kaiadmin/pgncom-logo.png');
-                $logoDataUri = null;
-                if (file_exists($logoPath)) {
+                // Logo Kiri
+                $logoPath1 = public_path('kai/assets/img/kaiadmin/pgncom-logo.png');
+                $logoDataUri1 = null;
+                if (file_exists($logoPath1)) {
                     try {
-                        $logoContent = file_get_contents($logoPath);
-                        $logoBase64 = base64_encode($logoContent);
-                        $logoMime = mime_content_type($logoPath);
-                        if ($logoMime) {
-                            $logoDataUri = 'data:' . $logoMime . ';base64,' . $logoBase64;
+                        $logoContent1 = file_get_contents($logoPath1);
+                        $logoBase64_1 = base64_encode($logoContent1);
+                        $logoMime1 = mime_content_type($logoPath1);
+                        if ($logoMime1) {
+                            $logoDataUri1 = 'data:' . $logoMime1 . ';base64,' . $logoBase64_1;
+                        }
+                    } catch (\Exception $e) {
+                        // Opsional: log error jika perlu
+                        // \Log::error("Error processing logo for PDF: " . $e->getMessage());
+                    }
+                }
+
+                // Logo Kanan
+                $logoPath2 = public_path('kai/assets/img/kaiadmin/pertamina-logo.png');
+                $logoDataUri2 = null;
+                if (file_exists($logoPath2)) {
+                    try {
+                        $logoContent2 = file_get_contents($logoPath2);
+                        $logoBase64_2 = base64_encode($logoContent2);
+                        $logoMime2 = mime_content_type($logoPath2);
+                        if ($logoMime2) {
+                            $logoDataUri2 = 'data:' . $logoMime2 . ';base64,' . $logoBase64_2;
                         }
                     } catch (\Exception $e) {
                         // Opsional: log error jika perlu
@@ -28,19 +46,32 @@
                     }
                 }
             @endphp
-            <div class="header-left">
-                @if ($logoDataUri)
-                    <img src="{{ $logoDataUri }}" alt="Logo Perusahaan" style="max-width: 100px; height: auto;">
-                @else
-                    <p style="font-size: 10px;">Logo</p>
-                @endif
-            </div>
-            <div class="header-right">
-                <h1>PT. Perusahaan Gas Negara, Tbk</h1>
-                <p>Jalan Raya Kota, No. 123, Kota Anda</p>
-                <p>Telp. (0721) XXXXXX</p>
-                <p>Email: info@pgnro4.com</p>
-            </div>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tbody>
+                    <tr>
+                        <td style="width: 25%; text-align: left; vertical-align: middle; border: none; padding: 0;">
+                            @if ($logoDataUri1)
+                                <img src="{{ $logoDataUri1 }}" alt="Logo PGNCOM" style="max-width: 150px; height: auto;">
+                            @endif
+                        </td>
+                        <td style="width: 50%; text-align: center; vertical-align: middle; border: none; padding: 0;">
+                            <div class="header-center">
+                                <h1>PT. Perusahaan Gas Negara, Tbk</h1>
+                                <p>35125, Jl. Sam Ratulangi No.15, Penengahan, Kec. Tj. Karang Pusat, Kota Bandar
+                                    Lampung, Lampung 35126</p>
+                                <p>Telp. (0721) 7626359</p>
+                                <p>Email: sales@pgncom.co.id</p>
+                            </div>
+                        </td>
+                        <td style="width: 25%; text-align: right; vertical-align: middle; border: none; padding: 0;">
+                            @if ($logoDataUri2)
+                                <img src="{{ $logoDataUri2 }}" alt="Logo Pertamina"
+                                    style="max-width: 150px; height: auto;">
+                            @endif
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </header>
 
         <h2>History Laporan Perjalanan Pengguna</h2>
@@ -60,15 +91,14 @@
                     <th>Titik Awal</th>
                     <th>Titik Akhir</th>
                     <th>Tujuan Perjalanan</th>
-                    <th>No Kendaraan</th>
                     <th>Tipe Kendaraan</th>
-                    <th>Estimasi Jarak Tempuh</th>
-                    <th>Estimasi Waktu</th>
-                    <th>Estimasi BBM</th>
+                    <th>No Kendaraan</th>
+                    <th>Jenis BBM</th>
                     <th>BBM Awal</th>
                     <th>BBM Akhir</th>
                     <th>Jam Pergi</th>
                     <th>Jam Kembali</th>
+                    <th>Divalidasi Oleh</th>
                 </tr>
             </thead>
             <tbody>
@@ -95,17 +125,15 @@
                         <td>{{ $item->titik_awal ?? '-' }}</td>
                         <td>{{ $item->titik_akhir ?? '-' }}</td>
                         <td>{{ $item->tujuan_perjalanan ?? '-' }}</td>
-                        <td>{{ $item->Kendaraan->no_kendaraan ?? '-' }}</td>
-                        <td>{{ $item->Kendaraan->tipe_kendaraan ?? '-' }}</td>
-                        <td>{{ $item->km_akhir ?? '-' }}</td>
-                        <td>{{ $item->estimasi_waktu ?? '-' }}</td>
-                        <td>{{ $item->estimasi_bbm ?? '-' }} Liter</td>
-                        <td>{{ $item->bbm_awal ?? '-' }}</td>
-                        <td>{{ $item->bbm_akhir ?? '-' }}</td>
-                        <td>{{ $item->jam_pergi ? \Carbon\Carbon::parse($item->jam_pergi)->format('d/m/Y H:i') : '-' }}
-                        </td>
+                        <td>{{ $item->Kendaraan->tipe_kendaraan ?? 'N/A' }}</td>
+                        <td>{{ $item->Kendaraan->no_kendaraan ?? 'N/A' }}</td>
+                        <td>{{ $item->jenis_bbm ?? '-' }}</td>
+                        <td>{{ $item->bbm_awal ?? '0' }}/8</td>
+                        <td>{{ $item->bbm_akhir ?? '0' }}/8</td>
+                        <td>{{ $item->jam_pergi_formatted ?? '-' }}</td>
                         <td>{{ $item->jam_kembali ? \Carbon\Carbon::parse($item->jam_kembali)->format('d/m/Y H:i') : '-' }}
                         </td>
+                        <td>{{ $item->validator->nama ?? '-' }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -152,34 +180,23 @@
     }
 
     header {
-        display: flex;
-        /* Menggunakan flexbox */
-        justify-content: space-between;
-        /* Menempatkan elemen di kedua ujung */
-        align-items: center;
-        /* Pusatkan secara vertikal */
         margin-bottom: 20px;
         padding-bottom: 10px;
         border-bottom: 2px solid black;
+        width: 100%;
     }
 
-    .header-left img {
-        max-width: 100px;
-        height: auto;
+    .header-center {
+        text-align: center;
     }
 
-    .header-right {
-        text-align: right;
-        /* Teks di sebelah kanan */
-    }
-
-    .header-right h1 {
+    .header-center h1 {
         font-size: 16px;
         margin: 0 0 5px;
         font-weight: bold;
     }
 
-    .header-right p {
+    .header-center p {
         font-size: 10px;
         color: #666;
         margin: 0;

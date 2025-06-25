@@ -62,7 +62,7 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Nama Pegawai</th>
+                                        <th>Nama Pengguna</th>
                                         <th>Titik Akhir</th>
                                         <th>Tujuan Perjalanan</th>
                                         <th>Jam Pergi</th>
@@ -70,7 +70,6 @@
                                         <th>Estimasi Waktu</th> {{-- Ganti header menjadi Durasi --}}
                                         <th>KM & BBM Awal</th>
                                         <th>KM & BBM Akhir</th>
-                                        {{-- <th>Status</th> --}}
                                         <th>Detail</th>
                                     </tr>
                                 </thead>
@@ -118,9 +117,6 @@
                                                     <span class="text-muted">Tidak ada foto</span>
                                                 @endif
                                             </td>
-                                            {{-- <td>
-                                        <span class="badge bg-primary">Selesai</span>
-                                    </td> --}}
                                             <td>
                                                 <button class="btn btn-info btn-sm detail-button" data-bs-toggle="modal"
                                                     data-bs-target="#detailModal"
@@ -128,16 +124,18 @@
                                                     data-nama-pegawai="{{ e($item->nama_pegawai ?? '') }}"
                                                     data-titik-awal="{{ $item->titik_awal }}"
                                                     data-titik-akhir="{{ $item->titik_akhir }}"
-                                                    data-tujuan="{{ $item->tujuan_perjalanan }}"
+                                                    data-tujuan="{{ $item->tujuan_perjalanan ?? '-' }}"
                                                     data-no-kendaraan="{{ $item->Kendaraan->no_kendaraan ?? '-' }}"
                                                     data-tipe-kendaraan="{{ $item->Kendaraan->tipe_kendaraan ?? '-' }}"
-                                                    {{-- data-km-awal="{{ $item->km_awal }}" --}} data-km-akhir="{{ $item->km_akhir }}"
-                                                    data-bbm-awal="{{ $item->bbm_awal }}"
-                                                    data-bbm-akhir="{{ $item->bbm_akhir }}"
+                                                    data-jenis-bbm="{{ $item->jenis_bbm ?? '-' }}"
+                                                    data-estimasi-jarak="{{ $item->km_akhir ? number_format((float) $item->km_akhir, 2, ',', '.') . ' KM' : '-' }}"
+                                                    data-bbm-awal="{{ $item->bbm_awal ?? '-' }}"
+                                                    data-bbm-akhir="{{ $item->bbm_akhir ?? '-' }}"
                                                     data-jam-pergi="{{ $item->jam_pergi }}"
                                                     data-jam-kembali="{{ $item->jam_kembali }}"
                                                     data-estimasi-waktu="{{ $item->estimasi_waktu }}"
-                                                    data-estimasi-bbm="{{ $item->estimasi_bbm }}">
+                                                    data-estimasi-bbm="{{ $item->estimasi_bbm }}"
+                                                    data-validator="{{ $item->validator->nama ?? '-' }}">
                                                     Detail
                                                 </button>
                                             </td>
@@ -168,7 +166,7 @@
                                 <td id="detailNamaPengemudi"></td>
                             </tr>
                             <tr>
-                                <th>Nama Pegawai</th>
+                                <th>Nama Pengguna</th>
                                 <td id="detailNamaPegawai"></td>
                             </tr>
                             <tr>
@@ -191,10 +189,10 @@
                                 <th>Tipe Kendaraan</th>
                                 <td id="detailTipeKendaraan"></td>
                             </tr>
-                            {{-- <tr>
-                        <th>KM Awal</th>
-                        <td id="detailKmAwal"></td>
-                    </tr> --}}
+                            <tr>
+                                <th>Jenis BBM</th>
+                                <td id="detailJenisBbm"></td>
+                            </tr>
                             <tr>
                                 <th>BBM Awal</th>
                                 <td>
@@ -227,7 +225,7 @@
                             </tr>
                             <tr>
                                 <th>Estimasi Total Jarak Tempuh</th>
-                                <td id="detailKmAkhir"></td>
+                                <td id="detailEstimasiJarak"></td>
                             </tr>
                             <tr>
                                 <th>Estimasi Waktu</th>
@@ -236,6 +234,10 @@
                             <tr>
                                 <th>Estimasi BBM</th>
                                 <td id="detailEstimasiBBM"></td>
+                            </tr>
+                            <tr>
+                                <th>Divalidasi Oleh</th>
+                                <td id="detailValidator"></td>
                             </tr>
                         </table>
                     </div>
@@ -310,8 +312,10 @@
                         'data-no-kendaraan') || '-';
                     document.getElementById('detailTipeKendaraan').textContent = button.getAttribute(
                         'data-tipe-kendaraan') || '-';
-                    let estimasiJarakTempuh = button.getAttribute('data-km-akhir');
-                    document.getElementById('detailKmAkhir').textContent = estimasiJarakTempuh || '-';
+                    document.getElementById('detailJenisBbm').textContent = button.getAttribute(
+                        'data-jenis-bbm') || '-';
+                    document.getElementById('detailEstimasiJarak').textContent = button.getAttribute(
+                        'data-estimasi-jarak') || '-';
                     document.getElementById('detailJamPergi').textContent = button.getAttribute(
                         'data-jam-pergi') || '-';
                     document.getElementById('detailJamKembali').textContent = button.getAttribute(
@@ -321,6 +325,8 @@
                     let estimasiBBM = button.getAttribute('data-estimasi-bbm');
                     document.getElementById('detailEstimasiBBM').textContent = estimasiBBM ? estimasiBBM +
                         " Liter" : '-'; // Tambah cek null
+                    document.getElementById('detailValidator').textContent = button.getAttribute(
+                        'data-validator') || '-';
 
                     // Update progress bar BBM Awal
                     const bbmAwal = button.getAttribute('data-bbm-awal') || 0;

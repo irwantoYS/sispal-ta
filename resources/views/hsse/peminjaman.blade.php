@@ -13,8 +13,8 @@
         <div class="page-inner">
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                 <div>
-                    <h3 class="fw-bold mb-3">Peminjaman Kendaraan oleh Pegawai</h3>
-                    <h6 class="op-7 mb-2">Catat penggunaan kendaraan operasional oleh pegawai non-driver</h6>
+                    <h3 class="fw-bold mb-3">Peminjaman Kendaraan oleh Pengguna</h3>
+                    <h6 class="op-7 mb-2">Catat penggunaan kendaraan operasional oleh pengguna non-driver</h6>
                 </div>
             </div>
 
@@ -29,7 +29,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group form-group-default">
-                                    <label>Nama Pegawai</label>
+                                    <label>Nama Pengguna</label>
                                     <select class="form-select select2-multiple" name="pegawai_id[]" multiple="multiple"
                                         required style="width: 100%;">
                                         @foreach ($pegawaiList as $pegawai)
@@ -133,7 +133,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Nama Pegawai</th>
+                                    <th>Nama Pengguna</th>
                                     <th>Kendaraan</th>
                                     <th>Tujuan</th>
                                     <th>Waktu Pinjam</th>
@@ -252,7 +252,7 @@
         $(document).ready(function() {
             $('.select2-multiple').select2({
                 theme: "bootstrap-5",
-                placeholder: $(this).data('placeholder') || 'Pilih pegawai',
+                placeholder: $(this).data('placeholder') || 'Pilih pengguna',
             });
         });
     </script>

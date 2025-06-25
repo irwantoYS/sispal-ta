@@ -89,7 +89,7 @@
                                 </p>
                             </div>
                             <div class="col-lg-7 col-sm-12">
-                                <img src="{{ asset('storage/images/Carousel-1.png') }}" class="d-block w-100"
+                                <img src="{{ asset('storage/images/akhlakbaru.jpeg') }}" class="d-block w-100"
                                     alt="...">
                             </div>
                         </div>
