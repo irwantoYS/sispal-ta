@@ -51,6 +51,7 @@ class DriverhistoryController extends Controller
         $totalEstimasiJarak = 0;
         $totalEstimasiBBM = 0;
         $totalDurasiMenit = 0;
+        $totalKmManual = 0;
 
         foreach ($perjalanan as $item) {
             // Durasi perjalanan sudah dihitung dan disimpan di $item->estimasi_waktu
@@ -75,6 +76,7 @@ class DriverhistoryController extends Controller
             // Akumulasi total
             $totalEstimasiJarak += (float)$item->km_akhir; // Gunakan km_akhir dari database
             $totalEstimasiBBM += (float)$item->estimasi_bbm;
+            $totalKmManual += (float)$item->total_km_manual;
         }
         // --- Akhir Perhitungan ---
 
@@ -88,6 +90,6 @@ class DriverhistoryController extends Controller
 
 
         // Kirim data ke view  *** PASTIKAN ADA startDate dan endDate ***
-        return view('driver.historyperjalanan', compact('perjalanan', 'totalEstimasiJarak', 'totalEstimasiBBM', 'totalDurasiFormat', 'startDate', 'endDate'));
+        return view('driver.historyperjalanan', compact('perjalanan', 'totalEstimasiJarak', 'totalEstimasiBBM', 'totalDurasiFormat', 'startDate', 'endDate', 'totalKmManual'));
     }
 }

@@ -78,6 +78,7 @@
 
         <div class="mb-4">
             <p><strong>Total Estimasi Jarak:</strong> {{ number_format($totalEstimasiJarak, 2, '.', '') }} KM</p>
+            <p><strong>Total KM Manual:</strong> {{ number_format($totalKmManual, 2, '.', '') }} KM</p>
             <p><strong>Total Estimasi BBM:</strong> {{ number_format($totalEstimasiBBM, 2, '.', '') }} Liter</p>
             <p><strong>Total Estimasi Waktu:</strong> {{ $totalDurasiFormat }}</p>
         </div>
@@ -88,14 +89,13 @@
                     <th>No</th>
                     <th>Nama Pengemudi</th>
                     <th>Nama Pegawai</th>
-                    <th>Titik Awal</th>
-                    <th>Titik Akhir</th>
                     <th>Tujuan Perjalanan</th>
                     <th>Tipe Kendaraan</th>
                     <th>No Kendaraan</th>
-                    <th>Jenis BBM</th>
-                    <th>BBM Awal</th>
-                    <th>BBM Akhir</th>
+                    <th>Estimasi Jarak</th>
+                    <th>KM Awal (M)</th>
+                    <th>KM Akhir (M)</th>
+                    <th>Total KM (M)</th>
                     <th>Jam Pergi</th>
                     <th>Jam Kembali</th>
                     <th>Divalidasi Oleh</th>
@@ -122,14 +122,14 @@
                                 }
                             @endphp
                         </td>
-                        <td>{{ $item->titik_awal ?? '-' }}</td>
-                        <td>{{ $item->titik_akhir ?? '-' }}</td>
                         <td>{{ $item->tujuan_perjalanan ?? '-' }}</td>
                         <td>{{ $item->Kendaraan->tipe_kendaraan ?? 'N/A' }}</td>
                         <td>{{ $item->Kendaraan->no_kendaraan ?? 'N/A' }}</td>
-                        <td>{{ $item->jenis_bbm ?? '-' }}</td>
-                        <td>{{ $item->bbm_awal ?? '0' }}/8</td>
-                        <td>{{ $item->bbm_akhir ?? '0' }}/8</td>
+                        <td>{{ $item->km_akhir ? number_format((float) $item->km_akhir, 2, ',', '.') . ' KM' : '-' }}
+                        </td>
+                        <td>{{ $item->km_awal_manual ? number_format($item->km_awal_manual) . ' KM' : '-' }}</td>
+                        <td>{{ $item->km_akhir_manual ? number_format($item->km_akhir_manual) . ' KM' : '-' }}</td>
+                        <td>{{ $item->total_km_manual ? number_format($item->total_km_manual) . ' KM' : '-' }}</td>
                         <td>{{ $item->jam_pergi_formatted ?? '-' }}</td>
                         <td>{{ $item->jam_kembali ? \Carbon\Carbon::parse($item->jam_kembali)->format('d/m/Y H:i') : '-' }}
                         </td>

@@ -116,6 +116,7 @@ class PDFController extends Controller
             return (float) str_replace(' KM', '', $item->km_akhir);
         });
         $totalEstimasiBBM =  $data['perjalanan']->sum('estimasi_bbm');
+        $totalKmManual = $data['perjalanan']->sum('total_km_manual');
 
         // Hitung total durasi
         $totalDurasiMenit = 0;
@@ -130,6 +131,7 @@ class PDFController extends Controller
         $data['totalEstimasiJarak'] = $totalEstimasiJarak;
         $data['totalEstimasiBBM'] = $totalEstimasiBBM;
         $data['totalDurasiFormat'] = $totalDurasiFormat;
+        $data['totalKmManual'] = $totalKmManual;
 
         $pdf = PDF::loadView('pdf.laporan_perjalanan', $data)->setPaper('A4', 'landscape');
         return $pdf->stream('laporan-perjalanan.pdf');

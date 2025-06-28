@@ -50,6 +50,7 @@
                             </div>
                             <p><strong>Total Estimasi Jarak:</strong> {{ number_format($totalEstimasiJarak, 2, '.', '') }}
                                 KM</p>
+                            <p><strong>Total KM Manual:</strong> {{ number_format($totalKmManual, 2, '.', '') }} KM</p>
                             <p><strong>Total Estimasi BBM:</strong> {{ number_format($totalEstimasiBBM, 2, '.', '') }} Liter
                             </p>
                             <p><strong>Total Estimasi Waktu:</strong> {{ $totalDurasiFormat }}</p>
@@ -63,12 +64,11 @@
                                         <th>No</th>
                                         <th>Nama Pengemudi</th>
                                         <th>Nama Pengguna</th>
-                                        <th>Titik Akhir</th>
                                         <th>Tujuan Perjalanan</th>
                                         <th>Jam Pergi</th>
                                         <th>Jam Kembali</th>
-                                        <th>KM & BBM Awal</th>
-                                        <th>KM & BBM Akhir</th>
+                                        <th>Foto Awal</th>
+                                        <th>Foto Akhir</th>
                                         <th>Detail</th>
                                     </tr>
                                 </thead>
@@ -93,7 +93,6 @@
                                                     }
                                                 @endphp
                                             </td>
-                                            <td>{{ $item->titik_akhir }}</td>
                                             <td>{{ $item->tujuan_perjalanan }}</td>
                                             <td>{{ $item->jam_pergi }}</td>
                                             <td>{{ $item->jam_kembali }}</td>
@@ -131,6 +130,9 @@
                                                     data-tipe-kendaraan="{{ $item->Kendaraan->tipe_kendaraan ?? '-' }}"
                                                     data-jenis-bbm="{{ $item->jenis_bbm ?? '-' }}"
                                                     data-estimasi-jarak="{{ $item->km_akhir ? number_format((float) $item->km_akhir, 2, ',', '.') . ' KM' : '-' }}"
+                                                    data-km-awal-manual="{{ $item->km_awal_manual ? number_format($item->km_awal_manual) . ' KM' : '-' }}"
+                                                    data-km-akhir-manual="{{ $item->km_akhir_manual ? number_format($item->km_akhir_manual) . ' KM' : '-' }}"
+                                                    data-total-km-manual="{{ $item->total_km_manual ? number_format($item->total_km_manual) . ' KM' : '-' }}"
                                                     data-bbm-awal="{{ $item->bbm_awal ?? '-' }}"
                                                     data-bbm-akhir="{{ $item->bbm_akhir ?? '-' }}"
                                                     data-jam-pergi="{{ $item->jam_pergi }}"
@@ -194,10 +196,6 @@
                                     <td id="detailJenisBbm"></td>
                                 </tr>
                                 <tr>
-                                    <th>KM Akhir</th>
-                                    <td id="detailKmAkhir"></td>
-                                </tr>
-                                <tr>
                                     <th>BBM Awal</th>
                                     <td>
                                         <div class="progress" style="height: 25px;">
@@ -240,6 +238,18 @@
                                 <tr>
                                     <th>Estimasi Jarak</th>
                                     <td id="detailEstimasiJarak"></td>
+                                </tr>
+                                <tr>
+                                    <th>KM Awal Manual</th>
+                                    <td id="detailKmAwalManual"></td>
+                                </tr>
+                                <tr>
+                                    <th>KM Akhir Manual</th>
+                                    <td id="detailKmAkhirManual"></td>
+                                </tr>
+                                <tr>
+                                    <th>Total KM Manual</th>
+                                    <td id="detailTotalKmManual"></td>
                                 </tr>
                                 <tr>
                                     <th>Divalidasi Oleh</th>
@@ -368,14 +378,12 @@
                             'data-tipe-kendaraan') || '-';
                         document.getElementById('detailJenisBbm').textContent = button.getAttribute(
                             'data-jenis-bbm') || '-';
-                        document.getElementById('detailKmAkhir').textContent = button.getAttribute(
-                            'data-km-akhir') || '-';
                         document.getElementById('detailJamPergi').textContent = button.getAttribute(
                             'data-jam-pergi') || '-';
                         document.getElementById('detailJamKembali').textContent = button.getAttribute(
                             'data-jam-kembali') || '-';
 
-                        {{-- Tambahkan pengambilan data estimasi --}}
+                        // Tambahkan pengambilan data estimasi
                         let estimasiWaktu = button.getAttribute('data-estimasi-waktu') || '-';
                         let estimasiBBM = button.getAttribute('data-estimasi-bbm') || '-';
                         document.getElementById('detailEstimasiWaktu').textContent = estimasiWaktu;
@@ -383,6 +391,12 @@
                             estimasiBBM + ' Liter' : '-';
                         document.getElementById('detailEstimasiJarak').textContent = button.getAttribute(
                             'data-estimasi-jarak') || '-';
+                        document.getElementById('detailKmAwalManual').textContent = button.getAttribute(
+                            'data-km-awal-manual') || '-';
+                        document.getElementById('detailKmAkhirManual').textContent = button.getAttribute(
+                            'data-km-akhir-manual') || '-';
+                        document.getElementById('detailTotalKmManual').textContent = button.getAttribute(
+                            'data-total-km-manual') || '-';
                         document.getElementById('detailValidator').textContent = button.getAttribute(
                             'data-validator') || '-';
 

@@ -115,6 +115,13 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group form-group-default">
+                                        <label>KM Awal Manual</label>
+                                        <input type="number" class="form-control" name="km_awal_manual"
+                                            placeholder="Masukkan KM Awal Kendaraan" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-group-default">
                                         <label>Tujuan Perjalanan</label>
                                         <input type="text" class="form-control" name="tujuan_perjalanan"
                                             placeholder="Tujuan Perjalanan" required>

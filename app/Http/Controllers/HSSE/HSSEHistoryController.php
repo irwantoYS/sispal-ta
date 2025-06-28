@@ -73,6 +73,7 @@ class HSSEHistoryController extends Controller
         $totalEstimasiJarak = 0;
         $totalEstimasiBBM = 0;
         $totalDurasiMenit = 0;
+        $totalKmManual = 0;
 
         foreach ($perjalanan as $item) {
             if ($item->jam_pergi && $item->jam_kembali) {
@@ -90,6 +91,7 @@ class HSSEHistoryController extends Controller
 
             $totalEstimasiJarak += (float)$item->km_akhir;
             $totalEstimasiBBM += (float)($item->estimasi_bbm ?? 0);
+            $totalKmManual += (float)($item->total_km_manual ?? 0);
         }
 
         $totalDurasiJam = floor($totalDurasiMenit / 60);
@@ -106,6 +108,7 @@ class HSSEHistoryController extends Controller
             'startDate' => $startDate,
             'endDate' => $endDate,
             'rentangTanggal' => $rentangTanggal,
+            'totalKmManual' => $totalKmManual,
         ]);
     }
 }

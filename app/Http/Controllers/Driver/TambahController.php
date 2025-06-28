@@ -44,6 +44,7 @@ class TambahController extends Controller
             'titik_akhir' => 'required|max:255',
             'tujuan_perjalanan' => 'required|max:255',
             'kendaraan_id' => 'required|exists:kendaraan,id',
+            'km_awal_manual' => 'required|numeric',
             'bbm_awal' => 'required|numeric',
             'jam_pergi' => 'required',
             'foto_awal' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:6000',
@@ -87,6 +88,7 @@ class TambahController extends Controller
             'kendaraan_id' => $request->kendaraan_id,
             'km_awal' => null,
             'km_akhir' => $km_akhir_calculated,
+            'km_awal_manual' => $request->km_awal_manual,
             'bbm_awal' => $request->bbm_awal,
             'bbm_akhir' => null,
             'jam_pergi' => $request->jam_pergi,
@@ -122,13 +124,18 @@ class TambahController extends Controller
             'jenis_bbm' => 'required|in:Solar,Pertalite,Pertamax',
             'jam_kembali' => 'required|date',
             'foto_akhir' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:6000',
+            'km_akhir_manual' => 'required|numeric|gt:' . $perjalanan->km_awal_manual,
         ]);
+
+        $total_km_manual = $request->km_akhir_manual - $perjalanan->km_awal_manual;
 
         $perjalanan->update([
             'bbm_akhir' => $request->bbm_akhir,
             'jenis_bbm' => $request->jenis_bbm,
             'jam_kembali' => $request->jam_kembali,
             'foto_akhir' => $request->hasFile('foto_akhir') ? $request->file('foto_akhir')->store('foto_perjalanan', 'public') : $perjalanan->foto_akhir,
+            'km_akhir_manual' => $request->km_akhir_manual,
+            'total_km_manual' => $total_km_manual,
         ]);
 
         if ($perjalanan->jam_pergi && $perjalanan->jam_kembali) {

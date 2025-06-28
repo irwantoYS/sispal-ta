@@ -126,6 +126,9 @@
                                                     data-no-kendaraan="{{ $item->Kendaraan->no_kendaraan ?? '-' }}"
                                                     data-tipe-kendaraan="{{ $item->Kendaraan->tipe_kendaraan ?? '-' }}"
                                                     data-estimasi-jarak="{{ $item->estimasi_jarak ?? '-' }}"
+                                                    data-km-awal-manual="{{ $item->km_awal_manual ?? '-' }}"
+                                                    data-km-akhir-manual="{{ $item->km_akhir_manual ?? '-' }}"
+                                                    data-total-km-manual="{{ $item->total_km_manual ?? '-' }}"
                                                     data-bbm-awal="{{ $item->bbm_awal ?? '-' }}"
                                                     data-jam-pergi="{{ $item->jam_pergi ? \Carbon\Carbon::parse($item->jam_pergi)->format('d/m/Y H:i') : '-' }}"
                                                     data-kendaraan-status="{{ $item->Kendaraan->status ?? '' }}"
@@ -211,6 +214,23 @@
                                                                         id="bbm_akhir-{{ $item->id }}"
                                                                         name="bbm_akhir" min="0" max="8"
                                                                         value="0" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group form-group-default">
+                                                                    <label>KM Awal Manual</label>
+                                                                    <input type="number" class="form-control"
+                                                                        value="{{ $item->km_awal_manual }}" readonly>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group form-group-default">
+                                                                    <label for="km_akhir_manual-{{ $item->id }}">KM
+                                                                        Akhir Manual</label>
+                                                                    <input type="number" class="form-control"
+                                                                        id="km_akhir_manual-{{ $item->id }}"
+                                                                        name="km_akhir_manual"
+                                                                        placeholder="Masukkan KM Akhir" required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-12">
@@ -358,6 +378,32 @@
                         <h5>Kendaraan yang Digunakan Perlu Perbaikan:</h5>
                         <ul id="detailInspeksiItems" class="list-group">
                         </ul>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label>Estimasi Jarak (API)</label>
+                                <p id="detailEstimasiJarak" class="form-control-static"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label>KM Awal Manual</label>
+                                <p id="detailKmAwalManual" class="form-control-static"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label>KM Akhir Manual</label>
+                                <p id="detailKmAkhirManual" class="form-control-static"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label>Total KM Manual</label>
+                                <p id="detailTotalKmManual" class="form-control-static"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
