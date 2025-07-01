@@ -24,51 +24,49 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table id="kendaraanTable" class="display table table-striped table-hover">
-                                    <thead>
+                            <table id="kendaraanTable" class="display table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Kendaraan</th>
+                                        <th>Tipe Kendaraan</th>
+                                        <th>Status</th>
+                                        <th>Gambar</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($kendaraan as $key => $k)
                                         <tr>
-                                            <th>No</th>
-                                            <th>Nama Kendaraan</th>
-                                            <th>Tipe Kendaraan</th>
-                                            <th>Status</th>
-                                            <th>Gambar</th>
-                                            <th>Aksi</th>
+                                            <td>{{ $key + 1 }}</td>
+                                            <td>{{ $k->no_kendaraan }}</td>
+                                            <td>{{ $k->tipe_kendaraan }}</td>
+                                            <td>
+                                                @if ($k->status === 'ready')
+                                                    <span class="badge bg-success">Ready</span>
+                                                @elseif ($k->status === 'in_use')
+                                                    <span class="badge bg-info">Digunakan</span>
+                                                @elseif ($k->status === 'perlu_perbaikan')
+                                                    <span class="badge bg-warning">Perlu Perbaikan</span>
+                                                @else
+                                                    {{ $k->status }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-secondary" data-bs-toggle="modal"
+                                                    data-bs-target="#imageModal"
+                                                    onclick="showImage('{{ asset('storage/' . $k->image) }}')">Lihat
+                                                    Gambar</button>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('managerarea.kendaraan.history', $k->id) }}"
+                                                    class="btn btn-warning btn-sm"
+                                                    title="Lihat Riwayat Inspeksi">Riwayat</a>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($kendaraan as $key => $k)
-                                            <tr>
-                                                <td>{{ $key + 1 }}</td>
-                                                <td>{{ $k->no_kendaraan }}</td>
-                                                <td>{{ $k->tipe_kendaraan }}</td>
-                                                <td>
-                                                    @if ($k->status === 'ready')
-                                                        <span class="badge bg-success">Ready</span>
-                                                    @elseif ($k->status === 'in_use')
-                                                        <span class="badge bg-info">Digunakan</span>
-                                                    @elseif ($k->status === 'perlu_perbaikan')
-                                                        <span class="badge bg-warning">Perlu Perbaikan</span>
-                                                    @else
-                                                        {{ $k->status }}
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-secondary" data-bs-toggle="modal"
-                                                        data-bs-target="#imageModal"
-                                                        onclick="showImage('{{ asset('storage/' . $k->image) }}')">Lihat
-                                                        Gambar</button>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('managerarea.kendaraan.history', $k->id) }}"
-                                                        class="btn btn-warning btn-sm"
-                                                        title="Lihat Riwayat Inspeksi">Riwayat</a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -175,10 +173,15 @@
     <script>
         $(document).ready(function() {
             $('#kendaraanTable').DataTable({
-                "paging": true,
-                "searching": true,
-                "ordering": true,
-                "responsive": true
+                "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                    "<'row'<'col-sm-12'<'table-responsive'tr>>>" +
+                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                "language": {
+                    "paginate": {
+                        "previous": "<",
+                        "next": ">"
+                    }
+                }
             });
 
             $('#laporanModal').on('shown.bs.modal', function() {

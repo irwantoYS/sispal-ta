@@ -12,21 +12,43 @@ use Illuminate\Support\Facades\Log;
 use App\Events\PerjalananCreated;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Models\DcuRecord;
 
 class TambahController extends Controller
 {
     // Menampilkan halaman form tambah perjalanan
     public function viewPerjalanan()
     {
+        // Ambil status DCU terakhir
+        $latestDcu = DcuRecord::where('user_id', Auth::id())
+            ->whereDate('created_at', Carbon::today())
+            ->latest()
+            ->first();
+
+        $dcuStatus = 'Belum Mengisi'; // Default status
+
+        if ($latestDcu) {
+            $dcuStatus = $latestDcu->kesimpulan; // 'Fit' or 'Unfit'
+        }
+
         $perjalanan = LaporanPerjalanan::all();
         $kendaraan = Kendaraan::whereIn('status', ['ready', 'perlu_perbaikan'])->get();
         $pegawaiList = Pegawai::orderBy('nama')->get();
-        return view('driver.tambahperjalanan', compact('perjalanan', 'kendaraan', 'pegawaiList'));
+        return view('driver.tambahperjalanan', compact('perjalanan', 'kendaraan', 'pegawaiList', 'dcuStatus'));
     }
 
     // Menyimpan data perjalanan
     public function storePerjalanan(Request $request)
     {
+        // Cek DCU Terakhir
+        $latestDcu = DcuRecord::where('user_id', Auth::id())->latest()->first();
+        if ($latestDcu && $latestDcu->kesimpulan == 'Unfit') {
+            // Periksa apakah DCU dibuat pada hari yang sama
+            if ($latestDcu->created_at->isToday()) {
+                return redirect()->back()->with('error', 'Anda tidak dapat membuat perjalanan karena hasil DCU terakhir Anda adalah "Unfit".');
+            }
+        }
+
         // Cek apakah user sudah punya perjalanan aktif
         $perjalananAktif = LaporanPerjalanan::where('pengemudi_id', Auth::id())
             ->whereIn('status', ['menunggu validasi', 'disetujui', 'in_use'])

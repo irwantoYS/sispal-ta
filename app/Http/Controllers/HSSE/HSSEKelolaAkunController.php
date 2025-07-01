@@ -72,7 +72,7 @@ class HSSEKelolaAkunController extends Controller
     /**
      * Update data akun.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user): RedirectResponse
     {
         // Pastikan hanya user aktif yang bisa diupdate datanya dari halaman ini
         if ($user->status !== 'aktif') {
@@ -86,15 +86,22 @@ class HSSEKelolaAkunController extends Controller
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
             'role' => 'required|in:ManagerArea,HSSE,Driver',
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:6000',
         ], [
             'nama.required' => 'Nama wajib diisi.',
             'no_telepon.required' => 'Nomor telepon wajib diisi.',
             'email.required' => 'Email wajib diisi.',
-            'email.unique' => 'Email sudah digunakan.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'password.min' => 'Password harus memiliki minimal 8 karakter.',
             'role.required' => 'Role wajib dipilih.',
             'image.image' => 'File harus berupa gambar.',
         ]);
+
+        $data = $request->only('nama', 'no_telepon', 'email', 'role');
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
 
         // Proses gambar baru jika ada
         if ($request->hasFile('image')) {
@@ -103,24 +110,13 @@ class HSSEKelolaAkunController extends Controller
                 Storage::disk('public')->delete($user->image);
             }
             $imagePath = $request->file('image')->store('images', 'public');
+            $data['image'] = $imagePath;
         } else {
-            $imagePath = $user->image ?: 'assets/img/default-user.jpg';
+            $data['image'] = $user->image ?: 'assets/img/default-user.jpg';
         }
 
         // Update data pengguna
-        $user->update([
-            'nama' => $request->nama,
-            'no_telepon' => $request->no_telepon,
-            'email' => $request->email,
-            'role' => $request->role,
-            'image' => $imagePath,
-        ]);
-
-        if ($request->filled('password')) {
-            $user->update([
-                'password' => Hash::make($request->password),
-            ]);
-        }
+        $user->update($data);
 
         return redirect()->route('hsse.kelolaakun')->with('success', 'Data akun berhasil diperbarui!');
     }

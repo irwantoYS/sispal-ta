@@ -109,6 +109,12 @@
                                 <p>Master Pengguna</p>
                             </a>
                         </li>
+                        <li class="nav-item {{ Request::is('hsse/dcu*') ? 'active' : '' }}">
+                            <a href="{{ route('hsse.dcu.history') }}">
+                                <i class="fa-solid fa-notes-medical"></i>
+                                <p>Riwayat DCU</p>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

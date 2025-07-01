@@ -69,29 +69,53 @@
                             <div class="collapse {{ Request::is('driver/perjalanan*') ? 'show' : '' }}"
                                 id="perjalanan">
                                 <ul class="nav nav-collapse">
-                                    <li class="{{ Request::is('driver/tambah-perjalanan') ? 'active' : '' }}">
-                                        <a href="{{ route('driver.tambah') }}">
+                                    <li class="{{ Request::is('driver/perjalanan/tambah') ? 'active' : '' }}">
+                                        <a href="{{ route('driver.perjalanan.tambah') }}">
                                             <span class="sub-item">Tambah Perjalanan</span>
                                         </a>
                                     </li>
-                                    <li class="{{ Request::is('driver/status') ? 'active' : '' }}">
-                                        <a href="{{ route('driver.status') }}">
+                                    <li class="{{ Request::is('driver/perjalanan/status') ? 'active' : '' }}">
+                                        <a href="{{ route('driver.perjalanan.status') }}">
                                             <span class="sub-item">Status Perjalanan</span>
                                         </a>
                                     </li>
-                                    <li class="{{ Request::is('driver/history') ? 'active' : '' }}">
-                                        <a href="{{ route('driver.history') }}">
+                                    <li class="{{ Request::is('driver/perjalanan/history') ? 'active' : '' }}">
+                                        <a href="{{ route('driver.perjalanan.history') }}">
                                             <span class="sub-item">History Perjalanan</span>
                                         </a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
-                        <li class="nav-item {{ Request::is('driver/kendaraan*') ? 'active' : '' }}">
+                        <li
+                            class="nav-item {{ Request::is('driver/kendaraan*') || Request::is('driver/history_inspeksi*') ? 'active' : '' }}">
                             <a href="{{ route('driver.kendaraan') }}">
                                 <i class="fa-solid fa-car-side"></i>
                                 <p>Kendaraan</p>
                             </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('driver/dcu*') ? 'active' : '' }}">
+                            <a data-bs-toggle="collapse" href="#dcu"
+                                class="{{ Request::is('driver/dcu*') ? '' : 'collapsed' }}"
+                                aria-expanded="{{ Request::is('driver/dcu*') ? 'true' : 'false' }}">
+                                <i class="fa-solid fa-notes-medical"></i>
+                                <p>DCU</p>
+                                <span class="caret"></span>
+                            </a>
+                            <div class="collapse {{ Request::is('driver/dcu*') ? 'show' : '' }}" id="dcu">
+                                <ul class="nav nav-collapse">
+                                    <li class="{{ Request::is('driver/dcu/create') ? 'active' : '' }}">
+                                        <a href="{{ route('driver.dcu.create') }}">
+                                            <span class="sub-item">Isi DCU</span>
+                                        </a>
+                                    </li>
+                                    <li class="{{ Request::is('driver/dcu/history') ? 'active' : '' }}">
+                                        <a href="{{ route('driver.dcu.history') }}">
+                                            <span class="sub-item">Riwayat DCU</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                     </ul>
                 </div>

@@ -29,10 +29,16 @@
                             </form>
                         </div>
 
-                        <a class="btn btn-success btn-round ms-auto mt-3 mt-md-0"
-                            href="{{ route('cetak.pdf', ['role' => 'Driver', 'startDate' => request('startDate'), 'endDate' => request('endDate')]) }}">
-                            <i class="fa-solid fa-print"></i> PDF
-                        </a>
+                        <div class="d-flex align-items-center">
+                            <a class="btn btn-success btn-round ms-auto"
+                                href="{{ route('cetak.pdf', ['role' => 'Driver', 'startDate' => request('startDate'), 'endDate' => request('endDate'), 'search' => request('search')]) }}">
+                                <i class="fa-solid fa-print"></i> PDF
+                            </a>
+                            <a class="btn btn-warning btn-round ms-2"
+                                href="{{ route('cetak.csv', ['role' => 'Driver', 'startDate' => request('startDate'), 'endDate' => request('endDate'), 'search' => request('search')]) }}">
+                                <i class="fa-solid fa-file-csv"></i> CSV
+                            </a>
+                        </div>
 
                     </div>
 
@@ -59,95 +65,92 @@
                     </div>
 
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="historyTable" class="display table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Nama Pengguna</th>
-                                        <th>Titik Akhir</th>
-                                        <th>Tujuan Perjalanan</th>
-                                        <th>Jam Pergi</th>
-                                        <th>Jam Kembali</th>
-                                        <th>Estimasi Waktu</th>
-                                        <th>Foto Awal</th>
-                                        <th>Foto Akhir</th>
-                                        <th>Detail</th>
-                                    </tr>
-                                </thead>
+                        <table id="historyTable" class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Pengguna</th>
+                                    <th>Titik Akhir</th>
+                                    <th>Tujuan Perjalanan</th>
+                                    <th>Jam Pergi</th>
+                                    <th>Jam Kembali</th>
+                                    <th>Estimasi Waktu</th>
+                                    <th>Foto Awal</th>
+                                    <th>Foto Akhir</th>
+                                    <th>Detail</th>
+                                </tr>
+                            </thead>
 
-                                <tbody>
-                                    @foreach ($perjalanan as $key => $item)
-                                        <tr>
-                                            <td>{{ $key + 1 }}</td>
-                                            <td>
-                                                @php
-                                                    $namaArray = json_decode($item->nama_pegawai);
-                                                    if (is_array($namaArray)) {
-                                                        echo e(implode(', ', $namaArray));
-                                                    } else {
-                                                        echo e($item->nama_pegawai);
-                                                    }
-                                                @endphp
-                                            </td>
-                                            {{-- <td>{{ $item->titik_awal }}</td> --}}
-                                            <td>{{ $item->titik_akhir }}</td>
-                                            <td>{{ $item->tujuan_perjalanan }}</td>
-                                            <td>{{ $item->jam_pergi }}</td>
-                                            <td>{{ $item->jam_kembali }}</td>
-                                            <td>{{ $item->estimasi_waktu }}</td>
-                                            <td>
-                                                @if ($item->foto_awal)
-                                                    <button class="btn btn-info btn-sm foto-link" data-bs-toggle="modal"
-                                                        data-bs-target="#fotoModal"
-                                                        data-foto="{{ asset('storage/' . $item->foto_awal) }}">
-                                                        <i class="fa fa-eye"></i>
-                                                    </button>
-                                                @else
-                                                    <span class="text-muted">Tidak ada foto</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($item->foto_akhir)
-                                                    <button class="btn btn-info btn-sm foto-link" data-bs-toggle="modal"
-                                                        data-bs-target="#fotoModal"
-                                                        data-foto="{{ asset('storage/' . $item->foto_akhir) }}">
-                                                        <i class="fa fa-eye"></i>
-                                                    </button>
-                                                @else
-                                                    <span class="text-muted">Tidak ada foto</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-info btn-sm detail-button" data-bs-toggle="modal"
-                                                    data-bs-target="#detailModal"
-                                                    data-nama-pengemudi="{{ $item->user->nama }}"
-                                                    data-nama-pegawai="{{ e($item->nama_pegawai ?? '') }}"
-                                                    data-titik-awal="{{ $item->titik_awal }}"
-                                                    data-titik-akhir="{{ $item->titik_akhir }}"
-                                                    data-tujuan="{{ $item->tujuan_perjalanan ?? '-' }}"
-                                                    data-no-kendaraan="{{ $item->Kendaraan->no_kendaraan ?? '-' }}"
-                                                    data-tipe-kendaraan="{{ $item->Kendaraan->tipe_kendaraan ?? '-' }}"
-                                                    data-jenis-bbm="{{ $item->jenis_bbm ?? '-' }}"
-                                                    data-estimasi-jarak="{{ $item->km_akhir ? number_format((float) $item->km_akhir, 2, ',', '.') . ' KM' : '-' }}"
-                                                    data-km-awal-manual="{{ $item->km_awal_manual ? number_format($item->km_awal_manual) . ' KM' : '-' }}"
-                                                    data-km-akhir-manual="{{ $item->km_akhir_manual ? number_format($item->km_akhir_manual) . ' KM' : '-' }}"
-                                                    data-total-km-manual="{{ $item->total_km_manual ? number_format($item->total_km_manual) . ' KM' : '-' }}"
-                                                    data-bbm-awal="{{ $item->bbm_awal ?? '-' }}"
-                                                    data-bbm-akhir="{{ $item->bbm_akhir ?? '-' }}"
-                                                    data-jam-pergi="{{ $item->jam_pergi }}"
-                                                    data-jam-kembali="{{ $item->jam_kembali }}"
-                                                    data-estimasi-waktu="{{ $item->estimasi_waktu }}"
-                                                    data-estimasi-bbm="{{ $item->estimasi_bbm }}"
-                                                    data-validator="{{ $item->validator->nama ?? '-' }}">
-                                                    Detail
+                            <tbody>
+                                @foreach ($perjalanan as $key => $item)
+                                    <tr>
+                                        <td>{{ $key + 1 }}</td>
+                                        <td>
+                                            @php
+                                                $namaArray = json_decode($item->nama_pegawai);
+                                                if (is_array($namaArray)) {
+                                                    echo e(implode(', ', $namaArray));
+                                                } else {
+                                                    echo e($item->nama_pegawai);
+                                                }
+                                            @endphp
+                                        </td>
+                                        {{-- <td>{{ $item->titik_awal }}</td> --}}
+                                        <td>{{ $item->titik_akhir }}</td>
+                                        <td>{{ $item->tujuan_perjalanan }}</td>
+                                        <td>{{ $item->jam_pergi }}</td>
+                                        <td>{{ $item->jam_kembali }}</td>
+                                        <td>{{ $item->estimasi_waktu }}</td>
+                                        <td>
+                                            @if ($item->foto_awal)
+                                                <button class="btn btn-info btn-sm foto-link" data-bs-toggle="modal"
+                                                    data-bs-target="#fotoModal"
+                                                    data-foto="{{ asset('storage/' . $item->foto_awal) }}">
+                                                    <i class="fa fa-eye"></i>
                                                 </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                            @else
+                                                <span class="text-muted">Tidak ada foto</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($item->foto_akhir)
+                                                <button class="btn btn-info btn-sm foto-link" data-bs-toggle="modal"
+                                                    data-bs-target="#fotoModal"
+                                                    data-foto="{{ asset('storage/' . $item->foto_akhir) }}">
+                                                    <i class="fa fa-eye"></i>
+                                                </button>
+                                            @else
+                                                <span class="text-muted">Tidak ada foto</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm detail-button" data-bs-toggle="modal"
+                                                data-bs-target="#detailModal" data-nama-pengemudi="{{ $item->user->nama }}"
+                                                data-nama-pegawai="{{ e($item->nama_pegawai ?? '') }}"
+                                                data-titik-awal="{{ $item->titik_awal }}"
+                                                data-titik-akhir="{{ $item->titik_akhir }}"
+                                                data-tujuan="{{ $item->tujuan_perjalanan ?? '-' }}"
+                                                data-no-kendaraan="{{ $item->Kendaraan->no_kendaraan ?? '-' }}"
+                                                data-tipe-kendaraan="{{ $item->Kendaraan->tipe_kendaraan ?? '-' }}"
+                                                data-jenis-bbm="{{ $item->jenis_bbm ?? '-' }}"
+                                                data-estimasi-jarak="{{ $item->km_akhir ? number_format((float) $item->km_akhir, 2, ',', '.') . ' KM' : '-' }}"
+                                                data-km-awal-manual="{{ $item->km_awal_manual ? number_format($item->km_awal_manual) . ' KM' : '-' }}"
+                                                data-km-akhir-manual="{{ $item->km_akhir_manual ? number_format($item->km_akhir_manual) . ' KM' : '-' }}"
+                                                data-total-km-manual="{{ $item->total_km_manual ? number_format($item->total_km_manual) . ' KM' : '-' }}"
+                                                data-bbm-awal="{{ $item->bbm_awal ?? '-' }}"
+                                                data-bbm-akhir="{{ $item->bbm_akhir ?? '-' }}"
+                                                data-jam-pergi="{{ $item->jam_pergi }}"
+                                                data-jam-kembali="{{ $item->jam_kembali }}"
+                                                data-estimasi-waktu="{{ $item->estimasi_waktu }}"
+                                                data-estimasi-bbm="{{ $item->estimasi_bbm }}"
+                                                data-validator="{{ $item->validator->nama ?? '-' }}">
+                                                Detail
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -399,24 +402,18 @@
             });
 
             // Inisialisasi DataTable
-            // Note: jQuery diperlukan untuk DataTable, pastikan sudah di-load sebelumnya
             if (window.jQuery) {
                 const table = $('#historyTable').DataTable({
-                    "paging": true,
-                    "searching": true,
-                    "ordering": true,
-                    "lengthChange": true,
-                    "responsive": true,
+                    "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                        "<'row'<'col-sm-12'<'table-responsive'tr>>>" +
+                        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                     "language": {
                         "paginate": {
-                            "previous": "&laquo;",
-                            "next": "&raquo;"
+                            "previous": "<",
+                            "next": ">"
                         }
                     }
                 });
-
-            } else {
-                console.error("jQuery is not loaded. DataTable cannot be initialized.");
             }
 
             // Reset pencarian tanggal

@@ -246,16 +246,20 @@
 
 @push('scripts')
     {{-- Script untuk Select2 --}}
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
             $('.select2-multiple').select2({
                 theme: "bootstrap-5",
-                placeholder: $(this).data('placeholder') || 'Pilih pengguna',
+                placeholder: 'Pilih pengguna atau ketik nama',
+                tags: true,
+                tokenSeparators: [',', ' ']
             });
         });
     </script>
+
+    {{-- Script untuk Leaflet (Peta) --}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
     {{-- script untuk visualisasi BBM AWAL --}}
     <script>

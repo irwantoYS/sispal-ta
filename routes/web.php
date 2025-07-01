@@ -12,7 +12,7 @@ use App\Http\Controllers\HSSE\HSSEHistoryController;
 use App\Http\Controllers\HSSE\HSSEKelolaAkunController;
 use App\Http\Controllers\HSSE\HSSEPersetujuanController;
 use App\Http\Controllers\HSSE\HSSEKendaraanController;
-use App\Http\Controllers\ManagerArea\HistoryController;
+use App\Http\Controllers\ManagerArea\HistoryController as ManagerAreaHistoryController;
 use App\Http\Controllers\ManagerArea\ManagerAreaController;
 use App\Http\Controllers\ManagerArea\PersetujuanController;
 use App\Http\Controllers\ManagerArea\KendaraanController;
@@ -21,9 +21,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\CSVController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HSSE\PegawaiController;
 use App\Http\Controllers\HSSE\PeminjamanController;
+use App\Http\Controllers\DcuController;
 
 
 
@@ -52,10 +54,19 @@ Route::middleware(['auth', 'ManagerAreaMiddleware'])->group(function () {
     Route::get('/managerarea/persetujuan', [PersetujuanController::class, 'viewPersetujuan'])->name('managerarea.persetujuan');
     Route::put('/perjalanan/{id}/validasi', [PersetujuanController::class, 'validasi'])->name('perjalanan.validasi');
     Route::put('/perjalanan/{id}/tolak', [PersetujuanController::class, 'tolak'])->name('perjalanan.tolak');
-    Route::get('/managerarea/history', [HistoryController::class,  'viewHistory'])->name('managerarea.history');
+    Route::get('/managerarea/history', [ManagerAreaHistoryController::class,  'viewHistory'])->name('managerarea.history');
     Route::get('/managerarea/kendaraan', [KendaraanController::class, 'viewKendaraan'])->name('managerarea.kendaraan');
     Route::get('/managerarea/kendaraan/{kendaraan}/history', [KendaraanController::class, 'showInspectionHistory'])->name('managerarea.kendaraan.history');
     Route::get('/managerarea/inspeksi/show/{inspeksi}', [KendaraanController::class, 'showInspectionDetail'])->name('managerarea.showinspeksi');
+    Route::get('/managerarea/perjalanan/history', [ManagerAreaHistoryController::class, 'history'])->name('managerarea.perjalanan.history');
+    Route::get('/managerarea/perjalanan/history/pdf', [ManagerAreaHistoryController::class, 'generatePDFHistory'])->name('managerarea.history_perjalanan.pdf');
+    Route::get('/managerarea/export-laporan-perjalanan', [CSVController::class, 'exportLaporanPerjalanan'])->name('managerarea.export.laporan_perjalanan');
+    Route::get('/managerarea/export-inspeksi-kendaraan', [CSVController::class, 'exportInspeksiKendaraan'])->name('managerarea.export.inspeksi_kendaraan');
+
+    // DCU Routes
+    Route::get('/managerarea/dcu/history', [DcuController::class, 'historyManagerArea'])->name('managerarea.dcu.history');
+    Route::get('/managerarea/dcu/pdf/{id}', [DcuController::class, 'generatePdf'])->name('managerarea.dcu.pdf');
+    Route::get('/managerarea/export-dcu', [CSVController::class, 'exportDcu'])->name('managerarea.export.dcu');
 });
 
 //hsse
@@ -69,6 +80,15 @@ Route::middleware(['auth', 'HSSEMiddleware'])->group(function () {
     Route::delete('/hsse/tambahkendaraan/{id}', [HSSEKendaraanController::class, 'deactivateKendaraan'])->name('hsse.tambahkendaraan.deactivate');
     Route::get('/hsse/kendaraan/{kendaraan}/history', [HSSEKendaraanController::class, 'showInspectionHistory'])->name('hsse.kendaraan.history');
     Route::get('/hsse/inspeksi/show/{inspeksi}', [HSSEKendaraanController::class, 'show'])->name('hsse.showinspeksi');
+    Route::get('/hsse/perjalanan/history', [HSSEHistoryController::class, 'history'])->name('hsse.perjalanan.history');
+    Route::get('/hsse/perjalanan/history/pdf', [HSSEHistoryController::class, 'generatePDFHistory'])->name('hsse.history_perjalanan.pdf');
+    Route::get('/hsse/export-laporan-perjalanan', [CSVController::class, 'exportLaporanPerjalanan'])->name('hsse.export.laporan_perjalanan');
+    Route::get('/hsse/export-inspeksi-kendaraan', [CSVController::class, 'exportInspeksiKendaraan'])->name('hsse.export.inspeksi_kendaraan');
+
+    // DCU Routes
+    Route::get('/hsse/dcu/history', [DcuController::class, 'historyHsse'])->name('hsse.dcu.history');
+    Route::get('/hsse/dcu/pdf/{id}', [DcuController::class, 'generatePdf'])->name('hsse.dcu.pdf');
+    Route::get('/hsse/export-dcu', [CSVController::class, 'exportDcu'])->name('hsse.export.dcu');
 
     // Routes for deactivated vehicles
     Route::get('/hsse/kendaraan/nonaktif', [HSSEKendaraanController::class, 'showDeactivated'])->name('hsse.kendaraan.nonaktif');
@@ -114,6 +134,25 @@ Route::middleware(['auth', 'DriverMiddleware'])->group(function () {
     Route::get('/kendaraan/{id}/inspeksi', [DriverKendaraanController::class, 'viewInspeksi'])->name('driver.viewinspeksi');
     Route::post('/kendaraan/{id}/inspeksi', [DriverKendaraanController::class, 'storeInspeksi'])->name('driver.storeinspeksi');
     Route::get('/inspeksi/show/{inspeksi}', [InspeksiKendaraanController::class, 'show'])->name('driver.inspeksi.show');
+
+    // DCU Routes
+    Route::get('/driver/inspeksi_kendaraan/create/{id}', [DriverKendaraanController::class, 'create'])->name('driver.inspeksi.create');
+    Route::post('/driver/inspeksi_kendaraan/store', [DriverKendaraanController::class, 'store'])->name('driver.inspeksi.store');
+    Route::get('/driver/history_inspeksi', [DriverhistoryController::class, 'index'])->name('driver.history_inspeksi');
+    Route::get('/driver/history_inspeksi/show/{id}', [DriverhistoryController::class, 'show'])->name('driver.history_inspeksi.show');
+    Route::get('/driver/history_inspeksi/pdf/{id}', [DriverhistoryController::class, 'generatePDF'])->name('driver.history_inspeksi.pdf');
+    Route::get('/driver/perjalanan/tambah', [TambahController::class, 'viewPerjalanan'])->name('driver.perjalanan.tambah');
+    Route::post('/driver/perjalanan/store', [TambahController::class, 'storePerjalanan'])->name('driver.perjalanan.store');
+    Route::get('/driver/perjalanan/status', [StatusController::class, 'viewStatus'])->name('driver.perjalanan.status');
+    Route::post('/driver/perjalanan/update', [StatusController::class, 'updateStatus'])->name('driver.perjalanan.update');
+    Route::get('/driver/perjalanan/history', [DriverhistoryController::class, 'viewHistory'])->name('driver.perjalanan.history');
+    Route::get('/driver/perjalanan/history/pdf', [DriverhistoryController::class, 'generatePDFHistory'])->name('driver.history_perjalanan.pdf');
+
+    // DCU Routes
+    Route::get('/driver/dcu/create', [DcuController::class, 'create'])->name('driver.dcu.create');
+    Route::post('/driver/dcu', [DcuController::class, 'store'])->name('driver.dcu.store');
+    Route::get('/driver/dcu/history', [DcuController::class, 'historyDriver'])->name('driver.dcu.history');
+    Route::get('/driver/dcu/pdf/{id}', [DcuController::class, 'generatePdf'])->name('driver.dcu.pdf');
 });
 
 //pdf_laravel
@@ -123,6 +162,7 @@ Route::middleware(['auth', 'DriverMiddleware'])->group(function () {
 
 //cetak_pdf
 Route::get('/cetak-pdf/{role}', [PDFController::class, 'cetakPDF'])->name('cetak.pdf');
+Route::get('/cetak-csv/{role}', [CSVController::class, 'cetakCSV'])->name('cetak.csv');
 Route::get('/perjalanan/pdf/{id}', [PDFController::class, 'StatusPerjalananPDF'])->name('statusperjalanan.pdf');
 Route::get('/inspeksi/pdf/{id}', [PDFController::class, 'InspeksiKendaraanPDF'])->name('inspeksi.pdf');
 

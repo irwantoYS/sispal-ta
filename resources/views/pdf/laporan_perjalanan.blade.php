@@ -56,7 +56,7 @@
                         </td>
                         <td style="width: 50%; text-align: center; vertical-align: middle; border: none; padding: 0;">
                             <div class="header-center">
-                                <h1>PT. Perusahaan Gas Negara, Tbk</h1>
+                                <h1>PT. PGAS Telekomunikasi Nusantara</h1>
                                 <p>35125, Jl. Sam Ratulangi No.15, Penengahan, Kec. Tj. Karang Pusat, Kota Bandar
                                     Lampung, Lampung 35126</p>
                                 <p>Telp. (0721) 7626359</p>
@@ -148,7 +148,7 @@
     </div>
 
     <footer>
-        <p>© {{ date('Y') }} PT. Perusahaan Gas Negara, Tbk. Semua Hak Dilindungi.</p>
+        <p>© {{ date('Y') }} PT. PGAS Telekomunikasi Nusantara. Semua Hak Dilindungi.</p>
     </footer>
 
     <script type="text/javascript">

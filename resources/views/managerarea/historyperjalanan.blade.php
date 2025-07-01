@@ -37,9 +37,13 @@
                                 <i class="fas fa-chart-bar"></i>
                             </button>
 
-                            <a class="btn btn-success btn-round ms-auto"
-                                href="{{ route('cetak.pdf', ['role' => 'ManagerArea', 'startDate' => request('startDate'), 'endDate' => request('endDate')]) }}">
+                            <a class="btn btn-success btn-round"
+                                href="{{ route('cetak.pdf', ['role' => 'ManagerArea', 'startDate' => request('startDate'), 'endDate' => request('endDate'), 'search' => request('search')]) }}">
                                 <i class="fa-solid fa-print"></i>
+                            </a>
+                            <a class="btn btn-warning btn-round ms-2"
+                                href="{{ route('cetak.csv', ['role' => 'ManagerArea', 'startDate' => request('startDate'), 'endDate' => request('endDate'), 'search' => request('search')]) }}">
+                                <i class="fa-solid fa-file-csv"></i>
                             </a>
                         </div>
                     </div>
@@ -80,7 +84,7 @@
                                             <td>{{ $key + 1 }}</td>
                                             <td>
                                                 @if (in_array($item->status, ['dipinjam', 'selesai']))
-                                                    <span class="badge bg-secondary">Dipinjamkan (HSSE)</span>
+                                                    <span class="badge bg-secondary">Dipinjamkan</span>
                                                 @else
                                                     {{ $item->user->nama }}
                                                 @endif
@@ -324,9 +328,34 @@
             </div>
         </div>
 
+    </div>
 
+    @push('scripts')
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener("DOMContentLoaded", function() {
+                // Inisialisasi DataTable
+                if (window.jQuery) {
+                    const table = $('#allhistoryTable').DataTable({
+                        "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                            "<'row'<'col-sm-12'<'table-responsive'tr>>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        "language": {
+                            "paginate": {
+                                "previous": "<",
+                                "next": ">"
+                            },
+                            "search": "Cari:",
+                            "lengthMenu": "Tampilkan _MENU_ data",
+                            "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                            "infoEmpty": "Menampilkan 0 sampai 0 dari 0 data",
+                            "infoFiltered": "(disaring dari _MAX_ total data)",
+                            "zeroRecords": "Tidak ada data yang cocok ditemukan"
+                        }
+                    });
+                } else {
+                    console.error("jQuery is not loaded. DataTable cannot be initialized.");
+                }
+
                 // Event delegation untuk klik tombol detail dan foto
                 document.addEventListener('click', function(event) {
 
@@ -463,55 +492,6 @@
                     });
                 }
 
-                // Inisialisasi DataTable
-                // Note: jQuery diperlukan untuk DataTable
-                if (window.jQuery) {
-                    const tableMA = $('#allhistoryTable').DataTable({
-                        "paging": true,
-                        "searching": true,
-                        "ordering": true,
-                        "lengthChange": true,
-                        "responsive": true,
-                        "language": {
-                            "paginate": {
-                                "previous": "&laquo;",
-                                "next": "&raquo;"
-                            },
-                            "search": "Cari:",
-                            "lengthMenu": "Tampilkan _MENU_ data",
-                            "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                            "infoEmpty": "Menampilkan 0 sampai 0 dari 0 data",
-                            "infoFiltered": "(disaring dari _MAX_ total data)",
-                            "zeroRecords": "Tidak ada data yang cocok ditemukan"
-                        }
-                    });
-
-                    // Logika search DataTable (jika diperlukan terpisah dari search bawaan)
-                    /*
-                            $('#searchFormMA').on('submit', function(e) { 
-                                e.preventDefault();
-                                const search = $('#searchTextMA').val(); 
-                                tableMA.search(search).draw(); 
-                            });
-                            */
-
-                    // Logika tombol cetak PDF jika event listener diperlukan
-                    // Jika tombol PDF adalah link biasa <a>, ini tidak perlu
-                    /*
-                     $('#cetakPDFMA').on('click', function() {
-                        const params = $.param({ 
-                            search: tableMA.search(),
-                            startDate: $('input[name="startDate"]').val(), 
-                            endDate: $('input[name="endDate"]').val(), 
-                        });
-                        const url = `{{ route('cetak.pdf', ['role' => 'ManagerArea']) }}?${params}`;
-                        window.open(url, '_blank');
-                    });
-                    */
-                } else {
-                    console.error("jQuery is not loaded. DataTable cannot be initialized.");
-                }
-
                 // Reset pencarian tanggal
                 const resetSearchButtonMA = document.getElementById('resetSearch');
                 if (resetSearchButtonMA) {
@@ -525,5 +505,6 @@
                 }
             });
         </script>
+    @endpush
 
-    @endsection
+@endsection

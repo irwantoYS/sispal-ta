@@ -95,6 +95,12 @@
                                 <p>Kendaraan</p>
                             </a>
                         </li>
+                        <li class="nav-item {{ Request::is('managerarea/dcu*') ? 'active' : '' }}">
+                            <a href="{{ route('managerarea.dcu.history') }}">
+                                <i class="fa-solid fa-notes-medical"></i>
+                                <p>Riwayat DCU</p>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -179,7 +185,7 @@
                                             </div>
                                         </div>
                                     </li>
-                                    
+
                                 </ul>
                             </li>
 
@@ -242,11 +248,12 @@
             {{--  Tambahkan Footer --}}
             <footer class="footer">
                 <div class="container-fluid">
-                    <div class="text-center">
+                    <div class="copyright" style="float: right;">
                         &copy; {{ date('Y') }} PGN RO Lampung. Hak Cipta Dilindungi Undang-undang.
                     </div>
                 </div>
             </footer>
+            {{-- Akhir Footer --}}
         </div>
     </div>
 
@@ -267,94 +274,105 @@
         </div>
     </div>
 
-    {{-- Pindahkan jQuery ke atas --}}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {{-- Core JS Files --}}
+    <script src="{{ asset('kai/assets/js/core/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('kai/assets/js/core/popper.min.js') }}"></script>
     <script src="{{ asset('kai/assets/js/core/bootstrap.min.js') }}"></script>
 
+    <!-- jQuery Scrollbar -->
     <script src="{{ asset('kai/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
 
+    <!-- Chart JS -->
     <script src="{{ asset('kai/assets/js/plugin/chart.js/chart.min.js') }}"></script>
 
+    <!-- jQuery Sparkline -->
     <script src="{{ asset('kai/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
 
+    <!-- Chart Circle -->
     <script src="{{ asset('kai/assets/js/plugin/chart-circle/circles.min.js') }}"></script>
 
+    <!-- Datatables -->
     <script src="{{ asset('kai/assets/js/plugin/datatables/datatables.min.js') }}"></script>
 
+    <!-- Bootstrap Notify -->
     <script src="{{ asset('kai/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
 
+    <!-- jQuery Vector Maps -->
     <script src="{{ asset('kai/assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
     <script src="{{ asset('kai/assets/js/plugin/jsvectormap/world.js') }}"></script>
 
+    <!-- Sweet Alert -->
     <script src="{{ asset('kai/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
 
-
+    <!-- Kaiadmin JS -->
     <script src="{{ asset('kai/assets/js/kaiadmin.min.js') }}"></script>
 
+    
+   {{-- Tambahkan @stack untuk script spesifik halaman --}}
+   @stack('scripts')
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+   <script>
+       document.addEventListener('DOMContentLoaded', function() {
 
-            // Fungsi untuk update jumlah notifikasi
-            function updateUnreadCount() {
-                fetch('{{ route('notifications.unreadCount') }}') // Buat route ini (lihat langkah 4)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('unread-count').textContent = data.count;
-                        // Jika count 0, sembunyikan badge
-                        if (data.count === 0) {
-                            document.getElementById('unread-count').classList.add(
-                                'd-none'); //d-none = display none, bawaan bootstrap
-                        } else {
-                            document.getElementById('unread-count').classList.remove('d-none');
-                        }
-                    });
-            }
+           // Fungsi untuk update jumlah notifikasi
+           function updateUnreadCount() {
+               fetch('{{ route('notifications.unreadCount') }}') // Buat route ini (lihat langkah 4)
+                   .then(response => response.json())
+                   .then(data => {
+                       document.getElementById('unread-count').textContent = data.count;
+                       // Jika count 0, sembunyikan badge
+                       if (data.count === 0) {
+                           document.getElementById('unread-count').classList.add(
+                               'd-none'); //d-none = display none, bawaan bootstrap
+                       } else {
+                           document.getElementById('unread-count').classList.remove('d-none');
+                       }
+                   });
+           }
 
-            // Update jumlah saat halaman pertama dimuat
-            updateUnreadCount();
+           // Update jumlah saat halaman pertama dimuat
+           updateUnreadCount();
 
-            // Update jumlah setiap 30 detik (opsional, sesuaikan)
-            setInterval(updateUnreadCount, 30000);
+           // Update jumlah setiap 30 detik (opsional, sesuaikan)
+           setInterval(updateUnreadCount, 30000);
 
 
-            // Event listener untuk tombol "Tandai Sudah Dibaca"
-            document.querySelector('.notif-box').addEventListener('click', function(
-                event) { // Gunakan event delegation
-                if (event.target.classList.contains('mark-as-read-btn')) {
-                    event.preventDefault(); // Mencegah form di-submit secara normal
-                    const form = event.target.closest('form'); // Cari form terdekat
-                    const url = form.action;
+           // Event listener untuk tombol "Tandai Sudah Dibaca"
+           document.querySelector('.notif-box').addEventListener('click', function(
+               event) { // Gunakan event delegation
+               if (event.target.classList.contains('mark-as-read-btn')) {
+                   event.preventDefault(); // Mencegah form di-submit secara normal
+                   const form = event.target.closest('form'); // Cari form terdekat
+                   const url = form.action;
 
-                    fetch(url, {
-                            method: 'POST', // Atau PATCH, tergantung route Anda
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}', // Sertakan CSRF token
-                                'Accept': 'application/json', // Minta response JSON
-                            },
-                            body: new FormData(form), // Kirim data form
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Hapus notifikasi dari tampilan
-                                form.closest('.notif-item')
-                                    .remove(); //Hapus parent element yang terdekat dengan class notif-item
-                                // Update jumlah notifikasi
-                                updateUnreadCount();
-                            } else {
-                                alert('Gagal menandai notifikasi sebagai sudah dibaca.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Terjadi kesalahan.');
-                        });
-                }
-            });
-        });
-    </script>
+                   fetch(url, {
+                           method: 'POST', // Atau PATCH, tergantung route Anda
+                           headers: {
+                               'X-CSRF-TOKEN': '{{ csrf_token() }}', // Sertakan CSRF token
+                               'Accept': 'application/json', // Minta response JSON
+                           },
+                           body: new FormData(form), // Kirim data form
+                       })
+                       .then(response => response.json())
+                       .then(data => {
+                           if (data.success) {
+                               // Hapus notifikasi dari tampilan
+                               form.closest('.notif-item')
+                                   .remove(); //Hapus parent element yang terdekat dengan class notif-item
+                               // Update jumlah notifikasi
+                               updateUnreadCount();
+                           } else {
+                               alert('Gagal menandai notifikasi sebagai sudah dibaca.');
+                           }
+                       })
+                       .catch(error => {
+                           console.error('Error:', error);
+                           alert('Terjadi kesalahan.');
+                       });
+               }
+           });
+       });
+   </script>
 </body>
 
 </html>

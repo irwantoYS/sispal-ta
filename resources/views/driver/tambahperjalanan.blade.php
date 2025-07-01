@@ -14,17 +14,37 @@
         <div class="page-inner">
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                 <div>
-                    <h3 class="fw-bold mb-3">Pemakaian Kendaraan</h3>
-                    <h6 class="op-7 mb-2">Pemakaian Kendaraan</h6>
+                    <h3 class="fw-bold mb-3">Tambah Perjalanan</h3>
                 </div>
             </div>
+
+            {{-- Status Kesehatan --}}
 
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Form Pemakaian Kendaraan</h4>
+                        <div class="card-title">Form Pemakaian Kendaraan</div>
+                        <div class="card-tools">
+                            <span
+                                class="badge 
+                                @if ($dcuStatus === 'Fit') badge-success 
+                                @elseif($dcuStatus === 'Unfit') badge-danger 
+                                @else badge-warning @endif">
+                                Status DCU: {{ $dcuStatus }}
+                            </span>
+                        </div>
                     </div>
                     <div class="card-body">
+                        @if ($dcuStatus === 'Unfit')
+                            <div class="alert alert-danger" role="alert">
+                                Anda tidak dapat membuat perjalanan baru karena status DCU Anda adalah
+                                <strong>UNFIT</strong>.
+                            </div>
+                        @elseif ($dcuStatus === 'Belum Mengisi')
+                            <div class="alert alert-warning" role="alert">
+                                Anda harus mengisi DCU terlebih dahulu sebelum dapat membuat perjalanan baru.
+                            </div>
+                        @endif
                         <form action="{{ route('storePerjalanan') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
@@ -109,8 +129,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group form-group-default">
                                         <label>Estimasi Jarak (KM)</label>
-                                        <input type="text" class="form-control" id="estimasi_jarak" name="estimasi_jarak"
-                                            placeholder="Estimasi Jarak" readonly>
+                                        <input type="text" class="form-control" id="estimasi_jarak"
+                                            name="estimasi_jarak" placeholder="Estimasi Jarak" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -173,7 +193,9 @@
                                 </div>
                             </div>
                             <div class="mt-4">
-                                <button type="submit" class="btn btn-primary">Tambah Perjalanan</button>
+                                <button type="submit" class="btn btn-primary"
+                                    {{ $dcuStatus !== 'Fit' ? 'disabled' : '' }}>Tambah
+                                    Perjalanan</button>
                             </div>
                         </form>
                     </div>

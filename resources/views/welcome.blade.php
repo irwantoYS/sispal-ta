@@ -109,7 +109,7 @@
                                 </p>
                             </div>
                             <div class="col-lg-7 col-sm-12">
-                                <img src="{{ asset('storage/images/Carousel-2.webp') }}" class="d-block w-100"
+                                <img src="{{ asset('storage/images/pgnbaru.png') }}" class="d-block w-100"
                                     alt="...">
                             </div>
                         </div>
