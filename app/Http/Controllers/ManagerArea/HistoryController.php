@@ -30,6 +30,7 @@ class HistoryController extends Controller
             ->select(
                 'pengemudi_id',
                 DB::raw('SUM(km_akhir) as total_jarak'),
+                DB::raw('SUM(total_km_manual) as total_km_manual'),
                 DB::raw("SUM(TIMESTAMPDIFF(MINUTE, jam_pergi, jam_kembali)) as total_durasi_menit"),
                 DB::raw('COUNT(*) as total_perjalanan')
             )

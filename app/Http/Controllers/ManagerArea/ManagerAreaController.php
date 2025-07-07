@@ -24,6 +24,10 @@ class ManagerAreaController extends Controller
             ->whereNotNull('jam_kembali')
             ->sum('km_akhir');
 
+        // Hitung Total KM Manual
+        $totalKmManualSemua = LaporanPerjalanan::whereNotNull('jam_kembali')
+            ->sum('total_km_manual');
+
         // Hitung Total Estimasi BBM Keseluruhan (dari perjalanan selesai)
         $totalBbmSemua = 0;
         $laporanBbm = LaporanPerjalanan::with('kendaraan')
@@ -54,7 +58,11 @@ class ManagerAreaController extends Controller
             ->pluck('year');
 
         // Mengambil Top Driver berdasarkan Jarak Tempuh (menggunakan km_akhir)
-        $topDriversByDistance = LaporanPerjalanan::select('pengemudi_id', DB::raw('SUM(km_akhir) as total_jarak'))
+        $topDriversByDistance = LaporanPerjalanan::select(
+            'pengemudi_id',
+            DB::raw('SUM(km_akhir) as total_jarak'),
+            DB::raw('SUM(total_km_manual) as total_km_manual')
+        )
             ->with('user')
             ->whereMonth('jam_pergi', $selectedMonth)
             ->whereYear('jam_pergi', $selectedYear)
@@ -63,7 +71,6 @@ class ManagerAreaController extends Controller
             ->orderByDesc('total_jarak')
             ->limit(5)
             ->get();
-
 
         $topDriversByTrips = LaporanPerjalanan::select('pengemudi_id', DB::raw('COUNT(*) as total_perjalanan'))
             ->with('user')
@@ -104,6 +111,7 @@ class ManagerAreaController extends Controller
             'totalJarakSemua',
             'totalBbmSemua',
             'totalWaktuFormatSemua',
+            'totalKmManualSemua',
             'topDriversByDistance',
             'topDriversByTrips',
             'topDriversByTime',

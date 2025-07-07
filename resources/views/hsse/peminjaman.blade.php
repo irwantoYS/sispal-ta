@@ -81,6 +81,13 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group form-group-default">
+                                    <label>KM Awal Manual</label>
+                                    <input type="number" class="form-control" name="km_awal_manual"
+                                        placeholder="Masukkan KM Awal Kendaraan" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-group-default">
                                     <label>Tujuan Perjalanan</label>
                                     <input type="text" class="form-control" name="tujuan_perjalanan"
                                         placeholder="Contoh: Mengantar dokumen ke klien" required>
@@ -210,6 +217,17 @@
                         @method('PATCH')
                         <div class="modal-body">
                             <div class="mb-3">
+                                <label>KM Awal Manual</label>
+                                <input type="number" class="form-control" value="{{ $peminjaman->km_awal_manual }}"
+                                    readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="km_akhir_manual-{{ $peminjaman->id }}" class="form-label">KM Akhir
+                                    Manual</label>
+                                <input type="number" class="form-control" id="km_akhir_manual-{{ $peminjaman->id }}"
+                                    name="km_akhir_manual" placeholder="Masukkan KM Akhir Kendaraan" required>
+                            </div>
+                            <div class="mb-3">
                                 <label for="bbm_akhir-{{ $peminjaman->id }}" class="form-label">BBM Akhir</label>
                                 <div class="progress" style="height: 25px;">
                                     <div id="bbm-akhir-bar-{{ $peminjaman->id }}" class="progress-bar bg-success"
@@ -220,6 +238,16 @@
                                 </div>
                                 <input type="range" class="form-range" id="bbm_akhir-{{ $peminjaman->id }}"
                                     name="bbm_akhir" min="0" max="8" value="0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="jenis_bbm-{{ $peminjaman->id }}" class="form-label">Jenis BBM</label>
+                                <select class="form-select" id="jenis_bbm-{{ $peminjaman->id }}" name="jenis_bbm"
+                                    required>
+                                    <option value="" disabled selected>Pilih Jenis BBM</option>
+                                    <option value="Solar">Solar</option>
+                                    <option value="Pertalite">Pertalite</option>
+                                    <option value="Pertamax">Pertamax</option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label for="foto_akhir-{{ $peminjaman->id }}" class="form-label">Foto KM & BBM

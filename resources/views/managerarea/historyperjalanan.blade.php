@@ -290,36 +290,41 @@
             aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header text-center">
-                        <h5 class="modal-title" id="driverSummaryModalLabel">Ringkasan Perjalanan per Driver
-                            {{ $rentangTanggal }}</h5>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="driverSummaryModalLabel">Ringkasan Total Perjalanan per Driver</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Nama Driver</th>
-                                        <th>Total Jarak Tempuh (KM)</th>
-                                        <th>Total Durasi</th>
-                                        <th>Total Perjalanan</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($driverSummary as $index => $driver)
+                        @if (isset($driverSummary) && count($driverSummary) > 0)
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
                                         <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $driver->user->nama }}</td>
-                                            <td>{{ $driver->total_jarak }}</td>
-                                            <td>{{ $driver->total_durasi_format }}</td>
-                                            <td>{{ $driver->total_perjalanan }}</td>
+                                            <th>No</th>
+                                            <th>Nama Driver</th>
+                                            <th>Jarak ( Manual)</th>
+                                            <th>Jarak (Estimasi)</th>
+                                            <th>Durasi</th>
+                                            <th>Perjalanan</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($driverSummary as $index => $summary)
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $summary->user->nama ?? 'N/A' }}</td>
+                                                <td>{{ number_format($summary->total_km_manual, 2, ',', '.') }}</td>
+                                                <td>{{ number_format($summary->total_jarak, 2, ',', '.') }}</td>
+                                                <td>{{ $summary->total_durasi_format }}</td>
+                                                <td>{{ $summary->total_perjalanan }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <p>Tidak ada data ringkasan untuk ditampilkan.</p>
+                        @endif
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>

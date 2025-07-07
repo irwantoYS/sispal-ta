@@ -39,6 +39,7 @@ class HomeController extends Controller
                 'laporan_perjalanan.pengemudi_id',
                 DB::raw('COUNT(laporan_perjalanan.id) as total_perjalanan'), // Tambahkan COUNT
                 DB::raw('SUM(laporan_perjalanan.km_akhir) as total_jarak'),
+                DB::raw('SUM(laporan_perjalanan.total_km_manual) as total_km_manual'),
                 DB::raw('SUM(TIMESTAMPDIFF(MINUTE, laporan_perjalanan.jam_pergi, laporan_perjalanan.jam_kembali)) as total_durasi_menit')
             )
             ->groupBy('users.nama', 'users.image', 'laporan_perjalanan.pengemudi_id')

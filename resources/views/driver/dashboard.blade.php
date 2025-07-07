@@ -60,40 +60,85 @@
                     <div class="card card-round">
                         <div class="card-header">
                             <div class="card-head-row">
-                                <div class="card-title">Statistik Performa Bulanan</div>
+                                <div class="card-title">Statistik Performa Driver</div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <!-- Ringkasan Total Keseluruhan -->
-                            <div class="row mb-4 text-center">
-                                <div class="col-md-4">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-road fa-2x text-danger me-2"></i>
-                                        <div>
-                                            <small class="text-muted">Seluruh Total Jarak Tempuh</small><br>
-                                            <strong
-                                                class="fs-5">{{ number_format($totalJarakDriverSelesai ?? 0, 0, ',', '.') }}
-                                                km</strong>
+                            <!-- Ringkasan Total Keseluruhan dalam bentuk card -->
+                            <div class="row">
+                                <div class="col-sm-6 col-md-3">
+                                    <div class="card card-stats card-primary card-round">
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col-icon">
+                                                    <div class="icon-big text-center icon-primary bubble-shadow-small"><i
+                                                            class="fas fa-route"></i></div>
+                                                </div>
+                                                <div class="col col-stats ms-3 ms-sm-0">
+                                                    <div class="numbers">
+                                                        <p class="card-category">Total Perjalanan</p>
+                                                        <h4 class="card-title">{{ $totalPerjalananDriver }}</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-gas-pump fa-2x text-info me-2"></i>
-                                        <div>
-                                            <small class="text-muted">Seluruh Total Estimasi BBM</small><br>
-                                            <strong
-                                                class="fs-5">{{ number_format($totalBbmDriverSelesai ?? 0, 2, ',', '.') }}
-                                                Liter</strong>
+                                <div class="col-sm-6 col-md-3">
+                                    <div class="card card-stats card-success card-round">
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col-icon">
+                                                    <div class="icon-big text-center icon-success bubble-shadow-small"><i
+                                                            class="fas fa-tachometer-alt"></i></div>
+                                                </div>
+                                                <div class="col col-stats ms-3 ms-sm-0">
+                                                    <div class="numbers">
+                                                        <p class="card-category">Total KM (Manual)</p>
+                                                        <h4 class="card-title">
+                                                            {{ number_format($totalKmManualDriverSelesai, 2, ',', '.') }}
+                                                        </h4>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-clock fa-2x text-warning me-2"></i>
-                                        <div>
-                                            <small class="text-muted">Seluruh Total Waktu Tempuh</small><br>
-                                            <strong class="fs-5">{{ $totalWaktuFormatDriverSelesai }}</strong>
+                                <div class="col-sm-6 col-md-3">
+                                    <div class="card card-stats card-info card-round">
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col-icon">
+                                                    <div class="icon-big text-center icon-info bubble-shadow-small"><i
+                                                            class="fas fa-road"></i></div>
+                                                </div>
+                                                <div class="col col-stats ms-3 ms-sm-0">
+                                                    <div class="numbers">
+                                                        <p class="card-category">Total KM (Estimasi)</p>
+                                                        <h4 class="card-title">
+                                                            {{ number_format($totalJarakDriverSelesai, 2, ',', '.') }}</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <div class="card card-stats card-danger card-round">
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col-icon">
+                                                    <div class="icon-big text-center icon-danger bubble-shadow-small"><i
+                                                            class="fas fa-gas-pump"></i></div>
+                                                </div>
+                                                <div class="col col-stats ms-3 ms-sm-0">
+                                                    <div class="numbers">
+                                                        <p class="card-category">Total Estimasi BBM</p>
+                                                        <h4 class="card-title">
+                                                            {{ number_format($totalBbmDriverSelesai, 2, ',', '.') }} L</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -157,8 +202,14 @@
                                                 <div class="col-7 col-stats">
                                                     <div class="numbers">
                                                         <p class="card-category">Jarak Tempuh</p>
-                                                        <h4 class="card-title">
-                                                            {{ number_format($statsJarak ?? 0, 0, ',', '.') }} km</h4>
+                                                        <h4 class="card-title" style="font-size: 1rem;">
+                                                            {{ number_format($statsKmManual ?? 0, 2, ',', '.') }} km
+                                                            <small>(Manual)</small>
+                                                        </h4>
+                                                        <h4 class="card-title" style="font-size: 1rem;">
+                                                            {{ number_format($statsJarak ?? 0, 0, ',', '.') }} km
+                                                            <small>(estimasi)</small>
+                                                        </h4>
                                                     </div>
                                                 </div>
                                             </div>

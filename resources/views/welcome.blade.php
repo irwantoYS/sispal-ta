@@ -246,8 +246,12 @@
                                 <h5 class="card-title fw-bold">{{ $driver->nama }}</h5>
                                 <p class="card-text mb-1"><i class="fas fa-route me-2"></i>Total Perjalanan:
                                     {{ $driver->total_perjalanan }}</p>
-                                <p class="card-text mb-1"><i class="fas fa-road me-2"></i>Total Jarak:
+                                <p class="card-text mb-1"><i class="fas fa-road me-2"></i>Total Jarak (Estimasi):
                                     {{ number_format($driver->total_jarak, 2, ',', '.') }} KM</p>
+                                <p class="card-text mb-1"><i class="fas fa-tachometer-alt me-2"></i>Total Jarak
+                                    (Manual)
+                                    :
+                                    {{ number_format($driver->total_km_manual, 2, ',', '.') }} KM</p>
                                 <p class="card-text"><i class="fas fa-clock me-2"></i>Total Durasi:
                                     {{ $driver->total_durasi_format }}</p>
                             </div>

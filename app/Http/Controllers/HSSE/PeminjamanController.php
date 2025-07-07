@@ -46,6 +46,7 @@ class PeminjamanController extends Controller
             'tujuan_perjalanan' => 'required|string|max:255',
             'titik_akhir' => 'required|string|max:255',
             'estimasi_jarak' => 'required|numeric',
+            'km_awal_manual' => 'required|numeric',
             'bbm_awal' => 'required|numeric',
             'jam_pergi' => 'required|date',
             'foto_awal' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:6000',
@@ -77,6 +78,7 @@ class PeminjamanController extends Controller
             'estimasi_jarak' => $request->estimasi_jarak,
             'previous_kendaraan_status' => $previousStatus,
             'km_akhir' => $request->estimasi_jarak * 2,
+            'km_awal_manual' => $request->km_awal_manual,
             'bbm_awal' => $request->bbm_awal,
             'foto_awal' => $request->file('foto_awal')->store('foto_perjalanan', 'public'),
         ]);
@@ -93,13 +95,15 @@ class PeminjamanController extends Controller
      */
     public function complete(Request $request, $id): RedirectResponse
     {
+        $peminjaman = LaporanPerjalanan::findOrFail($id);
+
         $request->validate([
             'bbm_akhir' => 'required|numeric',
             'jam_kembali' => 'required|date',
             'foto_akhir' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:6000',
+            'km_akhir_manual' => 'required|numeric|gt:' . $peminjaman->km_awal_manual,
+            'jenis_bbm' => 'required|in:Solar,Pertalite,Pertamax',
         ]);
-
-        $peminjaman = LaporanPerjalanan::findOrFail($id);
 
         if ($peminjaman->status !== 'dipinjam') {
             return redirect()->back()->with('error', 'Peminjaman ini tidak dalam status aktif.');
@@ -107,6 +111,10 @@ class PeminjamanController extends Controller
 
         $peminjaman->jam_kembali = $request->jam_kembali;
         $peminjaman->bbm_akhir = $request->bbm_akhir;
+        $peminjaman->jenis_bbm = $request->jenis_bbm;
+        $peminjaman->km_akhir_manual = $request->km_akhir_manual;
+        $peminjaman->total_km_manual = $request->km_akhir_manual - $peminjaman->km_awal_manual;
+
         if ($request->hasFile('foto_akhir')) {
             $peminjaman->foto_akhir = $request->file('foto_akhir')->store('foto_perjalanan', 'public');
         }

@@ -79,31 +79,43 @@
                         </div>
                         <div class="card-body">
                             <div class="row mb-4 text-center">
-                                <div class="col-md-4">
+                                
+                                <div class="col-md-3">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-tachometer-alt fa-2x text-success me-2"></i>
+                                        <div>
+                                            <small class="text-muted">Total KM (Manual)</small><br>
+                                            <strong
+                                                class="fs-5">{{ number_format($totalKmManualSemua ?? 0, 2, ',', '.') }}
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
                                     <div class="d-flex align-items-center justify-content-center">
                                         <i class="fas fa-road fa-2x text-danger me-2"></i>
                                         <div>
-                                            <small class="text-muted">Seluruh Total Jarak Tempuh</small><br>
+                                            <small class="text-muted">Total KM (Estimasi)</small><br>
                                             <strong class="fs-5">{{ number_format($totalJarakSemua ?? 0, 0, ',', '.') }}
                                                 km</strong>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="d-flex align-items-center justify-content-center">
                                         <i class="fas fa-gas-pump fa-2x text-info me-2"></i>
                                         <div>
-                                            <small class="text-muted">Seluruh Total Estimasi BBM</small><br>
+                                            <small class="text-muted">Total Estimasi BBM</small><br>
                                             <strong class="fs-5">{{ number_format($totalBbmSemua ?? 0, 2, ',', '.') }}
                                                 Liter</strong>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="d-flex align-items-center justify-content-center">
                                         <i class="fas fa-clock fa-2x text-warning me-2"></i>
                                         <div>
-                                            <small class="text-muted">Seluruh Total Waktu Tempuh</small><br>
+                                            <small class="text-muted">Total Waktu Tempuh</small><br>
                                             <strong class="fs-5">{{ $totalWaktuFormatSemua }}</strong>
                                         </div>
                                     </div>
@@ -145,7 +157,7 @@
                             <hr>
                             <div class="row mt-4">
                                 <div class="col-md-4">
-                                    <h5 class="mb-3">Jarak Tempuh Terbanyak</h5>
+                                    <h5 class="mb-3">Jarak Tempuh Terbanyak (manual-estimasi)</h5>
                                     @if ($topDriversByDistance->isEmpty())
                                         <p class="text-center text-muted">Tidak ada data.</p>
                                     @else
@@ -155,9 +167,15 @@
                                                     class="list-group-item d-flex justify-content-between align-items-center">
                                                     <span>{{ $index + 1 }}.
                                                         {{ $driver->user->nama ?? 'Driver Tidak Ditemukan' }}</span>
-                                                    <span
-                                                        class="badge bg-primary rounded-pill">{{ number_format($driver->total_jarak, 0, ',', '.') }}
-                                                        km</span>
+                                                    <div>
+                                                        
+                                                        <span
+                                                            class="badge bg-info rounded-pill">{{ number_format($driver->total_km_manual, 2, ',', '.') }}
+                                                            km</span>
+                                                        <span
+                                                            class="badge bg-primary rounded-pill me-1">{{ number_format($driver->total_jarak, 0, ',', '.') }}
+                                                            km</span>
+                                                    </div>
                                                 </li>
                                             @endforeach
                                         </ul>

@@ -42,6 +42,10 @@ class DriverController extends Controller
             ->whereNotNull('jam_kembali')
             ->sum(DB::raw('TIMESTAMPDIFF(SECOND, jam_pergi, jam_kembali)'));
 
+        $totalKmManualDriverSelesai = LaporanPerjalanan::where('pengemudi_id', $driverId)
+            ->whereNotNull('jam_kembali')
+            ->sum('total_km_manual');
+
         // Hitung Total Estimasi BBM Keseluruhan (dari perjalanan SELESAI oleh driver ini)
         $totalBbmDriverSelesai = 0;
         $laporanBbmDriver = LaporanPerjalanan::with('kendaraan')
@@ -75,6 +79,12 @@ class DriverController extends Controller
             ->whereNotNull('km_akhir') // Pastikan km_akhir ada
             ->sum('km_akhir'); // Jumlahkan km_akhir
 
+        // Statistik Jarak bulanan (Manual)
+        $statsKmManual = LaporanPerjalanan::where('pengemudi_id', $driverId)
+            ->whereMonth('jam_pergi', $selectedMonth)
+            ->whereYear('jam_pergi', $selectedYear)
+            ->sum('total_km_manual');
+
         $statsJumlahPerjalanan = LaporanPerjalanan::where('pengemudi_id', $driverId)
             ->whereMonth('jam_pergi', $selectedMonth)
             ->whereYear('jam_pergi', $selectedYear)
@@ -93,17 +103,19 @@ class DriverController extends Controller
 
         return view('driver.dashboard', compact(
             'totalPerjalananDriver',
-            'totalJarakDriverSelesai', // Ganti nama var
-            'totalBbmDriverSelesai',   // Ganti nama var
-            'totalWaktuFormatDriverSelesai', // Ganti nama var
+            'totalJarakDriverSelesai',
+            'totalBbmDriverSelesai',
+            'totalWaktuFormatDriverSelesai',
+            'totalKmManualDriverSelesai',
             'statsJarak',
+            'statsKmManual',
             'statsJumlahPerjalanan',
             'statsWaktuFormat',
             'selectedMonth',
             'selectedYear',
             'availableMonths',
             'availableYears',
-            'totalKendaraanDriver' // Tambahkan variabel ini
+            'totalKendaraanDriver'
         ));
     }
 
