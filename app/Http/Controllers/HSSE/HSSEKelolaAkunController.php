@@ -17,8 +17,8 @@ class HSSEKelolaAkunController extends Controller
      */
     public function index()
     {
-        // Mengambil hanya user dengan status 'aktif'
-        $users = User::where('status', 'aktif')->get();
+        // Mengambil hanya user dengan status 'aktif' dan bukan root
+        $users = User::where('status', 'aktif')->where('is_root', false)->get();
         return view('hsse.kelolaakun', compact('users'));
     }
 
@@ -53,11 +53,11 @@ class HSSEKelolaAkunController extends Controller
 
         // Simpan data akun
         User::create([
-            'nama' => $request->nama,
-            'no_telepon' => $request->no_telepon,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'nama' => $request->input('nama'),
+            'no_telepon' => $request->input('no_telepon'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+            'role' => $request->input('role'),
             'image' => $imagePath,
         ]);
 
@@ -74,6 +74,9 @@ class HSSEKelolaAkunController extends Controller
      */
     public function update(Request $request, User $user): RedirectResponse
     {
+        if ($user->is_root) {
+            return redirect()->route('hsse.kelolaakun')->with('error', 'Akun root tidak dapat diubah.');
+        }
         // Pastikan hanya user aktif yang bisa diupdate datanya dari halaman ini
         if ($user->status !== 'aktif') {
             return redirect()->route('hsse.kelolaakun')->with('error', 'Akun ini sudah nonaktif.');
@@ -100,7 +103,7 @@ class HSSEKelolaAkunController extends Controller
         $data = $request->only('nama', 'no_telepon', 'email', 'role');
 
         if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
+            $data['password'] = Hash::make($request->input('password'));
         }
 
         // Proses gambar baru jika ada
@@ -126,6 +129,9 @@ class HSSEKelolaAkunController extends Controller
      */
     public function destroy(User $user)
     {
+        if ($user->is_root) {
+            return redirect()->route('hsse.kelolaakun')->with('error', 'Akun root tidak dapat dinonaktifkan.');
+        }
         // Cek jika akun sudah nonaktif
         if ($user->status === 'nonaktif') {
             return redirect()->route('hsse.kelolaakun')->with('error', 'Akun ini sudah dinonaktifkan sebelumnya.');

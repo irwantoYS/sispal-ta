@@ -90,7 +90,7 @@ class PersetujuanController extends Controller
             }
 
             $perjalanan->status = 'ditolak';
-            $perjalanan->alasan = $request->alasan;
+            $perjalanan->alasan = $request->input('alasan');
             $perjalanan->validated_by = Auth::id();
             $perjalanan->save();
 
@@ -104,7 +104,7 @@ class PersetujuanController extends Controller
 
             PerjalananStatusUpdated::dispatch($perjalanan, 'ditolak');
             DB::commit();
-            return response()->json(['message' => 'Perjalanan berhasil ditolak dengan alasan: ' . $request->alasan]);
+            return response()->json(['message' => 'Perjalanan berhasil ditolak dengan alasan: ' . $request->input('alasan')]);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Error saat menolak perjalanan (ID: $id): " . $e->getMessage() . "\n" . $e->getTraceAsString()); //  Log stack trace juga

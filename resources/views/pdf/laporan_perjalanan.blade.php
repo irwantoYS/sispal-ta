@@ -142,8 +142,8 @@
         <div class="signature">
             <p>Mengetahui,</p>
             <div class="signature-line"></div>
-            <p class="signature-name">Nama Pejabat</p>
-            <p class="signature-title">Jabatan</p>
+            <p class="signature-name">Ade Irawan</p>
+            <p class="signature-title">Manager Area</p>
         </div>
     </div>
 
@@ -260,7 +260,7 @@
     }
 
     .signature-name {
-        margin-top: 5px;
+        margin-top: 60px;
         font-size: 12px;
     }
 

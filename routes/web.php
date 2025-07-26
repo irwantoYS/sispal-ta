@@ -26,15 +26,30 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\HSSE\PegawaiController;
 use App\Http\Controllers\HSSE\PeminjamanController;
 use App\Http\Controllers\DcuController;
+use Illuminate\Support\Facades\Auth;
 
 
 
-Route::get('/', [HomeController::class, 'landingpage'])->name('welcome');
+Route::get('/', function () {
+    if (Auth::check()) {
+        // Arahkan pengguna yang sudah login ke dashboard yang sesuai
+        $user = Auth::user();
+        if ($user->role === 'ManagerArea') {
+            return redirect()->route('managerarea.dashboard');
+        } elseif ($user->role === 'HSSE') {
+            return redirect()->route('hsse.dashboard');
+        } elseif ($user->role === 'Driver') {
+            return redirect()->route('driver.dashboard');
+        }
+    }
+    // Pengguna yang belum login akan melihat halaman landing
+    return app(HomeController::class)->landingpage();
+})->name('welcome');
 
-Route::get('/login', function () {
-    return view('login');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
 });
-Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
 
 
 

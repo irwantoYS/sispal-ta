@@ -102,7 +102,6 @@ class PDFController extends Controller
             } else {
                 $item->estimasi_bbm = '0';
             }
-            $item->save();
 
             // Tambahkan properti baru untuk diformat khusus untuk tampilan di PDF
             $item->jam_pergi_formatted = $jam_pergi->format('d/m/Y H:i');

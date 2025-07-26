@@ -76,9 +76,9 @@ class HSSEKendaraanController extends Controller
 
         // Membuat entri Kendaraan baru dengan status default 'ready'
         Kendaraan::create([
-            'no_kendaraan' => $request->no_kendaraan,
-            'tipe_kendaraan' => $request->merk_kendaraan . ' || ' . $request->model_mobil,
-            'km_per_liter' => $request->km_per_liter,
+            'no_kendaraan' => $request->input('no_kendaraan'),
+            'tipe_kendaraan' => $request->input('merk_kendaraan') . ' || ' . $request->input('model_mobil'),
+            'km_per_liter' => $request->input('km_per_liter'),
             'status' => 'ready', // Status default diatur menjadi 'ready'
             'image' => $imagePath,
         ]);
@@ -99,9 +99,9 @@ class HSSEKendaraanController extends Controller
 
         $kendaraan = Kendaraan::findOrFail($id);
 
-        $kendaraan->no_kendaraan = $request->no_kendaraan;
-        $kendaraan->tipe_kendaraan = $request->merk_kendaraan . ' || ' . $request->model_mobil;
-        $kendaraan->km_per_liter = $request->km_per_liter;
+        $kendaraan->no_kendaraan = $request->input('no_kendaraan');
+        $kendaraan->tipe_kendaraan = $request->input('merk_kendaraan') . ' || ' . $request->input('model_mobil');
+        $kendaraan->km_per_liter = $request->input('km_per_liter');
 
         if ($request->hasFile('image')) {
             // Hapus gambar lama jika ada

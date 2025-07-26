@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+//use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -61,6 +61,7 @@ class User extends Authenticatable
         'password',
         'no_telepon',
         'role',
+        'is_root',
         'status',
         'image',
     ];
@@ -93,7 +94,7 @@ class User extends Authenticatable
         return $this->hasMany(LaporanPerjalanan::class, 'pengemudi_id');
     }
 
-    public function notifications(): MorphMany
+    public function notifications()
     {
         return $this->morphMany(Notification::class, 'notifiable')->orderBy('created_at', 'desc');
     }

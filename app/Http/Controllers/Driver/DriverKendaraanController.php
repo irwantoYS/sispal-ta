@@ -94,6 +94,7 @@ class DriverKendaraanController extends Controller
 
     public function viewInspeksi($kendaraanId)
     {
+        /** @var \App\Models\Kendaraan $kendaraan */
         $kendaraan = Kendaraan::findOrFail($kendaraanId);
 
         // Cek status kendaraan
@@ -212,23 +213,23 @@ class DriverKendaraanController extends Controller
         // Cek *semua* field boolean yang terkait dengan kondisi *KENDARAAN*.
         // Jika *salah satu* bernilai 0 (false/Tidak Baik/Rusak), ubah status menjadi 'perlu_perbaikan'.
         if (
-            $request->body_baik == 0 || $request->ban_baik == 0 || $request->stir_baik == 0 ||
-            $request->rem_kaki_tangan_baik == 0 || $request->pedal_kopling_gas_rem_baik == 0 ||
-            $request->starter_baik == 0 || $request->oli_mesin_baik == 0 ||
-            $request->tangki_bb_pompa_baik == 0 || $request->radiator_pompa_fanbelt_baik == 0 ||
-            $request->transmisi_baik == 0 || $request->knalpot_baik == 0 || $request->klakson_baik == 0 ||
-            $request->alarm_mundur_baik == 0 || $request->lampu_depan_baik == 0 ||
-            $request->lampu_sign_baik == 0 || $request->lampu_kabin_pintu_baik == 0 ||
-            $request->lampu_rem_baik == 0 || $request->lampu_mundur_baik == 0 || $request->lampu_drl_baik == 0 ||
-            $request->indikator_kecepatan_baik == 0 || $request->indikator_bb_baik == 0 ||
-            $request->indikator_temperatur_baik == 0 || $request->lampu_depan_belakang_baik == 0 ||
-            $request->lampu_rem2_baik == 0 || $request->baut_roda_baik == 0 || $request->jendela_baik == 0 ||
-            $request->wiper_washer_baik == 0 || $request->spion_baik == 0 ||
-            $request->kunci_pintu_baik == 0 || $request->kursi_baik == 0 || $request->sabuk_keselamatan_baik == 0 ||
-            $request->apar_baik == 0 || $request->perlengkapan_kebocoran_baik == 0 ||
-            $request->segitiga_pengaman_baik == 0 || $request->safety_cone_baik == 0 ||
-            $request->dongkrak_kunci_baik == 0 || $request->ganjal_ban_baik == 0 || $request->kotak_p3k_baik == 0 ||
-            $request->dokumen_rutin_baik == 0 || $request->dokumen_service_baik == 0
+            $request->input('body_baik') == 0 || $request->input('ban_baik') == 0 || $request->input('stir_baik') == 0 ||
+            $request->input('rem_kaki_tangan_baik') == 0 || $request->input('pedal_kopling_gas_rem_baik') == 0 ||
+            $request->input('starter_baik') == 0 || $request->input('oli_mesin_baik') == 0 ||
+            $request->input('tangki_bb_pompa_baik') == 0 || $request->input('radiator_pompa_fanbelt_baik') == 0 ||
+            $request->input('transmisi_baik') == 0 || $request->input('knalpot_baik') == 0 || $request->input('klakson_baik') == 0 ||
+            $request->input('alarm_mundur_baik') == 0 || $request->input('lampu_depan_baik') == 0 ||
+            $request->input('lampu_sign_baik') == 0 || $request->input('lampu_kabin_pintu_baik') == 0 ||
+            $request->input('lampu_rem_baik') == 0 || $request->input('lampu_mundur_baik') == 0 || $request->input('lampu_drl_baik') == 0 ||
+            $request->input('indikator_kecepatan_baik') == 0 || $request->input('indikator_bb_baik') == 0 ||
+            $request->input('indikator_temperatur_baik') == 0 || $request->input('lampu_depan_belakang_baik') == 0 ||
+            $request->input('lampu_rem2_baik') == 0 || $request->input('baut_roda_baik') == 0 || $request->input('jendela_baik') == 0 ||
+            $request->input('wiper_washer_baik') == 0 || $request->input('spion_baik') == 0 ||
+            $request->input('kunci_pintu_baik') == 0 || $request->input('kursi_baik') == 0 || $request->input('sabuk_keselamatan_baik') == 0 ||
+            $request->input('apar_baik') == 0 || $request->input('perlengkapan_kebocoran_baik') == 0 ||
+            $request->input('segitiga_pengaman_baik') == 0 || $request->input('safety_cone_baik') == 0 ||
+            $request->input('dongkrak_kunci_baik') == 0 || $request->input('ganjal_ban_baik') == 0 || $request->input('kotak_p3k_baik') == 0 ||
+            $request->input('dokumen_rutin_baik') == 0 || $request->input('dokumen_service_baik') == 0
         ) {
             $status = 'perlu_perbaikan';
         }
@@ -238,101 +239,101 @@ class DriverKendaraanController extends Controller
         $inspeksi = InspeksiKendaraan::create([
             'kendaraan_id' => $kendaraanId,
             'user_id' => Auth::id(), // ID driver yang login
-            'tanggal_inspeksi' => $request->tanggal_inspeksi,
+            'tanggal_inspeksi' => $request->input('tanggal_inspeksi'),
 
             // Data Kendaraan (sesuaikan dengan nama field di form dan migrasi)
-            'body_baik' => $request->body_baik,
-            'body_keterangan' => $request->body_keterangan,
-            'ban_baik' => $request->ban_baik,
-            'ban_keterangan' => $request->ban_keterangan,
-            'stir_baik' => $request->stir_baik,
-            'stir_keterangan' => $request->stir_keterangan,
-            'rem_kaki_tangan_baik' => $request->rem_kaki_tangan_baik,
-            'rem_kaki_tangan_keterangan' => $request->rem_kaki_tangan_keterangan,
-            'pedal_kopling_gas_rem_baik' => $request->pedal_kopling_gas_rem_baik,
-            'pedal_kopling_gas_rem_keterangan' => $request->pedal_kopling_gas_rem_keterangan,
-            'starter_baik' => $request->starter_baik,
-            'starter_keterangan' => $request->starter_keterangan,
-            'oli_mesin_baik' => $request->oli_mesin_baik,
-            'oli_mesin_keterangan' => $request->oli_mesin_keterangan,
-            'tangki_bb_pompa_baik' => $request->tangki_bb_pompa_baik,
-            'tangki_bb_pompa_keterangan' => $request->tangki_bb_pompa_keterangan,
-            'radiator_pompa_fanbelt_baik' => $request->radiator_pompa_fanbelt_baik,
-            'radiator_pompa_fanbelt_keterangan' => $request->radiator_pompa_fanbelt_keterangan,
-            'transmisi_baik' => $request->transmisi_baik,
-            'transmisi_keterangan' => $request->transmisi_keterangan,
-            'knalpot_baik' => $request->knalpot_baik,
-            'knalpot_keterangan' => $request->knalpot_keterangan,
-            'klakson_baik' => $request->klakson_baik,
-            'klakson_keterangan' => $request->klakson_keterangan,
-            'alarm_mundur_baik' => $request->alarm_mundur_baik,
-            'alarm_mundur_keterangan' => $request->alarm_mundur_keterangan,
-            'lampu_depan_baik' => $request->lampu_depan_baik,
-            'lampu_depan_keterangan' => $request->lampu_depan_keterangan,
-            'lampu_sign_baik' => $request->lampu_sign_baik,
-            'lampu_sign_keterangan' => $request->lampu_sign_keterangan,
-            'lampu_kabin_pintu_baik' => $request->lampu_kabin_pintu_baik,
-            'lampu_kabin_pintu_keterangan' => $request->lampu_kabin_pintu_keterangan,
-            'lampu_rem_baik' => $request->lampu_rem_baik,
-            'lampu_rem_keterangan' => $request->lampu_rem_keterangan,
-            'lampu_mundur_baik' => $request->lampu_mundur_baik,
-            'lampu_mundur_keterangan' => $request->lampu_mundur_keterangan,
-            'lampu_drl_baik' => $request->lampu_drl_baik,
-            'lampu_drl_keterangan' => $request->lampu_drl_keterangan,
-            'indikator_kecepatan_baik' => $request->indikator_kecepatan_baik,
-            'indikator_kecepatan_keterangan' => $request->indikator_kecepatan_keterangan,
-            'indikator_bb_baik' => $request->indikator_bb_baik,
-            'indikator_bb_keterangan' => $request->indikator_bb_keterangan,
-            'indikator_temperatur_baik' => $request->indikator_temperatur_baik,
-            'indikator_temperatur_keterangan' => $request->indikator_temperatur_keterangan,
-            'lampu_depan_belakang_baik' => $request->lampu_depan_belakang_baik,
-            'lampu_depan_belakang_keterangan' => $request->lampu_depan_belakang_keterangan,
-            'lampu_rem2_baik' => $request->lampu_rem2_baik,
-            'lampu_rem2_keterangan' => $request->lampu_rem2_keterangan,
-            'baut_roda_baik' => $request->baut_roda_baik,
-            'baut_roda_keterangan' => $request->baut_roda_keterangan,
-            'jendela_baik' => $request->jendela_baik,
-            'jendela_keterangan' => $request->jendela_keterangan,
-            'wiper_washer_baik' => $request->wiper_washer_baik,
-            'wiper_washer_keterangan' => $request->wiper_washer_keterangan,
-            'spion_baik' => $request->spion_baik,
-            'spion_keterangan' => $request->spion_keterangan,
-            'kunci_pintu_baik' => $request->kunci_pintu_baik,
-            'kunci_pintu_keterangan' => $request->kunci_pintu_keterangan,
-            'kursi_baik' => $request->kursi_baik,
-            'kursi_keterangan' => $request->kursi_keterangan,
-            'sabuk_keselamatan_baik' => $request->sabuk_keselamatan_baik,
-            'sabuk_keselamatan_keterangan' => $request->sabuk_keselamatan_keterangan,
-            'apar_baik' => $request->apar_baik,
-            'apar_keterangan' => $request->apar_keterangan,
-            'perlengkapan_kebocoran_baik' => $request->perlengkapan_kebocoran_baik,
-            'perlengkapan_kebocoran_keterangan' => $request->perlengkapan_kebocoran_keterangan,
-            'segitiga_pengaman_baik' => $request->segitiga_pengaman_baik,
-            'segitiga_pengaman_keterangan' => $request->segitiga_pengaman_keterangan,
-            'safety_cone_baik' => $request->safety_cone_baik,
-            'safety_cone_keterangan' => $request->safety_cone_keterangan,
-            'dongkrak_kunci_baik' => $request->dongkrak_kunci_baik,
-            'dongkrak_kunci_keterangan' => $request->dongkrak_kunci_keterangan,
-            'ganjal_ban_baik' => $request->ganjal_ban_baik,
-            'ganjal_ban_keterangan' => $request->ganjal_ban_keterangan,
-            'kotak_p3k_baik' => $request->kotak_p3k_baik,
-            'kotak_p3k_keterangan' => $request->kotak_p3k_keterangan,
-            'dokumen_rutin_baik' => $request->dokumen_rutin_baik,
-            'dokumen_rutin_keterangan' => $request->dokumen_rutin_keterangan,
-            'dokumen_service_baik' => $request->dokumen_service_baik,
-            'dokumen_service_keterangan' => $request->dokumen_service_keterangan,
+            'body_baik' => $request->input('body_baik'),
+            'body_keterangan' => $request->input('body_keterangan'),
+            'ban_baik' => $request->input('ban_baik'),
+            'ban_keterangan' => $request->input('ban_keterangan'),
+            'stir_baik' => $request->input('stir_baik'),
+            'stir_keterangan' => $request->input('stir_keterangan'),
+            'rem_kaki_tangan_baik' => $request->input('rem_kaki_tangan_baik'),
+            'rem_kaki_tangan_keterangan' => $request->input('rem_kaki_tangan_keterangan'),
+            'pedal_kopling_gas_rem_baik' => $request->input('pedal_kopling_gas_rem_baik'),
+            'pedal_kopling_gas_rem_keterangan' => $request->input('pedal_kopling_gas_rem_keterangan'),
+            'starter_baik' => $request->input('starter_baik'),
+            'starter_keterangan' => $request->input('starter_keterangan'),
+            'oli_mesin_baik' => $request->input('oli_mesin_baik'),
+            'oli_mesin_keterangan' => $request->input('oli_mesin_keterangan'),
+            'tangki_bb_pompa_baik' => $request->input('tangki_bb_pompa_baik'),
+            'tangki_bb_pompa_keterangan' => $request->input('tangki_bb_pompa_keterangan'),
+            'radiator_pompa_fanbelt_baik' => $request->input('radiator_pompa_fanbelt_baik'),
+            'radiator_pompa_fanbelt_keterangan' => $request->input('radiator_pompa_fanbelt_keterangan'),
+            'transmisi_baik' => $request->input('transmisi_baik'),
+            'transmisi_keterangan' => $request->input('transmisi_keterangan'),
+            'knalpot_baik' => $request->input('knalpot_baik'),
+            'knalpot_keterangan' => $request->input('knalpot_keterangan'),
+            'klakson_baik' => $request->input('klakson_baik'),
+            'klakson_keterangan' => $request->input('klakson_keterangan'),
+            'alarm_mundur_baik' => $request->input('alarm_mundur_baik'),
+            'alarm_mundur_keterangan' => $request->input('alarm_mundur_keterangan'),
+            'lampu_depan_baik' => $request->input('lampu_depan_baik'),
+            'lampu_depan_keterangan' => $request->input('lampu_depan_keterangan'),
+            'lampu_sign_baik' => $request->input('lampu_sign_baik'),
+            'lampu_sign_keterangan' => $request->input('lampu_sign_keterangan'),
+            'lampu_kabin_pintu_baik' => $request->input('lampu_kabin_pintu_baik'),
+            'lampu_kabin_pintu_keterangan' => $request->input('lampu_kabin_pintu_keterangan'),
+            'lampu_rem_baik' => $request->input('lampu_rem_baik'),
+            'lampu_rem_keterangan' => $request->input('lampu_rem_keterangan'),
+            'lampu_mundur_baik' => $request->input('lampu_mundur_baik'),
+            'lampu_mundur_keterangan' => $request->input('lampu_mundur_keterangan'),
+            'lampu_drl_baik' => $request->input('lampu_drl_baik'),
+            'lampu_drl_keterangan' => $request->input('lampu_drl_keterangan'),
+            'indikator_kecepatan_baik' => $request->input('indikator_kecepatan_baik'),
+            'indikator_kecepatan_keterangan' => $request->input('indikator_kecepatan_keterangan'),
+            'indikator_bb_baik' => $request->input('indikator_bb_baik'),
+            'indikator_bb_keterangan' => $request->input('indikator_bb_keterangan'),
+            'indikator_temperatur_baik' => $request->input('indikator_temperatur_baik'),
+            'indikator_temperatur_keterangan' => $request->input('indikator_temperatur_keterangan'),
+            'lampu_depan_belakang_baik' => $request->input('lampu_depan_belakang_baik'),
+            'lampu_depan_belakang_keterangan' => $request->input('lampu_depan_belakang_keterangan'),
+            'lampu_rem2_baik' => $request->input('lampu_rem2_baik'),
+            'lampu_rem2_keterangan' => $request->input('lampu_rem2_keterangan'),
+            'baut_roda_baik' => $request->input('baut_roda_baik'),
+            'baut_roda_keterangan' => $request->input('baut_roda_keterangan'),
+            'jendela_baik' => $request->input('jendela_baik'),
+            'jendela_keterangan' => $request->input('jendela_keterangan'),
+            'wiper_washer_baik' => $request->input('wiper_washer_baik'),
+            'wiper_washer_keterangan' => $request->input('wiper_washer_keterangan'),
+            'spion_baik' => $request->input('spion_baik'),
+            'spion_keterangan' => $request->input('spion_keterangan'),
+            'kunci_pintu_baik' => $request->input('kunci_pintu_baik'),
+            'kunci_pintu_keterangan' => $request->input('kunci_pintu_keterangan'),
+            'kursi_baik' => $request->input('kursi_baik'),
+            'kursi_keterangan' => $request->input('kursi_keterangan'),
+            'sabuk_keselamatan_baik' => $request->input('sabuk_keselamatan_baik'),
+            'sabuk_keselamatan_keterangan' => $request->input('sabuk_keselamatan_keterangan'),
+            'apar_baik' => $request->input('apar_baik'),
+            'apar_keterangan' => $request->input('apar_keterangan'),
+            'perlengkapan_kebocoran_baik' => $request->input('perlengkapan_kebocoran_baik'),
+            'perlengkapan_kebocoran_keterangan' => $request->input('perlengkapan_kebocoran_keterangan'),
+            'segitiga_pengaman_baik' => $request->input('segitiga_pengaman_baik'),
+            'segitiga_pengaman_keterangan' => $request->input('segitiga_pengaman_keterangan'),
+            'safety_cone_baik' => $request->input('safety_cone_baik'),
+            'safety_cone_keterangan' => $request->input('safety_cone_keterangan'),
+            'dongkrak_kunci_baik' => $request->input('dongkrak_kunci_baik'),
+            'dongkrak_kunci_keterangan' => $request->input('dongkrak_kunci_keterangan'),
+            'ganjal_ban_baik' => $request->input('ganjal_ban_baik'),
+            'ganjal_ban_keterangan' => $request->input('ganjal_ban_keterangan'),
+            'kotak_p3k_baik' => $request->input('kotak_p3k_baik'),
+            'kotak_p3k_keterangan' => $request->input('kotak_p3k_keterangan'),
+            'dokumen_rutin_baik' => $request->input('dokumen_rutin_baik'),
+            'dokumen_rutin_keterangan' => $request->input('dokumen_rutin_keterangan'),
+            'dokumen_service_baik' => $request->input('dokumen_service_baik'),
+            'dokumen_service_keterangan' => $request->input('dokumen_service_keterangan'),
 
             // Data Pengemudi (sesuai dengan formulir)
-            'pengemudi_sehat_baik' => $request->pengemudi_sehat_baik,
-            'pengemudi_sehat_keterangan' => $request->pengemudi_sehat_keterangan,
-            'pengemudi_istirahat_baik' => $request->pengemudi_istirahat_baik,
-            'pengemudi_istirahat_keterangan' => $request->pengemudi_istirahat_keterangan,
-            'pengemudi_mabuk_baik' => $request->pengemudi_mabuk_baik,
-            'pengemudi_mabuk_keterangan' => $request->pengemudi_mabuk_keterangan,
-            'pengemudi_obat_baik' => $request->pengemudi_obat_baik,
-            'pengemudi_obat_keterangan' => $request->pengemudi_obat_keterangan,
+            'pengemudi_sehat_baik' => $request->input('pengemudi_sehat_baik'),
+            'pengemudi_sehat_keterangan' => $request->input('pengemudi_sehat_keterangan'),
+            'pengemudi_istirahat_baik' => $request->input('pengemudi_istirahat_baik'),
+            'pengemudi_istirahat_keterangan' => $request->input('pengemudi_istirahat_keterangan'),
+            'pengemudi_mabuk_baik' => $request->input('pengemudi_mabuk_baik'),
+            'pengemudi_mabuk_keterangan' => $request->input('pengemudi_mabuk_keterangan'),
+            'pengemudi_obat_baik' => $request->input('pengemudi_obat_baik'),
+            'pengemudi_obat_keterangan' => $request->input('pengemudi_obat_keterangan'),
 
-            'catatan' => $request->catatan,
+            'catatan' => $request->input('catatan'),
             'status' => $status, // Status *kendaraan* (bukan status perjalanan)
         ]);
 

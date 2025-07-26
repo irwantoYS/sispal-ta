@@ -62,18 +62,22 @@
                                         <td>
                                             <button class="btn btn-secondary" data-bs-toggle="modal"
                                                 data-bs-target="#imageModal"
-                                                onclick="showImage('{{ asset('storage/' . $user->image) }}')">Lihat
+                                                onclick="showImage('{{ asset('storage/' . $user->image) }}')">
                                                 Gambar</button>
 
                                         </td>
                                         <td>
-                                            <!-- Tombol Edit -->
-                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#editUserModal-{{ $user->id }}">Edit</button>
+                                            @if (!$user->is_root)
+                                                <!-- Tombol Edit -->
+                                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#editUserModal-{{ $user->id }}">Edit</button>
 
-                                            <!-- Tombol Nonaktifkan -->
-                                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#deactivateModal-{{ $user->id }}">Nonaktifkan</button>
+                                                <!-- Tombol Nonaktifkan -->
+                                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#deactivateModal-{{ $user->id }}">Nonaktifkan</button>
+                                            @else
+                                                <span class="badge bg-success">Root Account</span>
+                                            @endif
                                         </td>
                                     </tr>
 
@@ -131,8 +135,8 @@
                                                                 <input type="password" class="form-control"
                                                                     id="password-{{ $user->id }}" name="password">
                                                                 <span class="input-group-text" style="cursor: pointer;"
-                                                                    onclick="togglePasswordVisibility({{ $user->id }})">
-                                                                    {{-- <i class="bi bi-eye"></i> --}}
+                                                                    onclick="togglePasswordVisibility(this, {{ $user->id }})">
+                                                                    <i class="fa fa-eye"></i>
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -179,7 +183,7 @@
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="imageModalLabel">Gambar Kendaraan</h5>
+                                            <h5 class="modal-title" id="imageModalLabel">Gambar Profile</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
@@ -235,7 +239,8 @@
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('hsse.kelolaakun.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('hsse.kelolaakun.store') }}" method="POST" enctype="multipart/form-data"
+                    autocomplete="off">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="addUserModalLabel">Tambah Akun Baru</h5>
@@ -244,19 +249,23 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="nama" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="nama" name="nama" required>
+                            <input type="text" class="form-control" id="nama" name="nama" required
+                                autocomplete="off">
                         </div>
                         <div class="mb-3">
                             <label for="no_telepon" class="form-label">No Telepon</label>
-                            <input type="text" class="form-control" id="no_telepon" name="no_telepon" required>
+                            <input type="text" class="form-control" id="no_telepon" name="no_telepon" required
+                                autocomplete="off">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">email</label>
-                            <input type="text" class="form-control" id="email" name="email" required>
+                            <input type="email" class="form-control" id="email" name="email" required
+                                autocomplete="off">
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <input type="password" class="form-control" id="password" name="password" required
+                                autocomplete="new-password">
                         </div>
                         <div class="mb-3">
                             <label for="role" class="form-label">Role</label>
@@ -348,6 +357,24 @@
                     }
                 });
             });
+        </script>
+    @endpush
+    @push('scripts')
+        <script>
+            function togglePasswordVisibility(spanElement, userId) {
+                const passwordInput = document.getElementById('password-' + userId);
+                const icon = spanElement.querySelector('i');
+
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
         </script>
     @endpush
 @endsection

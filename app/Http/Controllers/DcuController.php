@@ -30,15 +30,15 @@ class DcuController extends Controller
 
         DcuRecord::create([
             'user_id' => Auth::id(),
-            'shift' => $request->shift,
-            'sistolik' => $request->sistolik,
-            'diastolik' => $request->diastolik,
-            'nadi' => $request->nadi,
-            'pernapasan' => $request->pernapasan,
-            'spo2' => $request->spo2,
-            'suhu_tubuh' => $request->suhu_tubuh,
-            'mata' => $request->mata,
-            'kesimpulan' => $request->kesimpulan,
+            'shift' => $request->input('shift'),
+            'sistolik' => $request->input('sistolik'),
+            'diastolik' => $request->input('diastolik'),
+            'nadi' => $request->input('nadi'),
+            'pernapasan' => $request->input('pernapasan'),
+            'spo2' => $request->input('spo2'),
+            'suhu_tubuh' => $request->input('suhu_tubuh'),
+            'mata' => $request->input('mata'),
+            'kesimpulan' => $request->input('kesimpulan'),
         ]);
 
         return redirect()->route('driver.dcu.history')->with('success', 'Data DCU berhasil disimpan.');

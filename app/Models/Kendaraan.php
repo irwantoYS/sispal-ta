@@ -8,6 +8,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
+/**
+ * @property int $id
+ * @property string $no_kendaraan
+ * @property string $tipe_kendaraan
+ * @property float $km_per_liter
+ * @property string $status
+ * @property string|null $image
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $masa_berlaku_pajak
+ * @property \Illuminate\Support\Carbon|null $masa_berlaku_kir
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
+ */
 class Kendaraan extends Model
 {
     use HasFactory;

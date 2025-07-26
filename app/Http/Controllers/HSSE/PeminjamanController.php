@@ -52,13 +52,13 @@ class PeminjamanController extends Controller
             'foto_awal' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:6000',
         ]);
 
-        $kendaraan = Kendaraan::findOrFail($request->kendaraan_id);
+        $kendaraan = Kendaraan::findOrFail($request->input('kendaraan_id'));
 
         if ($kendaraan->status !== 'ready') {
             return redirect()->back()->with('error', 'Kendaraan tidak tersedia atau sedang digunakan.');
         }
 
-        $pegawaiNames = Pegawai::whereIn('id', $request->pegawai_id)->pluck('nama')->toArray();
+        $pegawaiNames = Pegawai::whereIn('id', $request->input('pegawai_id'))->pluck('nama')->toArray();
 
         // Simpan status sebelumnya dan ubah status kendaraan
         $previousStatus = $kendaraan->status;
@@ -69,17 +69,17 @@ class PeminjamanController extends Controller
         LaporanPerjalanan::create([
             'pengemudi_id' => Auth::id(), // Dicatat oleh HSSE yang login
             'nama_pegawai' => json_encode($pegawaiNames), // Simpan sebagai array JSON
-            'kendaraan_id' => $request->kendaraan_id,
-            'tujuan_perjalanan' => $request->tujuan_perjalanan,
+            'kendaraan_id' => $request->input('kendaraan_id'),
+            'tujuan_perjalanan' => $request->input('tujuan_perjalanan'),
             'titik_awal' => '35125, Jl. Sam Ratulangi No.15, Penengahan, Kec. Tj. Karang Pusat, Kota Bandar Lampung, Lampung 35126',
-            'titik_akhir' => $request->titik_akhir,
-            'jam_pergi' => $request->jam_pergi,
+            'titik_akhir' => $request->input('titik_akhir'),
+            'jam_pergi' => $request->input('jam_pergi'),
             'status' => 'dipinjam', // Status khusus untuk peminjaman
-            'estimasi_jarak' => $request->estimasi_jarak,
+            'estimasi_jarak' => $request->input('estimasi_jarak'),
             'previous_kendaraan_status' => $previousStatus,
-            'km_akhir' => $request->estimasi_jarak * 2,
-            'km_awal_manual' => $request->km_awal_manual,
-            'bbm_awal' => $request->bbm_awal,
+            'km_akhir' => $request->input('estimasi_jarak') * 2,
+            'km_awal_manual' => $request->input('km_awal_manual'),
+            'bbm_awal' => $request->input('bbm_awal'),
             'foto_awal' => $request->file('foto_awal')->store('foto_perjalanan', 'public'),
         ]);
 
@@ -109,11 +109,11 @@ class PeminjamanController extends Controller
             return redirect()->back()->with('error', 'Peminjaman ini tidak dalam status aktif.');
         }
 
-        $peminjaman->jam_kembali = $request->jam_kembali;
-        $peminjaman->bbm_akhir = $request->bbm_akhir;
-        $peminjaman->jenis_bbm = $request->jenis_bbm;
-        $peminjaman->km_akhir_manual = $request->km_akhir_manual;
-        $peminjaman->total_km_manual = $request->km_akhir_manual - $peminjaman->km_awal_manual;
+        $peminjaman->jam_kembali = $request->input('jam_kembali');
+        $peminjaman->bbm_akhir = $request->input('bbm_akhir');
+        $peminjaman->jenis_bbm = $request->input('jenis_bbm');
+        $peminjaman->km_akhir_manual = $request->input('km_akhir_manual');
+        $peminjaman->total_km_manual = $request->input('km_akhir_manual') - $peminjaman->km_awal_manual;
 
         if ($request->hasFile('foto_akhir')) {
             $peminjaman->foto_akhir = $request->file('foto_akhir')->store('foto_perjalanan', 'public');

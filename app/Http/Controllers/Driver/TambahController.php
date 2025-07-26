@@ -73,7 +73,7 @@ class TambahController extends Controller
             'estimasi_jarak' => 'required',
         ]);
 
-        $kendaraan = Kendaraan::findOrFail($request->kendaraan_id);
+        $kendaraan = Kendaraan::findOrFail($request->input('kendaraan_id'));
 
         if ($kendaraan->status == 'in_use') {
             return redirect()->back()->with('error', 'Kendaraan sedang digunakan.');
@@ -89,11 +89,11 @@ class TambahController extends Controller
 
         Log::info('TambahController@storePerjalanan - Status Kendaraan setelah diubah: ' . $kendaraan->status);
 
-        $estimasi_jarak_numeric = floatval(str_replace(',', '.', $request->estimasi_jarak));
+        $estimasi_jarak_numeric = floatval(str_replace(',', '.', $request->input('estimasi_jarak')));
         $km_akhir_calculated = $estimasi_jarak_numeric * 2;
 
         // --- PERBAIKAN UNTUK NAMA PEGAWAI ---
-        $namaPegawaiInput = $request->nama_pegawai;
+        $namaPegawaiInput = $request->input('nama_pegawai');
         // Cek jika inputnya adalah array, langsung encode. Jika tidak, anggap sudah JSON.
         $namaPegawaiJson = is_array($namaPegawaiInput) ? json_encode($namaPegawaiInput) : $namaPegawaiInput;
         // Membersihkan jika ada JSON yang tidak valid atau string kosong
@@ -104,16 +104,16 @@ class TambahController extends Controller
         $perjalanan = LaporanPerjalanan::create([
             'pengemudi_id' => Auth::id(),
             'nama_pegawai' => $namaPegawaiJson, // Menggunakan variabel yang sudah dibersihkan
-            'titik_awal' => $request->titik_awal,
-            'titik_akhir' => $request->titik_akhir,
-            'tujuan_perjalanan' => $request->tujuan_perjalanan,
-            'kendaraan_id' => $request->kendaraan_id,
+            'titik_awal' => $request->input('titik_awal'),
+            'titik_akhir' => $request->input('titik_akhir'),
+            'tujuan_perjalanan' => $request->input('tujuan_perjalanan'),
+            'kendaraan_id' => $request->input('kendaraan_id'),
             'km_awal' => null,
             'km_akhir' => $km_akhir_calculated,
-            'km_awal_manual' => $request->km_awal_manual,
-            'bbm_awal' => $request->bbm_awal,
+            'km_awal_manual' => $request->input('km_awal_manual'),
+            'bbm_awal' => $request->input('bbm_awal'),
             'bbm_akhir' => null,
-            'jam_pergi' => $request->jam_pergi,
+            'jam_pergi' => $request->input('jam_pergi'),
             'jam_kembali' => null,
             'foto_awal' => $request->file('foto_awal')->store('foto_perjalanan', 'public'),
             'foto_akhir' => null,
@@ -149,14 +149,14 @@ class TambahController extends Controller
             'km_akhir_manual' => 'required|numeric|gt:' . $perjalanan->km_awal_manual,
         ]);
 
-        $total_km_manual = $request->km_akhir_manual - $perjalanan->km_awal_manual;
+        $total_km_manual = $request->input('km_akhir_manual') - $perjalanan->km_awal_manual;
 
         $perjalanan->update([
-            'bbm_akhir' => $request->bbm_akhir,
-            'jenis_bbm' => $request->jenis_bbm,
-            'jam_kembali' => $request->jam_kembali,
+            'bbm_akhir' => $request->input('bbm_akhir'),
+            'jenis_bbm' => $request->input('jenis_bbm'),
+            'jam_kembali' => $request->input('jam_kembali'),
             'foto_akhir' => $request->hasFile('foto_akhir') ? $request->file('foto_akhir')->store('foto_perjalanan', 'public') : $perjalanan->foto_akhir,
-            'km_akhir_manual' => $request->km_akhir_manual,
+            'km_akhir_manual' => $request->input('km_akhir_manual'),
             'total_km_manual' => $total_km_manual,
         ]);
 
