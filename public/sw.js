@@ -156,11 +156,7 @@ self.addEventListener("fetch", (event) => {
             })
         );
     }
-    // Untuk request lainnya (misalnya API calls, atau aset yang tidak masuk kriteria di atas)
-    // Biarkan browser menanganinya secara default (network only)
-    // else {
-    //     console.log(`[SW] Letting browser handle request: ${request.url}`);
-    // }
+    
 });
 
 console.log("[SW] Service Worker Loaded");

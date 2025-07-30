@@ -34,7 +34,7 @@ class HSSEHistoryController extends Controller
             ->whereNotNull('bbm_akhir')
             ->whereNotNull('jam_kembali')
             ->groupBy('pengemudi_id')
-            ->orderBy('total_jarak', 'desc');
+            ->orderBy('total_km_manual', 'desc');
 
         if ($startDate && $endDate) {
             $parsedStartDate = Carbon::parse($startDate)->startOfDay();

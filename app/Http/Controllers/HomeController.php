@@ -17,6 +17,7 @@ class HomeController extends Controller
         $roles = ['ManagerArea', 'HSSE', 'Driver'];
 
         $staff = User::whereIn('role', $roles)
+            ->where('nama', '!=', 'SuperAdmin') // <-- Menambahkan baris ini untuk mengecualikan SuperAdmin
             ->select('nama', 'role', 'image') // Ambil kolom yang dibutuhkan
             ->orderByRaw("FIELD(role, 'ManagerArea', 'HSSE', 'Driver')") // Urutkan berdasarkan role
 
@@ -43,7 +44,7 @@ class HomeController extends Controller
                 DB::raw('SUM(TIMESTAMPDIFF(MINUTE, laporan_perjalanan.jam_pergi, laporan_perjalanan.jam_kembali)) as total_durasi_menit')
             )
             ->groupBy('users.nama', 'users.image', 'laporan_perjalanan.pengemudi_id')
-            ->orderByDesc('total_jarak') // Urutkan berdasarkan total jarak
+            ->orderByDesc('total_km_manual') // Urutkan berdasarkan total jarak manual
             ->limit(3) // Ambil 3 teratas
             ->get();
 

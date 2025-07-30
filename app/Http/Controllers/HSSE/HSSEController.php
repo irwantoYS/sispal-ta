@@ -68,7 +68,7 @@ class HSSEController extends Controller
             ->whereYear('jam_pergi', $selectedYear)
             ->whereNotNull('km_akhir') // Pastikan km_akhir ada
             ->groupBy('pengemudi_id')
-            ->orderByDesc('total_jarak')
+            ->orderByDesc('total_km_manual')
             ->limit(5)
             ->get();
 

@@ -24,7 +24,8 @@
         </div>
 
         {{-- forgot password --}}
-        <a href="{{ route('password.request') }}">Lupa Password?</a>
+        <a href="{{ route('password.request') }}" class="underline text-sm text-gray-400 hover:text-gray-100">Lupa
+            Password?</a>
 
 
         <div class="flex items-center justify-end mt-4">
